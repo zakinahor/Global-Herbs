@@ -39,7 +39,6 @@ import ArticleDetailPage from './components/ArticleDetailPage';
 import OrderTrackingPage from './components/OrderTrackingPage';
 import AgeVerificationModal from './components/AgeVerificationModal';
 import SupportWidget from './components/SupportWidget';
-import GitHubSyncModal from './components/GitHubSyncModal';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -795,7 +794,6 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [gitHubSyncOpen, setGitHubSyncOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -937,16 +935,10 @@ export default function App() {
               setMobileFiltersOpen={setMobileFiltersOpen}
             />
 
-            <Footer onOpenGitHubSync={() => setGitHubSyncOpen(true)} />
+            <Footer />
 
             <BackToTopButton />
             <SupportWidget />
-
-            {/* In-App Direct GitHub Sync Modal */}
-            <GitHubSyncModal
-              isOpen={gitHubSyncOpen}
-              onClose={() => setGitHubSyncOpen(false)}
-            />
 
             <AnimatePresence>
               {cartOpen && (

@@ -2,10 +2,6 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
 import { createServer as createViteServer } from 'vite';
 import { generateSitemapXML } from './src/utils/sitemap';
 import {
@@ -649,73 +645,6 @@ async function startServer() {
       success: true,
       orders: matchedOrders,
     });
-  });
-
-  // Git Repository Status Check (Direct link to zakinahor/Global-Herbs)
-  app.get('/api/git/status', async (_req, res) => {
-    try {
-      const gitDir = path.join(process.cwd());
-      const { stdout: branchOut } = await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: gitDir });
-      const { stdout: commitOut } = await execAsync('git log -1 --pretty=format:"%h - %s (%cd)" --date=relative', { cwd: gitDir });
-      const { stdout: statusOut } = await execAsync('git status --porcelain', { cwd: gitDir });
-      const { stdout: remoteOut } = await execAsync('git remote get-url origin', { cwd: gitDir });
-
-      // Clean token out of remote URL if present for safe frontend display
-      const safeRemoteUrl = remoteOut.trim().replace(/https:\/\/[^@]+@github\.com\//, 'https://github.com/');
-
-      const uncommittedChanges = statusOut.trim() ? statusOut.trim().split('\n').length : 0;
-
-      return res.status(200).json({
-        success: true,
-        branch: branchOut.trim(),
-        latestCommit: commitOut.trim(),
-        uncommittedChanges,
-        repository: safeRemoteUrl,
-        targetRepo: 'zakinahor/Global-Herbs',
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        success: false,
-        error: err.message || 'Failed to inspect Git status',
-      });
-    }
-  });
-
-  // Git Direct Push & Sync Endpoint (pushes directly to zakinahor/Global-Herbs without creating new repo)
-  app.post('/api/git/sync', async (req, res) => {
-    try {
-      const gitDir = path.join(process.cwd());
-      const commitMessage = (req.body?.message || `Sync updates from Google AI Studio: ${new Date().toISOString()}`).trim();
-
-      // Check status first
-      const { stdout: statusBefore } = await execAsync('git status --porcelain', { cwd: gitDir });
-      
-      let commitMade = false;
-      if (statusBefore.trim().length > 0) {
-        await execAsync('git add .', { cwd: gitDir });
-        await execAsync(`git commit -m "${commitMessage.replace(/"/g, '\\"')}"`, { cwd: gitDir });
-        commitMade = true;
-      }
-
-      // Push directly to origin main
-      const { stdout: pushOut, stderr: pushErr } = await execAsync('git push origin main', { cwd: gitDir });
-      const { stdout: latestCommit } = await execAsync('git log -1 --pretty=format:"%h - %s (%cd)" --date=relative', { cwd: gitDir });
-
-      return res.status(200).json({
-        success: true,
-        message: 'Successfully synced changes directly to zakinahor/Global-Herbs!',
-        commitMade,
-        latestCommit: latestCommit.trim(),
-        pushOutput: (pushOut + '\n' + pushErr).trim(),
-        targetRepo: 'https://github.com/zakinahor/Global-Herbs',
-      });
-    } catch (err: any) {
-      console.error('[Git Sync Error]', err);
-      return res.status(500).json({
-        success: false,
-        error: err.message || 'Git sync failed',
-      });
-    }
   });
 
   // API Route: Checkout Function (Order Capture & Transactional Email Admin Notification)
