@@ -22,6 +22,7 @@ import {
   Youtube,
   Music2,
 } from 'lucide-react';
+import RedditIcon from './icons/RedditIcon';
 import { products, categories } from '../data/products';
 import { blogArticles } from '../data/blogArticles';
 import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from '../utils/sitemap';
@@ -731,7 +732,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* YouTube Card */}
             <a
               href="https://www.youtube.com/@GlobalMarijuanaDispensary"
@@ -832,6 +833,58 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
                 <span>Follow on TikTok</span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   View Latest Drops <ArrowRight size={13} />
+                </span>
+              </div>
+            </a>
+
+            {/* Official Reddit Card */}
+            <a
+              href="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-orange-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-orange-950/30 md:col-span-2 lg:col-span-1"
+            >
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#FF4500] flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
+                      <RedditIcon size={26} />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-orange-400 uppercase tracking-wider block">
+                        Official Reddit Channel
+                      </span>
+                      <h3 className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-orange-300 transition-colors">
+                        u/globalherbsinc
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-950/50 transition-colors">
+                    <ExternalLink size={16} />
+                  </div>
+                </div>
+
+                <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                  Join our official Reddit profile for community strain reviews, batch discussions, drop announcements, direct support, and community Q&amp;A.
+                </p>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                    Direct Community
+                  </span>
+                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                    Drop Q&amp;A
+                  </span>
+                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                    Reviews &amp; Feedback
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-orange-400 group-hover:text-orange-300">
+                <span>Connect on Reddit</span>
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  View Profile &amp; Posts <ArrowRight size={13} />
                 </span>
               </div>
             </a>

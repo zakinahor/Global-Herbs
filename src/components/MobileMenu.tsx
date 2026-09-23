@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { X, ChevronRight, Phone, MessageSquare, ShieldCheck, User, Youtube, Music2, ExternalLink } from 'lucide-react';
+import RedditIcon from './icons/RedditIcon';
 import { Category } from '../types';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
 import { useAuth } from '../context/AuthContext';
@@ -219,6 +220,25 @@ export default function MobileMenu({
                     </div>
                   </div>
                   <ExternalLink size={13} className="text-gray-400" />
+                </a>
+
+                <a
+                  href="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-orange-50 hover:bg-orange-100/70 border border-orange-200/60 text-orange-950 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-md bg-[#FF4500] flex items-center justify-center text-white shadow-xs">
+                      <RedditIcon size={14} />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold leading-tight">Reddit Profile</span>
+                      <span className="text-[10px] text-orange-700">u/globalherbsinc</span>
+                    </div>
+                  </div>
+                  <ExternalLink size={13} className="text-orange-600" />
                 </a>
               </div>
             </div>

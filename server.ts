@@ -216,6 +216,7 @@ async function startServer() {
   // Social Media Direct Redirect Endpoints
   const OFFICIAL_YOUTUBE_URL = 'https://www.youtube.com/@GlobalMarijuanaDispensary';
   const OFFICIAL_TIKTOK_URL = 'https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ';
+  const OFFICIAL_REDDIT_URL = 'https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM';
 
   app.get(['/youtube', '/yt', '/youtube/'], (req, res) => {
     return res.redirect(301, OFFICIAL_YOUTUBE_URL);
@@ -223,6 +224,10 @@ async function startServer() {
 
   app.get(['/tiktok', '/tik-tok', '/tiktok/'], (req, res) => {
     return res.redirect(301, OFFICIAL_TIKTOK_URL);
+  });
+
+  app.get(['/reddit', '/reddit/', '/official-reddit', '/u/globalherbsinc'], (req, res) => {
+    return res.redirect(301, OFFICIAL_REDDIT_URL);
   });
 
   // SEO Canonical 301 Permanent Redirects (Consolidating duplicate category & shop URLs)

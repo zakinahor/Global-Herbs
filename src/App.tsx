@@ -762,6 +762,18 @@ function AnimatedRoutes({
           path="/tik-tok"
           element={<ExternalRedirect url="https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ" />}
         />
+        <Route
+          path="/reddit"
+          element={<ExternalRedirect url="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM" />}
+        />
+        <Route
+          path="/official-reddit"
+          element={<ExternalRedirect url="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM" />}
+        />
+        <Route
+          path="/u/globalherbsinc"
+          element={<ExternalRedirect url="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM" />}
+        />
 
         <Route
           path="*"

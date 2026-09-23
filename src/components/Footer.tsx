@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, ArrowUpCircle, Youtube, Music2, ExternalLink } from 'lucide-react';
+import RedditIcon from './icons/RedditIcon';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
 import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
 
@@ -123,6 +124,23 @@ export default function Footer({ onSelectPage }: FooterProps) {
                     <span className="text-[9px] text-gray-400 truncate">@global.herbs6</span>
                   </div>
                   <ExternalLink size={12} className="text-gray-500 group-hover:text-cyan-300 flex-shrink-0" />
+                </a>
+
+                <a
+                  href="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-zinc-800/80 hover:bg-orange-950/40 border border-zinc-700/60 hover:border-orange-500/60 text-gray-200 hover:text-orange-300 transition-colors group"
+                  title="Official Reddit: u/globalherbsinc"
+                >
+                  <div className="w-6 h-6 rounded-md bg-[#FF4500] flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <RedditIcon size={14} />
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-grow text-left">
+                    <span className="text-[11px] font-bold truncate">Reddit Profile</span>
+                    <span className="text-[9px] text-gray-400 truncate">u/globalherbsinc</span>
+                  </div>
+                  <ExternalLink size={12} className="text-gray-500 group-hover:text-orange-300 flex-shrink-0" />
                 </a>
               </div>
             </div>
