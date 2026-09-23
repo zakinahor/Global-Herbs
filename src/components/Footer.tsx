@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, ArrowUpCircle, Youtube, Music2, ExternalLink } from 'lucide-react';
+import { ShieldCheck, ArrowUpCircle, Youtube, Music2, ExternalLink, GitPullRequest } from 'lucide-react';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
 import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
 
 interface FooterProps {
   onSelectPage?: (page: string) => void;
+  onOpenGitHubSync?: () => void;
 }
 
-export default function Footer({ onSelectPage }: FooterProps) {
+export default function Footer({ onSelectPage, onOpenGitHubSync }: FooterProps) {
   const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -284,6 +285,19 @@ export default function Footer({ onSelectPage }: FooterProps) {
               <span>Verify Age (21+)</span>
             </button>
             <div className="hidden sm:block h-3 w-px bg-zinc-800"></div>
+            {onOpenGitHubSync && (
+              <>
+                <button
+                  onClick={onOpenGitHubSync}
+                  className="hover:text-emerald-400 cursor-pointer flex items-center gap-1.5 text-zinc-400 hover:text-emerald-300 transition"
+                  title="Direct GitHub Repository Sync"
+                >
+                  <GitPullRequest size={12} className="text-emerald-500" />
+                  <span>Sync to GitHub</span>
+                </button>
+                <div className="hidden sm:block h-3 w-px bg-zinc-800"></div>
+              </>
+            )}
             <a href="#" onClick={scrollToTop} className="hover:text-emerald-400 flex items-center gap-1">
               <span>Back To Top</span>
               <ArrowUpCircle size={14} className="text-gray-400" />
