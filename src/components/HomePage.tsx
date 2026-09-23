@@ -67,7 +67,7 @@ const HOME_FAQS: FAQItem[] = [
     category: 'Ordering & Dispatch',
     question: 'When will my order dispatch and how do I track my delivery status?',
     answer:
-      'Orders received Monday through Saturday prior to 2:00 PM PST are processed and handed directly to priority postal dispatch the very same day from our Oregon hub. Once scanned, you receive an automated email confirmation with your real-time tracking number, which can also be tracked directly through our on-site Order Tracking page.',
+      'Orders received Monday through Saturday prior to 2:00 PM PST are processed and handed directly to priority postal dispatch the very same day from our Oregon hub. Once scanned, you receive an automated email confirmation with your real-time carrier tracking number to follow your parcel directly with the courier.',
   },
   {
     category: 'Payments & Guarantees',
@@ -497,7 +497,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               </div>
               <h3 className="font-heading font-bold text-base text-white">Priority Tracked Dispatch</h3>
               <p className="text-xs text-gray-300 leading-relaxed font-normal">
-                Fast processing from Cave Junction, Oregon with live tracking updates directly to your inbox and real-time portal lookup.
+                Fast processing from Cave Junction, Oregon with live tracking updates sent directly to your inbox.
               </p>
             </div>
 
@@ -975,18 +975,12 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
             Join thousands of satisfied connoisseurs nationwide who rely on Global Herbs for legal, lab-verified THCa flowers, solventless rosin, and discreet home delivery.
           </p>
 
-          <div className="pt-3 flex flex-col sm:flex-row justify-center gap-4">
+          <div className="pt-3 flex justify-center">
             <Link
               to="/products"
               className="px-8 py-3.5 bg-brand-green hover:bg-brand-green-hover text-white font-bold text-sm uppercase tracking-wider rounded-xl shadow-lg hover:shadow-brand-green/30 transition-all transform active:scale-95 duration-100 cursor-pointer"
             >
               Shop Current Harvest
-            </Link>
-            <Link
-              to="/order-tracking"
-              className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold text-sm rounded-xl transition cursor-pointer"
-            >
-              Track Existing Order
             </Link>
           </div>
         </div>

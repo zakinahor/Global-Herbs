@@ -250,11 +250,11 @@ export default function MobileMenu({
               </h4>
               <div className="flex flex-col gap-2.5 text-xs font-bold text-gray-700 uppercase tracking-wider">
                 <Link
-                  to="/order-tracking"
+                  to="/contact"
                   onClick={onClose}
                   className="text-left text-emerald-800 font-extrabold flex items-center justify-between bg-emerald-50 p-2 rounded-lg"
                 >
-                  <span>Track Order Status</span>
+                  <span>Customer Support</span>
                   <ChevronRight size={14} />
                 </Link>
                 <Link

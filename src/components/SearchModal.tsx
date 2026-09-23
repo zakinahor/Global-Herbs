@@ -221,11 +221,11 @@ export default function SearchModal({ isOpen, onClose, initialQuery = '' }: Sear
                       <ArrowRight size={12} className="text-gray-400" />
                     </Link>
                     <Link
-                      to="/order-tracking"
+                      to="/contact"
                       onClick={onClose}
                       className="p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 flex items-center justify-between transition"
                     >
-                      <span>Order Tracking</span>
+                      <span>Help &amp; Support</span>
                       <ArrowRight size={12} className="text-gray-400" />
                     </Link>
                   </div>

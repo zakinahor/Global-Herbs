@@ -167,7 +167,7 @@ export default function OrderTrackingPage() {
           </div>
         </div>
         <p className="text-emerald-100 text-xs sm:text-sm max-w-2xl mt-2 leading-relaxed">
-          Enter your Order ID (found in your order confirmation email) and billing email address to check the live packing, verification, and stealth courier status.
+          Please note that delivery transit tracking is handled directly by postal carriers. Check your email for your official tracking number and direct carrier updates, or verify your order fulfillment status below.
         </p>
       </div>
 
