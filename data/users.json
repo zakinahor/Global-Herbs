@@ -1,0 +1,15 @@
+[
+  {
+    "id": "USR-MEM-1001",
+    "name": "Zaki Nahor",
+    "email": "zakinahor692@gmail.com",
+    "passwordHash": "00c76e9161bd71308d1d8e33486d4750df31cb5b65f11e8bd418a196262ce5dae2d08423653ce4068f59587ba602d383f75a117597824b12bda76477b5d85fae",
+    "salt": "c3d48818dfee09ce7f9682e72d943fe9",
+    "accountType": "VIP Connoisseur Member",
+    "phone": "+1 (213) 280-1161",
+    "deliveryAddress": "Cave Junction, OR 97523",
+    "notes": "Initial dispensary administrator and verified VIP patient",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "lastLoginAt": "2026-09-23T23:05:10.234Z"
+  }
+]

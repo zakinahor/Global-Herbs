@@ -1,0 +1,6 @@
+{
+  "name": "Global Herbs",
+  "description": "High-performance legal online dispensary featuring Farm Bill compliant THCa flower, solventless hash rosin, vapes, discreet shipping, boosted SEO, and official media channels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

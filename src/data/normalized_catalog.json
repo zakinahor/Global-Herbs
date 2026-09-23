@@ -1,0 +1,853 @@
+{
+  "catalog_summary": {
+    "original_category_count": 55,
+    "consolidated_category_count": 10,
+    "categories_merged_log": [
+      "Merged 'Accessories / Blunt Wraps' -> 'Accessories'",
+      "Merged 'Accessories / Grinders' -> 'Accessories'",
+      "Merged 'Accessories / Merchandise' -> 'Accessories'",
+      "Merged 'Accessories / Rolling Papers' -> 'Accessories'",
+      "Merged 'Benzodiazepines' -> 'Pharmaceuticals'",
+      "Merged 'Bulk / Bulk Concentrates' -> 'Concentrates'",
+      "Merged 'Bulk / Bulk Edibles' -> 'Edibles'",
+      "Merged 'Bulk / Bulk Hash' -> 'Concentrates'",
+      "Merged 'Buy Peptide Weight Loss' -> 'Research Chemicals'",
+      "Merged 'CBD & THC Vape Pens / Batteries' -> 'Vapes'",
+      "Merged 'CBD & THC Vape Pens / Cartridges' -> 'Vapes'",
+      "Merged 'CBD & THC Vape Pens / Disposable Pens' -> 'Vapes'",
+      "Merged 'CBD / CBD Edibles' -> 'CBD'",
+      "Merged 'CBD / CBD Oil &amp; Tears' -> 'CBD'",
+      "Merged 'CBD / CBD for Pets' -> 'CBD'",
+      "Merged 'Concentrates / Budder' -> 'Concentrates'",
+      "Merged 'Concentrates / Diamonds' -> 'Concentrates'",
+      "Merged 'Concentrates / Hash' -> 'Concentrates'",
+      "Merged 'Concentrates / Live Resin' -> 'Concentrates'",
+      "Merged 'Concentrates / Phoenix Tears' -> 'Concentrates'",
+      "Merged 'Concentrates / Shatter' -> 'Concentrates'",
+      "Merged 'Concentrates / Solventless' -> 'Concentrates'",
+      "Merged 'DMT / DMT Powder' -> 'Psychedelics'",
+      "Merged 'DMT / DMT VAPE' -> 'Vapes'",
+      "Merged 'DMT' -> 'Psychedelics'",
+      "Merged 'Disposable Vapes / Alibarbar Vape' -> 'Vapes'",
+      "Merged 'Disposable Vapes / IGET ONE' -> 'Vapes'",
+      "Merged 'Disposable Vapes' -> 'Vapes'",
+      "Merged 'Edibles / Baked Edibles' -> 'Edibles'",
+      "Merged 'Edibles / Beverages' -> 'Edibles'",
+      "Merged 'Edibles / Chocolates' -> 'Edibles'",
+      "Merged 'Edibles / THC Gummies &amp; Candies' -> 'Edibles'",
+      "Merged 'Flowers / 1/2 Ounce Specials' -> 'Flowers'",
+      "Merged 'Flowers / AAA+ Cannabis' -> 'Flowers'",
+      "Merged 'Flowers / Hybrid' -> 'Flowers'",
+      "Merged 'Flowers / Indica' -> 'Flowers'",
+      "Merged 'Flowers / Pre-Rolls' -> 'Prerolls'",
+      "Merged 'Flowers / Sativa' -> 'Flowers'",
+      "Merged 'LSD' -> 'Psychedelics'",
+      "Merged 'Lucky Elk CBD' -> 'CBD'",
+      "Merged 'Lucky Elk Concentrates / All Concentrates' -> 'Concentrates'",
+      "Merged 'Lucky Elk Concentrates / All Concentrates' -> 'Vapes'",
+      "Merged 'Lucky Elk Edibles' -> 'Edibles'",
+      "Merged 'Lucky Elk Flowers / AAA Top Shelf' -> 'Flowers'",
+      "Merged 'Lucky Elk Flowers / AAAA Exotic' -> 'Flowers'",
+      "Merged 'Lucky Elk Pre Rolls' -> 'Prerolls'",
+      "Merged 'Lucky Elk Tools & Gear' -> 'Accessories'",
+      "Merged 'MDMA' -> 'Psychedelics'",
+      "Merged 'Magic Mushroom / Mushroom Chocolate Bars' -> 'Psychedelics'",
+      "Merged 'Magic Mushroom' -> 'Psychedelics'",
+      "Merged 'Muha Meds' -> 'Vapes'",
+      "Merged 'Newly Added' -> 'Pharmaceuticals'",
+      "Merged 'Oxycodone' -> 'Pharmaceuticals'",
+      "Merged 'Painkillers Drugs' -> 'Pharmaceuticals'",
+      "Merged 'Psychedelic' -> 'Psychedelics'"
+    ]
+  },
+  "categories": [
+    {
+      "category_name": "Accessories",
+      "products": [
+        {
+          "category": "Accessories / Blunt Wraps",
+          "product_name": "Green Society Rolling Machine",
+          "price": "$4",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Green-Society-Rolling-Machine.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/green-society-rolling-machine/",
+          "description": "Sleek and easy-to-use rolling machine for perfectly crafted 79mm joints and rolling papers.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Blunt Wraps",
+          "product_name": "Backwoods Honey Bourbon Cigars",
+          "price": "$20",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Backwoods-Honey-Bourbon-Cigars.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/backwoods-honey-bourbon-cigars/",
+          "description": "Smooth, rich, and aromatic tobacco cigars with a delicious Honey Bourbon flavor.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Grinders",
+          "product_name": "Green Society Herb Grinder",
+          "price": "$40",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Green-Society-Grinder-2.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/green-society-herb-grinder/",
+          "description": "Three-chamber aluminum grinder featuring razor-sharp teeth, magnetic lid, and a kief catcher.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Merchandise",
+          "product_name": "Green Society Rolling Tray",
+          "price": "$10",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Green-Society-Rolling-Tray.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/green-society-rolling-tray/",
+          "description": "Strong and durable metal rolling tray styled with a custom signature Stoner monogram.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Rolling Papers",
+          "product_name": "Juicy Jay Superfine Rolling Papers",
+          "price": "$3",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Juicy-Jay-Superfine-Rolling-Papers.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/juicy-jay-superfine-rolling-papers/",
+          "description": "Triple-dipped superfine rolling papers crafted to enhance natural aromas and preserve smooth smoke.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Tools & Gear",
+          "product_name": "Lucky Elk Lanyard",
+          "price": "$10",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/lanyards-3designs.jpg?v=1762203624",
+          "product_url": "https://luckyelk.com/products/lucky-elk-lanyard",
+          "description": "Folded wrist strap with golden lobster-clasp hook and leather pipe emblem tab.",
+          "in_stock": true
+        },
+        {
+          "category": "Accessories / Tools & Gear",
+          "product_name": "Sticker Collection · Lucky Elk",
+          "price": "$15",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/stickers-group1.jpg?v=1764569892",
+          "product_url": "https://luckyelk.com/products/sticker-collection-lucky-elk",
+          "description": "15-piece collector's sticker pack printed on durable premium vinyl.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Pharmaceuticals",
+      "products": [
+        {
+          "category": "Pharmaceuticals / Benzodiazepines",
+          "product_name": "Buy Alko 1 Tablet Online",
+          "price": "$200",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/Alko-1-Tablet-Online.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-alko-1-tablet-online/",
+          "description": "Alko 1 MG (Xanax) tablet is a prescribed formula used to manage anxiety and panic disorders.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Benzodiazepines",
+          "product_name": "Buy Klonopin 2mg Online",
+          "price": "$366",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723465442.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-klonopin-2mg-online/",
+          "description": "Clonazepam formula designed to relieve anxiety, relax muscles, and soothe psychological tension.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Benzodiazepines",
+          "product_name": "Farmapram 2mg (Alprazolam)",
+          "price": "$150",
+          "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=600",
+          "product_url": "https://globalmarijuanadispensary.com/shop/farmapram-2mg-alprazolam/",
+          "description": "Mexican equivalent brand Xanax formulated for acute anxiety and panic symptoms.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Benzodiazepines",
+          "product_name": "Xanax 2mg Yellow Bar R039",
+          "price": "$300 - $3999 (100 Pills, 200 Pills, 300 Pills, 500 Pills, 1000 Pills, 2000 Pills)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723464245.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/xanax-2mg-yellow-bar-r039/",
+          "description": "Yellow R039 rectangular bars formulated to provide potent, fast-acting anxiety relief.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Newly Added Drugs",
+          "product_name": "3-methylfentanyl",
+          "price": "$915",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723465821.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/3-methylfentanyl/",
+          "description": "Highly potent opioid analgesic research compound. Synthesized for biochemical study and testing.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Newly Added Drugs",
+          "product_name": "Amphetamine powder",
+          "price": "$200 - $17400 (10 Grams, 20 Grams, 50 Grams, 100 Grams, 500 Grams, 1 KG)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723465694.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/amphetamine-powder/",
+          "description": "Pure white amphetamine sulfate stimulant powder suitable for certified laboratory analysis.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Oxycodone",
+          "product_name": "Oxycodone 10mg",
+          "price": "$225",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723464439.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/oxycodone-10mg/",
+          "description": "Premium opioid analgesic tablets formulated for rapid and effective relief of moderate to severe pain.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Oxycodone",
+          "product_name": "Oxycodone 80mg",
+          "price": "$665",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723464421.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/oxycodone-80mg/",
+          "description": "High-dose ongoing relief pain tablets from certified pharmaceutical manufacturers.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Painkillers",
+          "product_name": "Buy Adderall 30mg",
+          "price": "$664",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723465643.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-adderall-30mg/",
+          "description": "High-strength central nervous system stimulant tablets designed for ADHD management and focus.",
+          "in_stock": true
+        },
+        {
+          "category": "Pharmaceuticals / Painkillers",
+          "product_name": "Buy Dilaudid Online",
+          "price": "$416",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1723465534.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-dilaudid-online/",
+          "description": "Hydromorphone HCl formula providing fast-acting relief for severe and persistent physical pain.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Concentrates",
+      "products": [
+        {
+          "category": "Concentrates / Bulk Concentrates",
+          "product_name": "Shatter – Pink Kush",
+          "price": "$400",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Pink-Kush-Shatter-Bulk-510x510-1.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/shatter-pink-kush/",
+          "description": "Indica-dominant hybrid shatter offering deep, relaxing physical sedation and a strong body high.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Bulk Hash",
+          "product_name": "Lebanese Hash (Bulk)",
+          "price": "$400 - $1296 (1-4-lb, 1-2-lb, 1-lb)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Lebanese-Hash-510x510-1.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/lebanese-hash-bulk/",
+          "description": "Aged Lebanese hash sourced directly from local, small-batch growers in the Bekaa Valley.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Budder",
+          "product_name": "Green Supreme Budder",
+          "price": "$40",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Green-Supreme-Budder.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/green-supreme-budder/",
+          "description": "Creamy whipped wax concentrate providing strain-specific taste and high-potency body effects.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Hash",
+          "product_name": "Hash – Bentley",
+          "price": "$10 - $143 (1g, 3-5g, 7g, 14g, 28g)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Bentley-Hash.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/hash-bentley/",
+          "description": "Malleable domestic indica hash cured with oak-wood notes and traditional earthy spices.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Diamonds",
+          "product_name": "Green Supreme Diamonds",
+          "price": "$50",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Green-Supreme-Northern-Lights-Diamonds.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/green-supreme-diamonds/",
+          "description": "Pure, high-potency THC-A diamonds crystallized in an organic, flavorful terpene sauce.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Live Resin",
+          "product_name": "High Voltage Extracts HTFSE Sauce",
+          "price": "$45",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/High-Voltage-Extracts-HTFSE-Sauce-1.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/high-voltage-extracts-htfse-sauce/",
+          "description": "High-end full-spectrum extract diamonds and sauce sourced from fresh-frozen BC craft buds.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Phoenix Tears",
+          "product_name": "Faded Extracts Honey Oil",
+          "price": "$24",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Faded-Extracts-Honey-Oil.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/faded-extracts-honey-oil/",
+          "description": "Clean, decarboxylated golden honey oil suitable for ingestion, vaporizing, or cooking infusions.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Shatter",
+          "product_name": "Faded Extracts Shatter",
+          "price": "$30",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Faded-Extracts-Shatter.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/faded-extracts-shatter/",
+          "description": "Glass-like, highly stable shatter extracted from premium organic Canadian buds.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Solventless",
+          "product_name": "Royalty Rosin Flower Rosin",
+          "price": "$40",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Royalty-Rosin-Flower-Rosin.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/royalty-rosin-flower-rosin/",
+          "description": "Solventless flower rosin pressed with heat and immense pressure to lock in all natural terpenes.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Live Hash Rosin · Jam",
+          "price": "$75 - $240 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/rosinjammainimage.jpg?v=1783624543",
+          "product_url": "https://luckyelk.com/products/thca-live-hash-rosin-jam",
+          "description": "THCa Live Hash Rosin · Jam is one of the rarest expressions of solventless concentrates.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Bubble Hash · Piatella",
+          "price": "$75 - $240 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/piatellamainimage.jpg?v=1779987575",
+          "product_url": "https://luckyelk.com/products/thca-bubble-hash-piatella",
+          "description": "Cured for 6+ months to develop greater depth, complexity, and stability.",
+          "in_stock": false
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Bubble Hash · Temple Ball Reserve",
+          "price": "$42 - $130 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/templeballreservemainimage.jpg?v=1779984864",
+          "product_url": "https://luckyelk.com/products/thca-bubble-hash-temple-ball-reserve",
+          "description": "Artisan solventless concentrate crafted from premium ice water bubble hash and aged for 3-6 months.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Badder",
+          "price": "$20 - $165 (1g, 3.5g, 10g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/baddermainimage.jpg?v=1779998134",
+          "product_url": "https://luckyelk.com/products/thca-badder",
+          "description": "Smooth, creamy, and potent terpene-rich whipped concentrate.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Live Hash Rosin · In-House",
+          "price": "$55 - $205 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/inhouseliverosinimage.jpg?v=1781104939",
+          "product_url": "https://luckyelk.com/products/thca-live-hash-rosin-in-house",
+          "description": "Core solventless lineup with balanced quality, strong flavor, and clean melt.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Live Hash Rosin · Staefli Farms",
+          "price": "$65 - $225 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/staeflirosinmainimage.jpg?v=1740175464",
+          "product_url": "https://luckyelk.com/products/thca-live-hash-rosin-staefli-farms",
+          "description": "Grown in living soil using regenerative farming practices, bred specifically for hash.",
+          "in_stock": true
+        },
+        {
+          "category": "Concentrates / Lucky Elk Concentrates",
+          "product_name": "THCa Live Hash Rosin · Private Reserve",
+          "price": "$70 - $225 (1g, 3.5g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/liverosinprivatereservemainimage.jpg?v=1781105234",
+          "product_url": "https://luckyelk.com/products/thca-live-hash-rosin-private-reserve",
+          "description": "Our finest tier cold-cured rosin chosen for exceptional terpene expression.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Edibles",
+      "products": [
+        {
+          "category": "Edibles / Bulk Edibles",
+          "product_name": "Ripped Edibles THC Chewies (Bulk)",
+          "price": "$80",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Ripped-Edibles-THC-Chewies-Bulk.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/ripped-edibles-thc-chewies-bulk/",
+          "description": "Assorted bulk soft chew candies, infused with 20mg premium THC distillate per piece.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Baked Edibles",
+          "product_name": "Faded Cannabis Co. THC Brownies",
+          "price": "$26",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Faded-Cannabis-Co.-THC-Brownies-1.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/faded-cannabis-co-thc-brownies/",
+          "description": "Freshly baked fudge brownies containing pure, lab-tested full-spectrum THC oil and dark chocolate.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Beverages",
+          "product_name": "Golden Monkey Extracts Peppermint Hot Chocolate",
+          "price": "$14",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Golden-Monkey-Extracts-Peppermint-Hot-Chocolate.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/golden-monkey-extracts-peppermint-hot-chocolate/",
+          "description": "Belgian chocolate powder blended with refreshing peppermint and infused with 150mg of THC.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Chocolates",
+          "product_name": "Potluck Matcha White Chocolate",
+          "price": "$26",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Potluck-Matcha-White-Chocolate.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/potluck-matcha-white-chocolate/",
+          "description": "Small-batch white chocolate bar with organic matcha notes and 100mg full-spectrum THC.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / THC Gummies &amp; Candies",
+          "product_name": "Potluck Cherry Gummies",
+          "price": "$17",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Potluck-Cherry-Gummies.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/potluck-cherry-gummies/",
+          "description": "Sweet and chewy organic cherry gummies infused with 20mg premium full-spectrum THC per piece.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Lucky Elk Edibles",
+          "product_name": "Live Resin Delta 9 Gummies · Cruise",
+          "price": "$24 (10 pieces)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-greenapplecruise.jpg?v=1749506753",
+          "product_url": "https://luckyelk.com/products/live-resin-delta-9-gummies-sour-apple-cruise",
+          "description": "Mellow hybrid green apple formulation with Delta 9-THC and full-spectrum CBD.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Lucky Elk Edibles",
+          "product_name": "Live Resin Delta 9 Gummies · Explore",
+          "price": "$24 (10 pieces)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-strawberryrhubarbexplore.jpg?v=1749507302",
+          "product_url": "https://luckyelk.com/products/live-resin-delta-9-gummies-strawberry-rhubarb-explore",
+          "description": "Sativa formulation with CBG, Delta 9-THC, and CBD for clarity and daytime focus.",
+          "in_stock": true
+        },
+        {
+          "category": "Edibles / Lucky Elk Edibles",
+          "product_name": "Live Resin Delta 9 Gummies · Unwind",
+          "price": "$24 (10 pieces)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-huckleberryunwind.jpg?v=1749505921",
+          "product_url": "https://luckyelk.com/products/live-resin-delta-9-gummies-huckleberry-unwind",
+          "description": "Oregon huckleberry flavor infused with Delta 9-THC, CBD, and sleep-friendly CBN.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Research Chemicals",
+      "products": [
+        {
+          "category": "Research Chemicals / Peptides",
+          "product_name": "Compounded Tirzepatide 60mg 99.3% purity peptide",
+          "price": "$150",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/06/reta-removebg-preview.png",
+          "product_url": "https://globalmarijuanadispensary.com/shop/compounded-tirzepatide-60mg-99-3-purity-peptide/",
+          "description": "Synthetic dual-receptor pathway research peptide. 99% pure HPLC verified lyophilized powder.",
+          "in_stock": true
+        },
+        {
+          "category": "Research Chemicals / Lab Chemicals",
+          "product_name": "Autoinducer-2 (2-AI)",
+          "price": "$120 - $3170 (10 Grams, 25 Grams, 50 Grams)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/Buy-2-AI-Online.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/autoinducer-2-2-ai/",
+          "description": "Central nervous system stimulant compound intended for chemical laboratory research and in-vitro studies.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Vapes",
+      "products": [
+        {
+          "category": "Vapes / Batteries",
+          "product_name": "AVD Clone Battery",
+          "price": "$10",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/AVD-Clone-Battery.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/avd-clone-battery/",
+          "description": "Smart 350mAh draw-activated battery featuring Smart Pulse Technology for smooth draws.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Cartridges",
+          "product_name": "Proper Extracts 2mL Live Resin Vape Carts",
+          "price": "$60",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Proper-Extracts-2mL-Live-Resin-Vape-Carts-New.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/proper-extracts-2ml-live-resin-vape-carts/",
+          "description": "Premium strain-specific live resin vape cartridges with robust terpene flavors.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Disposable Pens",
+          "product_name": "Muha Meds Diamond Peaches Disposable",
+          "price": "$41",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/09/muha-meds-diamond-peaches.png",
+          "product_url": "https://globalmarijuanadispensary.com/shop/muha-meds-diamond-peaches-disposable/",
+          "description": "Melted diamond hybrid extract disposable pen infused with juicy, sweet peach terpenes.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Disposable Vapes",
+          "product_name": "IGET ONE 12000 Puffs Blueberry Ice Vape | Smart Screen",
+          "price": "$50",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/07/iget-one-12000-puffs-blueberry-ice-vape-smart-screen.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/iget-one-12000-puffs-blueberry-ice-vape-smart-screen/",
+          "description": "Features a massive 2700mAh marathon battery, integrated curved smart screen, and sweet iced blueberry flavor.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Disposable Vapes",
+          "product_name": "STLTH 60K Disposable Vape Device – Lychee Melon Ice",
+          "price": "$23",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/06/stlth-60k-disposable-vape-device-lychee-melon-ice.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/stlth-60k-disposable-vape-device-lychee-melon-ice/",
+          "description": "Up to 60,000 puffs of crisp lychee and juicy melon. Equipped with LED screen and triple power modes.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Alibarbar Vapes",
+          "product_name": "JNR Cruiser 12000 Mixed Berry",
+          "price": "$38",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/07/jnr-cruiser-12000-mixed-berry.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/jnr-cruiser-12000-mixed-berry/",
+          "description": "Classic sweet mix of mountain berries. Premium long-lasting draw with adjustable airflow.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / IGET ONE",
+          "product_name": "IGET Bar PRO 10000 Strawberry White Peach Ice Mist Vape",
+          "price": "$48",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/07/iget-bar-pro-10000-strawberry-white-peach-ice-mist-vape.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/iget-bar-pro-10000-strawberry-white-peach-ice-mist-vape/",
+          "description": "A soft fruit blend of juicy strawberry, white peach, and a cool minty mist. 10000 Puffs capacity.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / DMT Vapes",
+          "product_name": "DMT Vape Top DIY Refill Syringe 1ml",
+          "price": "$140",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/DMT-Vape-Top-DIY-Refill-Syringe-1ml.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/dmt-vape-top-diy-refill-syringe-1ml/",
+          "description": "Premium pre-filled glass syringe containing 1mL pure DMT liquid for easy cartridge refills.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Muha Meds Cartridges",
+          "product_name": "Muha Meds Cali Gas OG | Hybrid",
+          "price": "$39",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/09/Muha-Meds-Cali-Gas-OG.png",
+          "product_url": "https://globalmarijuanadispensary.com/shop/muha-meds-cali-gas-og-hybrid/",
+          "description": "1000mg premium cannabis extract cart infused with strain-specific California gas and OG terpenes.",
+          "in_stock": true
+        },
+        {
+          "category": "Vapes / Lucky Elk Concentrates",
+          "product_name": "Diamond Cut THCa Disposable Vape",
+          "price": "$30",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/diamondcutvapemainimage.jpg?v=1780000392",
+          "product_url": "https://luckyelk.com/products/diamond-cut-thca-disposable-vape",
+          "description": "THCa liquid diamonds blended with a live resin terpene sauce made from Oregon hemp.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "CBD",
+      "products": [
+        {
+          "category": "CBD / CBD Edibles",
+          "product_name": "Pacific CBD Mixed Berries",
+          "price": "$12",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Pacific-CBD-Mixed-Berry-Gummies.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/pacific-cbd-mixed-berries/",
+          "description": "Juicy strawberry, blueberry, and raspberry gummies infused with 200mg pure, soothing CBD.",
+          "in_stock": true
+        },
+        {
+          "category": "CBD / CBD for Pets",
+          "product_name": "Faded Cannabis Co. CBD Pet Relief 300mg",
+          "price": "$50",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Faded-Cannabis-Co.-CBD-Pet-Relief-300mg-2.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/faded-cannabis-co-cbd-pet-relief-300mg/",
+          "description": "Pet calming drops blended with premium CBD, healthy fats, and Omega-3 rich Atlantic Krill Oil.",
+          "in_stock": true
+        },
+        {
+          "category": "CBD / CBD Oil &amp; Tears",
+          "product_name": "Viridesco Full Spectrum CBD Oil",
+          "price": "$16",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Viridesco-CBD-Oil.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/viridesco-full-spectrum-cbd-oil/",
+          "description": "Raw, unadulterated organic full-spectrum hemp oil suitable for sublingual ingestion or topical use.",
+          "in_stock": true
+        },
+        {
+          "category": "CBD / CBD Drops",
+          "product_name": "Full Spectrum CBD Drops · Chamomile Infusion (2000 mg)",
+          "price": "$50",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551809449.jpg?v=1709847162",
+          "product_url": "https://luckyelk.com/products/chamomile-full-spectrum-cbd-drops-2000-mg",
+          "description": "A soothing blend of full spectrum CBD and organically grown chamomile, formulated for calm and clarity.",
+          "in_stock": true
+        },
+        {
+          "category": "CBD / CBD Drops",
+          "product_name": "Full Spectrum CBD Drops · Cold-Infused Turmeric (1500 mg)",
+          "price": "$48",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551767631.jpg?v=1709847226",
+          "product_url": "https://luckyelk.com/products/turmeric-full-spectrum-cbd-drops-1500-mg",
+          "description": "This golden blend combines full spectrum CBD (1500mg) with the power of organically grown turmeric.",
+          "in_stock": true
+        },
+        {
+          "category": "CBD / CBD Drops",
+          "product_name": "Full Spectrum CBD Drops · Natural (1000 mg)",
+          "price": "$46",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551611480.jpg?v=1709847198",
+          "product_url": "https://luckyelk.com/products/natural-full-spectrum-cbd-drops-1000-mg",
+          "description": "Pure and straightforward, our Natural Drops contain 1000mg of full spectrum CBD in a clean MCT oil base.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Psychedelics",
+      "products": [
+        {
+          "category": "Psychedelics / DMT Crystals",
+          "product_name": "Pure N,N DMT crystals",
+          "price": "$100",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2026/07/Pure-NN-DMT-crystals.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/pure-nn-dmt-crystals/",
+          "description": "Highly purified Freebase N,N-DMT crystals extracted from premium Mimosa Hostilis root bark.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / DMT Powder",
+          "product_name": "5-MeO DMT Powder (Dimethyltryptamine) online",
+          "price": "$130",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/10/Buy-DMT-Powder-Dimethyltryptamine-online.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-5-meo-dmt-powder-dimethyltryptamine-online/",
+          "description": "Pure, high-grade 5-MeO-DMT powder of supreme research quality.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / LSD Blotters & Liquids",
+          "product_name": "LSD Blotter 400µg",
+          "price": "$349",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/10/LSD-Blotter-400µg.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/lsd-blotter-400%c2%b5g/",
+          "description": "Highly potent lysergic acid diethylamide (LSD) blotter tabs printed on custom artwork paper.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / LSD Blotters & Liquids",
+          "product_name": "100ML 1P-LSD Microdosing Kit",
+          "price": "$130 - $599 (4 X 100ML, 6 X 100ML, 8 X 100ML)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/10/100ML-1P-LSD-Microdosing-Kit.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/100ml-1p-lsd-microdosing-kit/",
+          "description": "Calibrated microdose solution. Every 1mL delivers 1mcg of 1P-LSD for focus and brain optimization.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / Dried Shrooms",
+          "product_name": "Albino Penis Envy Magic Mushrooms",
+          "price": "$18 - $325 (1 gram, 3.5 grams, 7 grams, 14 grams, 28 grams)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Albino-Penis-Envy-Magic-Mushrooms.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/albino-penis-envy-magic-mushrooms/",
+          "description": "One of the most potent Psilocybe Cubensis varieties. Induces highly vivid visual and cosmic spiritual journeys.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / Shroom Chocolates",
+          "product_name": "Magic Mushrooms Milk Chocolate Bar 3000mg",
+          "price": "$25",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/1724846596.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/magic-mushrooms-milk-chocolate-bar-3000mg/",
+          "description": "Creamy milk chocolate bar infused with 3000mg of premium, lab-tested Blue Meanie mushrooms.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / MDMA Crystals & Ecstasy",
+          "product_name": "Buy MDMA Crystal 84% LAB TESTED",
+          "price": "$150 - $305 (4G, 10G)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/10/Buy-MDMA-Crystal-84-LAB-TESTED.webp",
+          "product_url": "https://globalmarijuanadispensary.com/shop/buy-mdma-crystal-84-lab-tested/",
+          "description": "Lab-tested high-purity crystalline MDMA. Produces intense feelings of empathy and sensory enhancement.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / MDMA Crystals & Ecstasy",
+          "product_name": "Blue Punisher MDMA Pills",
+          "price": "$120 - $919 (25 Pills, 50 Pills, 100 Pills, 200 Pills)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2025/10/Blue-Punisher-MDMA-Pills.jpeg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/blue-punisher-mdma-pills/",
+          "description": "Infamous high-strength skull-stamped Blue Punisher ecstasy pills with maximum purity active compounds.",
+          "in_stock": true
+        },
+        {
+          "category": "Psychedelics / Miscellaneous Psychedelics",
+          "product_name": "2C-B Nexus Blue Bees",
+          "price": "$180 - $1050 (50 Pills, 100 Pills, 200Pills)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/08/2C-B-Nexus-Blue-Bees.png",
+          "product_url": "https://globalmarijuanadispensary.com/shop/2c-b-nexus-blue-bees/",
+          "description": "Blue Bee pressed tablets containing high-purity 2C-B for a balanced psychedelic and empathogenic trip.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Flowers",
+      "products": [
+        {
+          "category": "Flowers / Half-Ounce Specials",
+          "product_name": "Grape Pie",
+          "price": "$22 - $320 (3-5g, 7g, 14g, 28g, 1-4-lb)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Grape-Pie-Multi.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/grape-pie/",
+          "description": "Indica-dominant hybrid, cross of Cherry Pie and Grape Stomper. Offers an extremely sweet, fruity grape aroma.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAA+ Premium",
+          "product_name": "Purple Space Cookies",
+          "price": "$100",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Purple-Space-Cookies-New-Multi.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/purple-space-cookies/",
+          "description": "Rare Sativa-dominant hybrid bred from Durban Poison and GSC. Beautiful purple hue with sweet berry notes.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / Hybrid Strains",
+          "product_name": "Miracle Alien Cookies #10 (Smalls)",
+          "price": "$35",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Miracle-Alien-Cookies-10-Smalls.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/miracle-alien-cookies-10-smalls/",
+          "description": "Highly sought-after MAC hybrid variant offering a happy, heavy mental buzz and smooth citrus smoke.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / Indica Strains",
+          "product_name": "Death Bubba",
+          "price": "$28 - $160 (3-5g, 7g, 14g, 28g)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Death-Bubba-Multi.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/death-bubba/",
+          "description": "Infamous heavy-hitting Vancouver indica strain offering deep physical sedation, couch-lock, and fuel-gassy taste.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / Sativa Strains",
+          "product_name": "Sour Diesel",
+          "price": "$25 - $350 (3-5g, 7g, 14g, 28g, 1-4-lb)",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/Sour-Diesel-Strain-Multi.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/sour-diesel/",
+          "description": "Classic high-strength Sativa. Uplifting, clear-headed energy with a sharp diesel and skunk citrus profile.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAA Top Shelf Greenhouse",
+          "product_name": "Superboof · Greenhouse THCa Flower",
+          "price": "$30 - $196 (3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/superboofgreenhousemainimage_2.jpg?v=1783526269",
+          "product_url": "https://luckyelk.com/products/superboof-thca-greenhouse-flower",
+          "description": "Summer light-deprivation greenhouse harvest featuring citrus and candied orange notes.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAA Top Shelf Greenhouse",
+          "product_name": "Lemon Cherry Gelato · Greenhouse THCa Flower",
+          "price": "$30 - $196 (3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/lemoncherrygelatomainimage.jpg?v=1761265797",
+          "product_url": "https://luckyelk.com/products/lemon-cherry-gelato-greenhouse-thca-flower",
+          "description": "Classic sweet lemon candy and gelato notes under Southern Oregon sun.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAAA Exotic Indoor",
+          "product_name": "White Runtz THCa",
+          "price": "$14 - $265 (1g, 3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/white_runtz_main_image.jpg?v=1757105626",
+          "product_url": "https://luckyelk.com/products/white-runtz-thca",
+          "description": "Indoor-grown balanced hybrid with an icy trichome layer and tropical sweet vanilla aroma.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAAA Exotic Indoor",
+          "product_name": "Flex Panther THCa",
+          "price": "$14 - $265 (1g, 3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/LE-FlexPanther_AAAA_-1080-2.jpg?v=1779832737",
+          "product_url": "https://luckyelk.com/products/flex-panther-thca",
+          "description": "Indoor hybrid of Flaming Cheetoz and Trapzilla with sharp lemon solvent and fuel notes.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAAA Exotic Indoor",
+          "product_name": "Purple Churro THCa",
+          "price": "$14 - $265 (1g, 3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/purplechurromainimage_f51c98ff-b232-4fa0-a4f4-691c3e54fe72.jpg?v=1777491760",
+          "product_url": "https://luckyelk.com/products/purple-churro-thca",
+          "description": "Warm cinnamon, vanilla cream, and baked cake flavors woven with premium resin.",
+          "in_stock": true
+        },
+        {
+          "category": "Flowers / AAAA Exotic Indoor",
+          "product_name": "Blue Nerdz THCa",
+          "price": "$14 - $265 (1g, 3.5g, 7g, 14g, 28g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/bluenerdzmainimage_9f02568b-36f8-4f25-83f2-7a683448e873.jpg?v=1777490779",
+          "product_url": "https://luckyelk.com/products/blue-nerdz-thca",
+          "description": "Blue raspberry candy and grape sweetness with deep relaxation effects.",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "category_name": "Prerolls",
+      "products": [
+        {
+          "category": "Prerolls / Pre-Roll Joints",
+          "product_name": "KushKraft Pre-Rolls",
+          "price": "$30",
+          "image_url": "https://globalmarijuanadispensary.com/wp-content/uploads/2024/09/KushKraft-Pre-Rolls.jpg",
+          "product_url": "https://globalmarijuanadispensary.com/shop/kushkraft-pre-rolls/",
+          "description": "Convenient joint pack featuring unbleached papers, RAW filter tips, and premium ground craft buds.",
+          "in_stock": true
+        },
+        {
+          "category": "Prerolls / Lucky Elk Prerolls",
+          "product_name": "THCa Blunt",
+          "price": "$11 - $12 (1g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/bluntmainimage.jpg?v=1751399648",
+          "product_url": "https://luckyelk.com/products/thca-blunt",
+          "description": "Single-strain THCa flower wrapped in organic slow-burning hemp paper.",
+          "in_stock": true
+        },
+        {
+          "category": "Prerolls / Lucky Elk Prerolls",
+          "product_name": "THCa Pre Rolls · Indoor Grown",
+          "price": "$8 - $12 (0.5g, 1g)",
+          "image_url": "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/3690719763.jpg?v=1709847207",
+          "product_url": "https://luckyelk.com/products/thca-pre-rolls-indoor-grown",
+          "description": "Crafted in-house using premium indoor-grown smalls and sugar leaf.",
+          "in_stock": true
+        }
+      ]
+    }
+  ]
+}

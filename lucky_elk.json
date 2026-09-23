@@ -1,0 +1,511 @@
+{
+    "categories":  [
+                       {
+                           "category_name":  "CBD",
+                           "products":  [
+                                            {
+                                                "category":  "CBD",
+                                                "product_name":  "Full Spectrum CBD Drops · Chamomile Infusion (2000 mg)",
+                                                "price":  "$50.00 (Default)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551809449.jpg?v=1709847162",
+                                                "product_url":  "https://luckyelk.com/products/chamomile-full-spectrum-cbd-drops-2000-mg",
+                                                "description":  "A soothing blend of full spectrum CBD and organically grown chamomile, formulated for calm and clarity. Each 1oz bottle contains 2000mg of CBD suspended in MCT oil, with a graduated dropper for easy, precise dosing. Gentle floral notes from cold-infused chamomile round out the earthy hemp flavor, making this a favorite for evening wind-down rituals or anytime your system needs a reset. Crafted with care and packed in a sustainably grown hemp paper box, this dropper delivers plant-based support—simple, potent, and rooted in nature. Ingredients: MCT oil (from coconuts), full spectrum CBD distillate (from hemp flower), chamomile CBD Per Bottle: 2000 mg",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "CBD",
+                                                "product_name":  "Full Spectrum CBD Drops · Cold-Infused Turmeric (1500 mg)",
+                                                "price":  "$48.00 (Default)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551767631.jpg?v=1709847226",
+                                                "product_url":  "https://luckyelk.com/products/turmeric-full-spectrum-cbd-drops-1500-mg",
+                                                "description":  "This golden blend combines full spectrum CBD (1500mg) with the power of organically grown turmeric, cold-infused to preserve its natural properties. Turmeric’s earthy warmth complements the hemp profile, offering a grounded, restorative experience. MCT oil acts as the carrier, supporting fast, effective delivery in every dose. Ideal for daily wellness routines, post-activity recovery, or any moment that calls for balance. Housed in eco-conscious hemp paper packaging with a graduated dropper for control and consistency. Ingredients: MCT oil (from coconuts), full spectrum CBD distillate (from hemp flower), turmeric CBD Per Bottle: 1500mg",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "CBD",
+                                                "product_name":  "Full Spectrum CBD Drops · Natural (1000 mg)",
+                                                "price":  "$46.00 (Default)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2551611480.jpg?v=1709847198",
+                                                "product_url":  "https://luckyelk.com/products/natural-full-spectrum-cbd-drops-1000-mg",
+                                                "description":  "Pure and straightforward, our Natural Drops contain 1000mg of full spectrum CBD in a clean MCT oil base—no added herbs, flavors, or fuss. Just potent plant power, ready to adapt to your routine. Whether added to a morning smoothie or taken solo under the tongue, this is a versatile staple for those who prefer simplicity. Each 1oz bottle comes with a graduated dropper and is tucked into a hemp paper box—sustainable outside, full spectrum inside. Ingredients: MCT oil (from coconuts), full spectrum CBD distillate (from hemp flower) CBD Per Bottle: 1000 mg",
+                                                "in_stock":  true
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Concentrates / All Concentrates",
+                           "products":  [
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · Jam",
+                                                "price":  "$75.00 -$240.00 (Fire AF / 1g, Fire AF / 3.5g, Grape Hi-Chew / 1g, Grape Hi-Chew / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/rosinjammainimage.jpg?v=1783624543",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-jam",
+                                                "description":  "THCa Live Hash Rosin · Jam is one of the rarest expressions of solventless concentrates. Crafted from fresh frozen flower and extracted entirely with ice water, each small batch is carefully cured to develop a crystal-rich texture suspended in a terpene-heavy sauce. The result is an exceptionally flavorful rosin with remarkable stability, intense strain expression, and a unique texture. Produced in extremely limited quantities, our Rosin Jam showcases the artistry of modern solventless extraction. Expect vibrant terpene profiles, rich cannabinoid expression, and a refined dabbing experience that rewards connoisseurs seeking something truly uncommon.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Bubble Hash · Piatella",
+                                                "price":  "$75.00 -$240.00 (Grape Hi-Chew / 1g, Grape Hi-Chew / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/piatellamainimage.jpg?v=1779987575",
+                                                "product_url":  "https://luckyelk.com/products/thca-bubble-hash-piatella",
+                                                "description":  "THCa Bubble Hash · Piatella begins with our 6-star full melt bubble hash, carefully cured for 6+ months to develop greater depth, complexity, and stability. Over time, the hash takes on a distinctive texture somewhere between wet and dry—soft, moist, and slightly crumbly—while its aroma and flavor become richer and more nuanced. Piatella represents a modern approach to hash curing, preserving the purity and character of exceptional full melt while allowing the resin to mature into something distinctly its own. When stored properly in a cool, dark environment, it can continue to cure and develop over time—a rare expression of solventless hash that rewards patience, precision, and intention.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "Diamond Cut THCa Disposable Vape",
+                                                "price":  "$30.00 (Sour Diesel · Explore / 1g, Dutch Treat · Cruise / 1g, Lemon OG · Unwind / 1g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/diamondcutvapemainimage.jpg?v=1780000392",
+                                                "product_url":  "https://luckyelk.com/products/diamond-cut-thca-disposable-vape",
+                                                "description":  "Our Diamond Cut THCa Disposable Vape brings the same formulation as our carts into a simple, all-in-one format. THCa liquid diamonds are blended with a live resin terpene sauce made from fresh-frozen Oregon hemp, preserving the plant’s native terpene profile while increasing overall cannabinoid density—without distillate or synthetic additives. This format sits between live resin and more concentrated extracts. The sauce carries the flavor, while the THCa adds density and a quicker onset. Everything comes directly from the plant, with no botanical terpenes or converted cannabinoids.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Bubble Hash · Temple Ball Reserve",
+                                                "price":  "$42.00 -$130.00 (Biscotti Chunks / 1g, Biscotti Chunks / 3.5g, Crash Glow / 1g, Crash Glow / 3.5g, Guava Tangie / 1g, Guava Tangie / 3.5g, Red Smoothie / 1g, Red Smoothie / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/templeballreservemainimage.jpg?v=1779984864",
+                                                "product_url":  "https://luckyelk.com/products/thca-bubble-hash-temple-ball-reserve",
+                                                "description":  "THCa Bubble Hash · Temple Ball Reserve is an artisan solventless concentrate crafted from premium ice water bubble hash and hand-rolled into traditional temple ball form. Dense, pliable, and deeply aromatic, each small batch combines modern solventless extraction with one of the oldest and most revered styles of hashish. Carefully aged for 3–6 months, Temple Ball Reserve develops greater depth, cohesion, and complexity as the resin slowly matures. The result is a rich, intensely flavorful hash with a soft, greasy texture and evolving aromatic profile—a modern expression of old-world craftsmanship made for those who appreciate hash in its most timeless form.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Badder",
+                                                "price":  "$20.00 -$165.00 (Blue Dream / 1g, Blue Dream / 3.5g, Blue Dream / 10g, GMO Cookies / 1g, GMO Cookies / 3.5g, GMO Cookies / 10g, Green Crack / 1g, Green Crack / 3.5g, Green Crack / 10g, Lemon Cherry Gelato / 1g, Lemon Cherry Gelato / 3.5g, Lemon Cherry Gelato / 10g, Purple Gelato / 1g, Purple Gelato / 3.5g, Purple Gelato / 10g, Strawberry Cough / 1g, Strawberry Cough / 3.5g, Strawberry Cough / 10g, Natural (no added terps) / 1g, Natural (no added terps) / 3.5g, Natural (no added terps) / 10g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/baddermainimage.jpg?v=1779998134",
+                                                "product_url":  "https://luckyelk.com/products/thca-badder",
+                                                "description":  "Smooth, creamy, and potent—THCa Badder delivers a terpene-rich, highly refined cannabis concentrate with a whipped, buttery texture that’s easy to handle and perfect for dabbing. Made from premium cannabis, this extract offers high purity and strong effects, making it a go-to for those who want a powerful yet flavorful experience. Each batch is crafted to preserve cannabinoids and terpenes, ensuring bold aromas, complex flavors, and smooth vapor production. Whether you\u0027re a seasoned dabler or new to concentrates, THCa Badder provides an effortless way to enjoy high-quality extracts.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "Diamond Cut THCa Cart",
+                                                "price":  "$30.00 (Gelato · Cruise / 1g, Granddaddy Purple · Unwind / 1g, Strawberry Cough · Explore / 1g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/diamondcutcartimage.jpg?v=1777658513",
+                                                "product_url":  "https://luckyelk.com/products/liquid-diamonds-thca-cart",
+                                                "description":  "Our Diamond Cut THCa Cart blends THCa liquid diamonds with a live resin terpene sauce made from Oregon-grown hemp. Extracted from fresh-frozen flower, the sauce preserves the plant’s native terpene profile and is paired with THCa crystals to increase potency—without distillate or synthetic additives. This format sits between live resin and more concentrated extracts. The sauce carries the flavor, while the THCa adds density and a quicker onset. Everything comes directly from the plant, with no botanical terpenes or converted cannabinoids. Effects come on more quickly than rosin, with a defined front end that settles into a steady, balanced state.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · In-House",
+                                                "price":  "$55.00 -$205.00 (Dulce de Papaya / 1g, Dulce de Papaya / 3.5g, GMO x Gush Mintz Truffle / 1g, GMO x Gush Mintz Truffle / 3.5g, Guava Drops / 1g, Guava Drops / 3.5g, Honey Banana / 1g, Honey Banana / 3.5g, Island Blend / 1g, Island Blend / 3.5g, Lemon Tree x Grape Cream / 1g, Lemon Tree x Grape Cream / 3.5g, Papaya x White Runtz / 1g, Papaya x White Runtz / 3.5g, Tropicana Fritter / 1g, Tropicana Fritter / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/inhouseliverosinimage.jpg?v=1781104939",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-in-house",
+                                                "description":  "THCa Live Hash Rosin · In-House represents the core of our solventless lineup—crafted for customers who want serious live rosin quality without stepping into reserve-tier pricing. Made from fresh frozen flower and extracted entirely with ice water, each batch is carefully pressed and cold cured to preserve the plant’s native terpene profile, texture, and full-spectrum character. This category focuses on balanced quality, strong flavor, clean melt, and reliable consistency across strains and releases. Expect creamy textures, expressive terpene profiles, and smooth low-temp performance designed for regular enjoyment. In-House is our daily-driver solventless tier: premium enough for dedicated hash smokers, practical enough to keep in rotation.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · Staefli Farms",
+                                                "price":  "$65.00 -$225.00 (Dulce de Uva / 1g, Dulce de Uva / 3.5g (1/8oz), Garlic Breath / 1g, Garlic Breath / 3.5g (1/8oz), Guava Stix / 1g, Guava Stix / 3.5g (1/8oz), Hash Burger / 1g, Hash Burger / 3.5g (1/8oz), Papaya Burger / 1g, Papaya Burger / 3.5g (1/8oz), Tallymon / 1g, Tallymon / 3.5g (1/8oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/staeflirosinmainimage.jpg?v=1740175464",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-staefli-farms",
+                                                "description":  "Staefli Farms Live Hash Rosin is crafted for true connoisseurs of solventless extraction. Grown in living soil using regenerative farming practices, every strain is bred specifically for hash and rosin production, ensuring a pure, terpene-rich experience with no solvents, no additives—just the essence of the plant. Using traditional ice water extraction and low-temp pressing, this cold-cured rosin delivers bold flavors, rich aromas, and smooth, potent dabs. Whether you\u0027re after fruity, gassy, or complex earthy profiles, Staefli Live Hash Rosin stays true to the strain, offering an exceptionally clean and flavorful concentrate.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Shatter",
+                                                "price":  "$23.00 -$88.00 (Blackberry Gelato / 1g, Blackberry Gelato / 3.5g, Lemon Sour Diesel / 1g, Lemon Sour Diesel / 3.5g, Dosidos / 1g, Dosidos / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/shattermainimage_2.jpg?v=1740693555",
+                                                "product_url":  "https://luckyelk.com/products/thca-shatter",
+                                                "description":  "Crisp, clean, and highly potent—THCa Shatter delivers a pure, glass-like concentrate with sharp flavors and strong effects. Made from organically grown cannabis, this extract offers the classic pull-and-snap consistency. With its stable, translucent structure, shatter preserves the essential cannabinoids and terpenes of each strain, letting the bold aromas and flavors shine. Designed for dabbing, THCa Shatter provides a clean, powerful vapor with smooth, consistent effects in every hit.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Bubble Hash",
+                                                "price":  "$30.00 -$95.00 (Indica - Purple Punch / 1g, Indica - Purple Punch / 3.5g, Sativa - Strawberry Cough / 1g, Sativa - Strawberry Cough / 3.5g, Hybrid - SFV OG / 1g, Hybrid - SFV OG / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/bubblehashmainimage_1.jpg?v=1781713568",
+                                                "product_url":  "https://luckyelk.com/products/thca-bubble-hash",
+                                                "description":  "Our THCa Bubble Hash is a solventless concentrate made using traditional ice water extraction and trichome-rich flower. This 4-star hash is crafted for everyday enjoyment, offering a soft, resinous texture with rich flavor and approachable versatility. This line focuses on balanced quality, dependable consistency, and classic hash character at a fair price. Available in indica, sativa, and hybrid options, each batch preserves the plant’s natural terpene and cannabinoid profile without the use of solvents. Whether crumbled into flower, enjoyed in a hash bowl, or lightly vaporized, THCa Bubble Hash delivers a grounded, flavor-forward solventless experience built for regular sessions.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · Private Reserve",
+                                                "price":  "$70.00 -$225.00 (Cherry Diesel / 1g, Cherry Diesel / 3.5g, Divine Banana / 1g, Divine Banana / 3.5g, Fire AF / 1g, Fire AF / 3.5g, Grape Gas / 1g, Grape Gas / 3.5g, Grape Hi-Chew / 1g, Grape Hi-Chew / 3.5g, Melted Strawberries / 1g, Melted Strawberries / 3.5g, Rainbow Belts x Tallymon / 1g, Rainbow Belts x Tallymon / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/liverosinprivatereservemainimage.jpg?v=1781105234",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-private-reserve",
+                                                "description":  "THCa Live Hash Rosin · Private Reserve represents our finest tier cold-cured rosin. Produced from fresh frozen flower and extracted entirely with ice water, these small-batch releases are chosen for exceptional terpene expression, flavor, texture, and overall quality. Only a small percentage of batches earn the Private Reserve designation. Expect standout genetics, rich strain character, and the kind of depth and complexity that keeps connoisseurs coming back to the jar. Private Reserve showcases live hash rosin at its highest level—crafted for those who appreciate the nuances that separate good hash from great hash.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Crumble",
+                                                "price":  "$20.00 -$180.00 (Lemon Cherry Gelato / 1g, Lemon Cherry Gelato / 3.5g, Lemon Cherry Gelato / 10g, Purple Gelato / 1g, Purple Gelato / 3.5g, Purple Gelato / 10g, Purple Punch / 1g, Purple Punch / 3.5g, Purple Punch / 10g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/thcacrumblemainimage.jpg?v=1726172386",
+                                                "product_url":  "https://luckyelk.com/products/thca-crumble",
+                                                "description":  "Light, airy, and packed with potency—THCa Crumble is a dry, honeycomb-like concentrate that breaks apart easily for effortless dabbing. Made from organically grown cannabis, this extract delivers a full-bodied experience with rich terpene expression and strong effects. Its crumbly, porous texture allows for quick vaporization, producing smooth, flavorful hits without the hassle of handling sticky concentrates. Perfect for dabbing rigs and e-rigs, this concentrate offers a clean, potent vapor that’s easy to work with and consistently strong.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Bubble Hash · Full Melt",
+                                                "price":  "$60.00 -$225.00 (Fire AF (90-119µ) / 1g, Fire AF (90-119µ) / 3.5g, GMO Rootbeer (73-159µ) / 1g, GMO Rootbeer (73-159µ) / 3.5g, Grape Hi-Chew (90-119µ) / 1g, Grape Hi-Chew (90-119µ) / 3.5g, Hash Burger (90-119µ) / 1g, Hash Burger (90-119µ) / 3.5g, Lunch Money (45µ) / 1g, Lunch Money (45µ) / 3.5g, Rainbow Belts x Tallymon (73-159µ) / 1g, Rainbow Belts x Tallymon (73-159µ) / 3.5g, Strawberry Guava (45µ) / 1g, Strawberry Guava (45µ) / 3.5g, Triple Cake (73-159µ) / 1g, Triple Cake (73-159µ) / 3.5g, Winter Sunset (73-159µ) / 1g, Winter Sunset (73-159µ) / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/fullmelthashmainimage.jpg?v=1756754442",
+                                                "product_url":  "https://luckyelk.com/products/thca-full-melt-bubble-hash",
+                                                "description":  "THCa Full Melt Bubble Hash represents the peak of solventless craftsmanship—meticulously washed, filtered, and freeze-dried to preserve the plant’s natural character. Fresh-frozen flower yields a sandy, golden texture that softens into a glossy melt as it warms, dabbing clean with minimal residue for pure flavor and bright potency. This true 6-star hash is produced in small, uncured batches by a legendary West Coast hashmaker. Each run reflects the strain, the season, and the care behind it. This is full melt in its purest form—trichomes, ice, and water.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Bubble Hash · Blonde Sift",
+                                                "price":  "$35.00 -$125.00 (Orange Creamsicle (unpressed) / 1g, Orange Creamsicle (unpressed) / 3.5g, Staefli Blend (unpressed) / 1g, Staefli Blend (unpressed) / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/blondehash.jpg?v=1732741019",
+                                                "product_url":  "https://luckyelk.com/products/thca-bubble-hash-blonde-sift",
+                                                "description":  "Blonde Sift THCa Bubble Hash is a 5-star solventless hash made using traditional ice water extraction—carefully dried to achieve a loose, sandy texture inspired by classic dry sift hash. Pale blonde in color and exceptionally aromatic, this batch offers a cleaner, more elevated expression of bubble hash while preserving the familiar texture and ritual of traditional sifted resin. Though the consistency resembles kief or dry sift, the resin itself is produced entirely through solventless bubble hash methods using exceptional flower grown with regenerative farming practices. The result is a light, terpene-rich concentrate with expressive flavor, soft granular texture, and elevated resin quality throughout.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · Budget",
+                                                "price":  "$45.00 -$175.00 (Banana Meltshake / 1g, Banana Meltshake / 3.5g, Big Bagg / 1g, Big Bagg / 3.5g, Grape Cream Cake / 1g, Grape Cream Cake / 3.5g, Grease Bucket / 1g, Grease Bucket / 3.5g, Purple Apricot / 1g, Purple Apricot / 3.5g, Red Zushi / 1g, Red Zushi / 3.5g, Runtz x Cookies \u0026 Cream / 1g, Runtz x Cookies \u0026 Cream / 3.5g, Slurricane / 1g, Slurricane / 3.5g, Strawberry Gusherz / 1g, Strawberry Gusherz / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/budgetliverosinmainimage_96dd38e7-26ec-4743-899e-61c1d47471c8.jpg?v=1779996897",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-budget",
+                                                "description":  "THCa Live Hash Rosin · Budget is crafted from fresh frozen flower using ice water extraction and low-temp pressing to preserve the plant’s natural terpene profile and full-spectrum character. These batches offer a smooth, flavorful solventless experience with textures ranging from creamy badder to softer cold cure. Selected for value-driven pricing, Budget Rosin may feature darker color, slight oxidation, or more subdued terpene expression compared to our premium tiers, while still delivering clean melt and genuine solventless quality. This category is built for customers who want authentic live hash rosin at a more approachable everyday price.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Hash Rosin · Fresh Press",
+                                                "price":  "$68.00 -$225.00 (Fire AF / 1g, Fire AF / 3.5g (1/8oz), Hash Burger / 1g, Hash Burger / 3.5g (1/8oz), Honey Banana / 1g, Honey Banana / 3.5g (1/8oz), Papaya Burger / 1g, Papaya Burger / 3.5g (1/8oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/freshpressmainimage.jpg?v=1779998671",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-hash-rosin-fresh-press",
+                                                "description":  "Fresh Press Live Rosin captures solventless hash rosin at its freshest point—collected directly from the press without curing or post-processing. By skipping the cold cure stage, fresh press preserves exceptionally high terpene content and delivers a bright, expressive flavor profile that reflects the strain in its purest form. Made from bubble hash using only ice water extraction, heat, and pressure, fresh press can range from glassy and translucent to softer textures as it naturally evolves over time. Proper cold storage helps preserve its flavor, texture, and freshness for the best possible experience.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Sugar",
+                                                "price":  "$20.00 -$150.00 (1g / Runtz x Tahoe OG, 3.5g / Runtz x Tahoe OG, 10g / Runtz x Tahoe OG)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/thcasugarmainimage.jpg?v=1747354567",
+                                                "product_url":  "https://luckyelk.com/products/thca-sugar",
+                                                "description":  "THCa Sugar is a potent BHO concentrate with a grainy, semi-wet consistency that falls between crumble and resin. Each scoop delivers a dense dose of cannabinoids, with visible crystalline THCa suspended in a terpene-rich matrix that glistens like raw sugar. It’s stable enough to handle easily, yet sticky enough to preserve flavor and potency. Expect bold, expressive terpene profiles that translate into rich, flavorful dabs with a fast-acting onset. Whether you’re loading up a rig or enhancing flower, THCa Sugar offers a versatile, high-impact experience for concentrate lovers.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "Live Rosin THCa Cart",
+                                                "price":  "$45.00 -$68.00 (Grapefruit Zlushie / 0.5g, Grapefruit Zlushie / 1g, Maple Dunks / 0.5g, Maple Dunks / 1g, Strawberry Guava / 0.5g, Strawberry Guava / 1g, Triple Cake / 0.5g, Triple Cake / 1g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/thcarosincart1gimage.jpg?v=1777660437",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-rosin-carts",
+                                                "description":  "The latest THCa Live Rosin Cart delivers our most refined solventless experience yet—made from fresh frozen flower, cold-cured to preserve vivid color, balanced texture, and full terpene expression. Every detail of this batch was fine-tuned for flavor and consistency, offering clean, strain-true vapor that stays smooth from start to finish. View all of our THCa Carts! Each cart is filled with uncut, 100% live rosin and housed in premium CCELL hardware, featuring a ceramic coil for even heat and pure taste. No distillate, no additives, no shortcuts—just solventless hash oil, perfected. For those who value purity, craftsmanship, and precision, this is rosin the way it was meant to be.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Rosin Disposable Vape",
+                                                "price":  "$46.00 -$70.00 (Breadstix / 0.5g, Breadstix / 1g, Candy Zeclaire / 0.5g, Candy Zeclaire / 1g, Dozicot / 0.5g, Dozicot / 1g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/allinonepodmainimage.jpg?v=1754607538",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-rosin-disposable-vape",
+                                                "description":  "Meet the new generation of THCa Live Rosin Disposable Vape—a potent, portable option crafted for solventless purists. Each unit is filled with uncut live rosin, cold-cured and made from fresh-frozen flower, then refined using our Cold Spin Terp Protection™ process to protect the strain’s full terpene profile. No distillate, no additives, no compromises. Designed for clean flavor and smooth performance, this vape uses iKrusher Vona Pro hardware with variable voltage and a ceramic coil, offering precise temperature control and consistent vapor. Whether you’re at home or on the move, it’s an effortless way to experience authentic solventless live rosin.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Concentrates / All Concentrates",
+                                                "product_name":  "THCa Live Resin",
+                                                "price":  "$30.00 -$95.00 (Astro Monk x Dosilato / 1g, Astro Monk x Dosilato / 3.5g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/3969568704.jpg?v=1709847189",
+                                                "product_url":  "https://luckyelk.com/products/thca-live-resin",
+                                                "description":  "Fresh, flavorful, and true to the plant—THCa Live Resin is crafted from organically grown, flash-frozen flower, preserving every terpene and cannabinoid at peak freshness. This premium concentrate delivers a pure, full-spectrum experience, capturing the authentic flavor and potency of each strain without compromise. Whether you’re after sweet citrus, earthy spice, or gassy funk, the bold aromas and rich flavors of this live resin speak for themselves. Perfect for dabbing or enhancing flower, THCa Live Resin is a testament to craftsmanship and sustainability, bringing you the best of the plant—from the field to your jar.",
+                                                "in_stock":  false
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Concentrates / BHO Extracts",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Concentrates / Bubble Hash",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Concentrates / Dabs",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Concentrates / Solventless Rosin",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Edibles",
+                           "products":  [
+                                            {
+                                                "category":  "Edibles",
+                                                "product_name":  "Live Resin Delta 9 Gummies · Cruise",
+                                                "price":  "$24.00 (10 pieces (200mg))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-greenapplecruise.jpg?v=1749506753",
+                                                "product_url":  "https://luckyelk.com/products/live-resin-delta-9-gummies-sour-apple-cruise",
+                                                "description":  "Balanced and breezy, Cruise anytime with our Live Resin D9 Gummies made with real apples. A true hybrid formulation made for the mellow middle ground—with Delta 9-THC and full-spectrum CBD, they offer a steady glide without the spikes—perfect for weekend hangs, long walks, or creative stretches. Bright, tangy apple meets a touch of sweetness in this tart green bite, with live resin infusion lending botanical depth and nuance that goes beyond candy. Expect real-fruit flavor, smooth onset, and a finish that feels clean and calm. This one’s for the seekers of ease, joy, and just-right lift. Set your pace, hit cruise, and enjoy the ride. Potency: 20mg Delta 9 THC | 2mg CBD",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Edibles",
+                                                "product_name":  "Live Resin Delta 9 Gummies · Explore",
+                                                "price":  "$24.00 (10 pieces (200mg))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-strawberryrhubarbexplore.jpg?v=1749507302",
+                                                "product_url":  "https://luckyelk.com/products/live-resin-delta-9-gummies-strawberry-rhubarb-explore",
+                                                "description":  "Set out with clarity and curiosity. Explore with our Live Resin D9 Gummies made with real strawberries and rhubarb. This sativa formulation blends Delta 9-THC, full-spectrum CBD, and CBG for a light-on-your-feet effect with sharper edges. Designed for daytime rituals, creative missions, and feel-good movement. Sweet strawberry and tangy rhubarb strike a satisfying balance—vibrant, zesty, and just a bit nostalgic. With the added lift of CBG—often called the “mother cannabinoid”—this gummy leans into clarity and motivation without going overboard. For adventures big or small, Explore helps you meet the moment with a fresh mind and open heart. Potency: 20mg Delta 9-THC | 10mg CBG | 2mg CBD",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Edibles",
+                                                "product_name":  "Live Resin Delta 9 Gummies · Unwind",
+                                                "price":  "$24.00 (10 pieces (200mg))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9gummies-huckleberryunwind.jpg?v=1749505921",
+                                                "product_url":  "https://luckyelk.com/products/live-resin-delta-9-gummies-huckleberry-unwind",
+                                                "description":  "Sink into stillness. Unwind with our Live Resin D9 Gummies made with real Oregon huckleberries. Our indica-leaning formulation is crafted for rest, relief, and rituals that call for soft landing. Infused with a calming trio of Delta 9-THC, full-spectrum CBD, and sleep-friendly CBN, this gummy is designed to quiet the noise and cradle you into a deeper exhale. Flavored with real fruit and a hint of wild tang, these huckleberry flavored treats offer a dark, jammy profile that finishes smooth with a hint of tartness. The live resin infusion preserves native terpenes for a rich experience that honors the whole plant. Whether it’s a slow evening on the porch or a quiet close to the day, our Unwind D9 Gummies are your gentle companion when you\u0027re ready to dim the lights and let go. Potency: 20mg Delta 9-THC | 10mg CBN | 2mg CBD",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Edibles",
+                                                "product_name":  "Live Resin Delta 9 Caramel (40mg)",
+                                                "price":  "$8.00 -$60.00 (1 piece - 40mg, 3 pieces - 120mg, 10 pieces - 400mg)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/3587436078.jpg?v=1709847169",
+                                                "product_url":  "https://luckyelk.com/products/d9-live-resin-caramel-40-mg",
+                                                "description":  "Some things never go out of style—like rich, buttery caramels and top-tier cannabis extracts. Our Live Resin D9 Caramel blends organic ingredients with the bold effects of Delta-9 THC and live resin CBD in every piece. Crafted with full-spectrum live resin, each caramel captures the complexity of the plant’s natural profile, bringing out deep, earthy undertones that perfectly balance the sweet, creamy richness. The result? A perfectly dosed edible that delivers the entourage effect in the most delicious way possible. Potency: 40mg Δ9 THC | 4mg CBD",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Edibles",
+                                                "product_name":  "Live Resin Delta 9 + CBN Caramel (40mg)",
+                                                "price":  "$8.00 -$60.00 (1 piece - 40mg, 3 pieces - 120mg, 10 pieces - 400mg)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/d9caramelswcbnmainimage.jpg?v=1747431795",
+                                                "product_url":  "https://luckyelk.com/products/d9-cbn-live-resin-caramel-40mg",
+                                                "description":  "This is our same organic Live Resin D9 caramel, but now infused with CBN to support deeper rest, relaxation, and sleep. It’s a nighttime-friendly option for anyone looking to wind down without sacrificing taste or quality. Each piece contains Delta-9 THC, live resin CBD, and CBN, delivering a full-spectrum experience rooted in high quality ingredients and consistent dosing. The flavor is rich and buttery with subtle herbal depth from the live resin infusion—no synthetic flavoring, just real plant character. Perfect for evenings, slow weekends, or whenever it’s time to take things down a notch. Potency: 40mg Δ9 THC | 4mg CBD | 11mg CBN",
+                                                "in_stock":  true
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Flower / AAA Top Shelf",
+                           "products":  [
+                                            {
+                                                "category":  "Flower / AAA Top Shelf",
+                                                "product_name":  "Superboof · Greenhouse THCa Flower",
+                                                "price":  "$30.00 -$196.00 (3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/superboofgreenhousemainimage_2.jpg?v=1783526269",
+                                                "product_url":  "https://luckyelk.com/products/superboof-thca-greenhouse-flower",
+                                                "description":  "Superboof THCa (Black Cherry Punch × Tropicana Cookies) returns with a fresh Summer \u002726 light-deprivation greenhouse harvest. This sativa-leaning batch is grown with organic inputs and timed sun exposure, producing dense buds with striking purple coloration, bright orange pistils, and a thick coating of sticky trichomes. The aroma bursts with citrus, candied orange, and funky cherry gas. Flavor follows with tart grapefruit, sweet earth, and lingering notes of cherry candy and burnt sugar. Fresh, flavorful, and resin-rich, this latest Superboof harvest delivers the bold terpene profile and uplifting effects that have made the cultivar a modern favorite.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAA Top Shelf",
+                                                "product_name":  "Lemon Cherry Gelato · Greenhouse THCa Flower",
+                                                "price":  "$30.00 -$196.00 (3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/lemoncherrygelatomainimage.jpg?v=1761265797",
+                                                "product_url":  "https://luckyelk.com/products/lemon-cherry-gelato-greenhouse-thca-flower",
+                                                "description":  "Lemon Cherry Gelato THCa (Sunset Sherbet × Girl Scout Cookies) arrives with a fresh Summer \u002726 light-deprivation greenhouse harvest. Grown with organic inputs and timed sun exposure, this balanced hybrid produces resin-rich buds with deep green coloration, purple accents, bright orange pistils, and a thick coating of sticky trichomes. The aroma is pure candy gas—sweet lemon candy, ripe cherry, creamy citrus, and a smooth gassy finish. Flavor follows with sugary citrus, sweet cherry, and rich gelato notes that linger on the palate. Fresh, flavorful, and exceptionally resinous, this latest Lemon Cherry Gelato harvest delivers the iconic candy gas terpene profile that has made the cultivar a modern classic.",
+                                                "in_stock":  true
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Flower / AAAA Exotic",
+                           "products":  [
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "White Runtz THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/white_runtz_main_image.jpg?v=1757105626",
+                                                "product_url":  "https://luckyelk.com/products/white-runtz-thca",
+                                                "description":  "White Runtz THCa (Gelato × Zkittlez) is a balanced hybrid, indoor-grown to bring out its signature frost and color depth. This fresh batch shows dense, medium/large buds in pale green and soft purple, threaded with bright orange pistils and finished with a thick, icy trichome layer. The aroma leans tropical and sweet, blending vanilla frosting with candy-forward citrus and a light herbal backdrop. On the palate, White Runtz delivers creamy confectionery notes, sugary fruit, and a smooth finish that lingers with dessert-like sweetness. Effects begin with gentle uplift before settling into a calm, steady ease. An approachable candy-profile cultivar for those who enjoy sweet, flavorful flower with balanced expression.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Flex Panther THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/LE-FlexPanther_AAAA_-1080-2.jpg?v=1779832737",
+                                                "product_url":  "https://luckyelk.com/products/flex-panther-thca",
+                                                "description":  "Flex Panther THCa (Flaming Cheetoz × Trapzilla) is a fresh indoor-grown hybrid showcasing some of Oregon's most exciting modern genetics. Dense, resin-soaked buds display pale green coloration with occasional purple accents, finished with a thick coating of greasy trichomes. The aroma opens with sharp lemon solvent, fuel, and a distinctive note of toasted corn chips. Flavor follows with bright citrus rind, savory grain, earthy funk, and lingering diesel. Flex Panther delivers a balanced experience backed by a truly uncommon terpene profile. Equal parts exotic, savory, and loud, this cultivar reflects the new generation of designer cannabis genetics—bred for complexity, character, and undeniable bag appeal.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Blackberry Superboof THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/blackberrysuperboofmainimage.jpg?v=1738878963",
+                                                "product_url":  "https://luckyelk.com/products/blackberry-superboof-thca",
+                                                "description":  "Blackberry Superboof THCa (Blackberry × Superboof) is back with a fresh indoor harvest. This sativa is a true crowd favorite, known for chunky, trichome-drenched buds showcasing vibrant green coloration, occasional purple accents, and fiery orange pistils. Frosty and terpene-rich, it's a strain that delivers on both looks and performance. The aroma hits loud—tropical fruit, zesty citrus, and straight gas—while the flavor layers juicy blackberry sweetness with citrus zest and an earthy finish. Each inhale offers a complex, lingering smoke that keeps you reaching for more. Bright, flavorful, and highly expressive, Blackberry Superboof has earned its spot as a go-to daytime cultivar. With this new batch, the strain returns with the bold flavor and uplifting experience that made it a staple in the first place.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Bulk THCa Flower",
+                                                "price":  "$108.00 -$655.00 (Jelly Breath / 14g, Jelly Breath / 28g (1 oz), Jelly Breath / 112g (1/4 lb), MAC (Miracle Alien Cookies) / 14g, MAC (Miracle Alien Cookies) / 28g (1 oz), MAC (Miracle Alien Cookies) / 112g (1/4 lb))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/sungrownbulkbin.jpg?v=1750970441",
+                                                "product_url":  "https://luckyelk.com/products/thca-bulk-flower",
+                                                "description":  "Bulk THCa Flower is where value-minded smokers stock up. Find some great deals on limited runs, special offers, and older stock. Current availability: Jelly Breath THCa is back with a fresh indoor harvest featuring the same standout genetics that made this cultivar a customer favorite. This batch is available in discounted bulk quantities due to a looser trim and lighter bud structure than our standard retail selection. The aroma, flavor, and overall experience remain true to Jelly Breath—just at an exceptional value for bulk buyers.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Lizard Burger THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/LE-LizardBurger_AAAA_-1080-2.jpg?v=1776109521",
+                                                "product_url":  "https://luckyelk.com/products/lizard-burger-thca",
+                                                "description":  "Lizard Burger THCa (Hash Burger × Lee-Hi Larry) is an indoor-grown hybrid that brings together two unapologetically loud modern cultivars. Dense, resin-heavy buds showcase earthy greens, purple accents, and a thick coating of greasy trichomes that stick to your fingers. The aroma leans heavily into savory gas, layering earthy funk with notes of garlic, fuel, and a subtle herbal sharpness. On the palate, rich diesel and earthy hash flavors take center stage, backed by a lingering savory character that gives the strain its distinctive identity. Lizard Burger delivers a balanced experience with noticeable body presence and a calm, steady headspace. Its deeply aromatic profile and old-school gas influence make it a strong choice for connoisseurs seeking flavor-driven flower with genuine depth and character.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "X10 Cyborg THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/x10_cyborg_main_image.jpg?v=1782162643",
+                                                "product_url":  "https://luckyelk.com/products/x10-cyborg-thca",
+                                                "description":  "X10 Cyborg THCa (Blizzard King × Trap Queen) is an exotic indoor-grown hybrid showcasing the cutting edge of modern savory cannabis genetics. Dense, resin-soaked buds feature pale greens and purples, with a thick layer of greasy trichomes that give the flower exceptional bag appeal. The aroma opens with bold earth, fuel, and a faint touch of citrus. Flavor follows with rich gas, deep earth, and an herbal finish reminiscent of fresh thyme, delivering a savory complexity that stands apart from sweeter modern cultivars. X10 Cyborg delivers a deeply potent, indica-leaning experience with a heavy body presence and long-lasting effects. Reminiscent of Trapzilla, this cultivar is built for experienced consumers seeking serious potency and a terpene profile rooted in gas, earth, and funk.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Purple Churro THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/purplechurromainimage_f51c98ff-b232-4fa0-a4f4-691c3e54fe72.jpg?v=1777491760",
+                                                "product_url":  "https://luckyelk.com/products/purple-churro-thca",
+                                                "description":  "Purple Churro THCa (Cinnamon Horchata x Apples & Bananas) is an indica-leaning hybrid that pairs dessert-like sweetness with a creamy, comforting depth. This batch shows off dense, frosty buds in shades of violet and lime green, with vivid orange hairs weaving through its sugary trichome coat. The aroma carries warm cinnamon and vanilla cream over subtle fruit, unfolding into hints of baked cake and faint gas. On the palate, it’s smooth and layered — sweet and doughy up front, with a gentle, gassy finish that rounds out the experience. Purple Churro brings a cozy, grounded calm without clouding the mind — ideal for winding down or savoring slow evenings. A strain that feels like comfort food in flower form.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Blue Nerdz THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/bluenerdzmainimage_9f02568b-36f8-4f25-83f2-7a683448e873.jpg?v=1777490779",
+                                                "product_url":  "https://luckyelk.com/products/blue-nerdz-thca",
+                                                "description":  "Blue Nerdz THCa (Blue Sherbet × Zkittlez) is an indica-leaning hybrid grown indoors in coco coir with organic inputs. This batch produces dense, resin-heavy buds with rich green and violet tones, bright orange pistils, and a thick trichome layer that gives it strong exotic bag appeal. Aromas lead with blue raspberry candy and sugary grape, backed by sour citrus and a light gas finish. The flavor follows with syrupy fruit, tangy citrus, and a creamy backend that lingers on the palate. Blue Nerdz delivers a steady, relaxing experience with a mellow headspace and gradual body ease. Best suited for evening use or slower sessions, it’s a dependable option for those drawn to bold, candy-forward profiles with depth.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "MAC (Miracle Alien Cookies) THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/macmainimage.jpg?v=1765409645",
+                                                "product_url":  "https://luckyelk.com/products/miracle-alien-cookies-thca",
+                                                "description":  "Miracle Alien Cookies THCa (Alien Cookies × [Starfighter × Colombian]) is a balanced hybrid grown indoors in living soil. This batch features large, pale-green buds with pronounced calyx stacking and a thick, frosty trichome layer — a real standout in terms of bag appeal. Aromas open with bright citrus and soft herbal sweetness over a subtle doughy, cookie-like note. On the palate, MAC brings lemon-pastry tones, light cookie dough, and a smooth citrus-cream finish that feels clean and naturally layered. Effects lift the mind before easing into steady body calm — a balanced, gradual progression that reflects why MAC remains one of the most respected modern exotics. A top-tier indoor cut for anyone drawn to refined citrus-dessert terpenes and organic living-soil cultivation.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "White Chocolate Chip THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/whitechocolatechipmainimage_4d53ae63-ab3d-491c-ae8a-2c8a59df7111.jpg?v=1777872240",
+                                                "product_url":  "https://luckyelk.com/products/white-chocolate-chip-thca",
+                                                "description":  "White Chocolate Chip THCa (White Runtz × Oreoz) is an indoor-grown hybrid cultivated with organic inputs. This batch features medium-sized buds with a dense, chunky structure, pale green tones with occasional violet hues, and a thick trichome layer that gives it a soft, frosted finish. Aromas open with sweet cream and vanilla, backed by light cocoa and a subtle gas edge. The flavor follows with dessert-like richness—creamy sweetness up front, layered with chocolate notes and a smooth, slightly gassy finish. White Chocolate Chip delivers a balanced, easygoing experience with a calm headspace and gentle body relaxation. Suitable for both daytime and evening use, it’s a versatile option for those drawn to creamy, dessert-forward profiles with a bit of depth.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Jelly Breath THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/jellybreathmainimage_6b5171fb-5352-4372-b898-be962c268af7.jpg?v=1748554800",
+                                                "product_url":  "https://luckyelk.com/products/jelly-breath-thca",
+                                                "description":  "Jelly Breath THCa (Mendo Breath x Do-Si-Dos) is an indoor-grown indica-dominant hybrid cultivated in organic soil. The large buds are light green with a thick layer of trichomes and the occasional streak of purple. This batch is extra sticky and well-cured, with a natural shape that reflects careful handling and a clean grow. The unique aroma leans creamy, almost fermented—think berry yogurt and sourdough—with a hint of tangy grapes. Break it open and you’ll catch notes of overripe fruit and faint gas. The flavor follows suit: rich and tangy on the inhale, with a smooth, slightly herbal finish. Jelly Breath earns its place in the exotic collection for its bold aroma and layered flavor. With sticky trichomes, vibrant coloration, and a rich terpene profile, this batch delivers everything you’d expect from a standout in our highest tier.",
+                                                "in_stock":  false
+                                            },
+                                            {
+                                                "category":  "Flower / AAAA Exotic",
+                                                "product_name":  "Flapjacks THCa",
+                                                "price":  "$14.00 -$265.00 (1g, 3.5g, 7g, 14g, 28g (1 oz))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/4029195148.jpg?v=1709846549",
+                                                "product_url":  "https://luckyelk.com/products/flapjacks-thca",
+                                                "description":  "Flapjacks THCa (Macflurry x Pancakes x GMO) is our flagship strain, chosen for its dense bud structure, bold terpene profile, and dependable potency. Grown indoors in coco coir, the plants produce chunky, trichome-rich buds that show off why this cultivar has become a cornerstone of our lineup. The nose leads with garlic and gas, balanced by doughy notes reminiscent of pancakes and maple syrup. The inhale is pungent and fuel-forward, settling into savory GMO funk before giving way to sweet, bready flavors. A finish of toasted sugar, spice, and diesel lingers long after the smoke clears. Flapjacks is a full-bodied, flavorful smoke with serious weight—an ideal choice for unwinding in the evening or indulging in a slow, satisfying session.",
+                                                "in_stock":  false
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Flower / Hybrid THCa Flower",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Flower / Indica THCa Flower",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Flower / Sativa THCa Flower",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Flower / Sungrown",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Flower / THCA Small Buds",
+                           "products":  []
+                       },
+                       {
+                           "category_name":  "Pre Rolls",
+                           "products":  [
+                                            {
+                                                "category":  "Pre Rolls",
+                                                "product_name":  "THCa Blunt",
+                                                "price":  "$11.00 -$12.00 (Banana Mintz (Greenhouse) / 1 gram, Blue Nerdz (Indoor) / 1 gram, Inked Up Cherries (Greenhouse) / 1 gram)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/bluntmainimage.jpg?v=1751399648",
+                                                "product_url":  "https://luckyelk.com/products/thca-blunt",
+                                                "description":  "A full gram of organically grown, sun-fed flower, wrapped in a smooth-burning hemp paper—no tobacco, no additives, just clean smoke. This is our take on the classic blunt, built for flavor and function. Each one is packed with single-strain THCa flower sourced from small family farms. Grown under the sun using organic practices, the flower is cured to perfection and rolled into a natural hemp wrap that lets the terpenes shine. Expect a slow, even burn and a bold, full-bodied smoke from start to finish. Shop all of our THCa Pre Rolls! Whether you're kicking back solo or passing it with friends, this is a dependable, terp-forward blunt that delivers the goods—no shortcuts, just good flower in a clean wrap.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Pre Rolls",
+                                                "product_name":  "THCa Pre Rolls · Indoor Grown",
+                                                "price":  "$8.00 -$12.00 (Blue Ice Nerds / 0.5 gram, Blue Ice Nerds / 1 gram, Candy Runtz / 0.5 gram, Candy Runtz / 1 gram, Lemon Cherry Gelato / 0.5 gram, Lemon Cherry Gelato / 1 gram, Purple Churro / 0.5 gram, Purple Churro / 1 gram, Slurricane / 0.5 gram, Slurricane / 1 gram)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/3690719763.jpg?v=1709847207",
+                                                "product_url":  "https://luckyelk.com/products/thca-pre-rolls-indoor-grown",
+                                                "description":  "Not all pre-rolls are created equal, and we don’t cut corners when it comes to quality. Our Indoor Grown THCa Pre Rolls are crafted in-house using premium smalls and sugar leaf—never trim or byproduct. We’re talking natural, organically grown flower, carefully ground and hand-packed for a smooth, even burn. These joints are made for true cannabis lovers who value flavor, potency, and a clean smoke. Shop our other THCa prerolls! Whether you’re looking for a convenient way to enjoy exotic indoor flower or just want a perfectly rolled joint without the effort, these pre-rolls deliver. Grab a pack and experience the difference of fresh, hand-crafted, high-quality indoor-grown THCa—rolled and ready to go.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Pre Rolls",
+                                                "product_name":  "THCa Pre Rolls · Sungrown",
+                                                "price":  "$6.50 -$10.00 (Blackberry Gelato / 0.5g, Blackberry Gelato / 1g, Cereal Milk / 0.5g, Cereal Milk / 1g, Frosted Cream Puff / 0.5g, Frosted Cream Puff / 1g, Frozen Grapes / 0.5g, Frozen Grapes / 1g, Mandarin Flookies / 0.5g, Mandarin Flookies / 1g, Passion Fruit OG / 0.5g, Passion Fruit OG / 1g, Sapphire Kush / 0.5g, Sapphire Kush / 1g)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/3690719763.jpg?v=1709847207",
+                                                "product_url":  "https://luckyelk.com/products/thca-pre-rolls-sungrown",
+                                                "description":  "Pure, potent, and straight from the soil—our Sungrown THCa Pre Rolls deliver an authentic cannabis experience, crafted with care and intention. These pre-rolls feature organically cultivated, full-season outdoor flower, expertly dried, cured, and hand-packed for a smooth, flavorful smoke. View all of our THCa Pre Rolls! Our sungrown flower thrives under natural sunlight, developing a rich terpene profile and robust cannabinoid content that showcases the full spectrum of the plant’s potential. No trim, no shake—just pure, whole-flower goodness, rolled for convenience and ready to enjoy. Whether you’re unwinding at sunset or sparking up a session with friends, these pre-rolls bring the depth and complexity of sungrown cannabis straight to your fingertips. Experience the difference the sun makes.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Pre Rolls",
+                                                "product_name":  "THCa Pre Rolls 6-pk (4.5g)",
+                                                "price":  "$42.00 -$46.00 (Flapjacks (Indoor), Lemon Cherry Gelato (Indoor), Passion Fruit OG (Greenhouse), Purple Churro (Indoor), Purple Snowman (Greenhouse))",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/products/2978607432_7eb6ea4e-cceb-447f-afd6-58258e38d2b0.jpg?v=1709847224",
+                                                "product_url":  "https://luckyelk.com/products/thca-pre-rolls-6-pk-4-5g",
+                                                "description":  "Six Smokes | 0.75 grams ea. Lucky Elk Signature Pre Rolls are now available with THCa flower. Back by popular demand, this pack is the perfect blend of vintage style and modern convenience. Our pre rolls are made with premium flower—always hang dried and slow cured. Forget about sticks and stems. We roll with a blend of small buds and sugar leaf. Our hemp paper boxes are crafted for a sustainable future using USA grown materials. (Each pack includes matches and striker panel.)",
+                                                "in_stock":  true
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Tools \u0026 Gear",
+                           "products":  [
+                                            {
+                                                "category":  "Tools \u0026 Gear",
+                                                "product_name":  "Lucky Elk Lanyard",
+                                                "price":  "$10.00 (Pipe Spiral, Highest Elk, Oregon Vibes)",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/lanyards-3designs.jpg?v=1762203624",
+                                                "product_url":  "https://luckyelk.com/products/lucky-elk-lanyard",
+                                                "description":  "Carry your ritual with style. The Lucky Elk Lanyard is a 6.5\" (folded) wrist strap, ¾\" wide, and fitted with a golden lobster-clasp hook, USB loop string, and a leather tab embossed with the Lucky Elk pipe emblem. Built to pair perfectly with our Disposable Vapes, but versatile enough for keys, ID cards, or anything else you keep close. Choose from three original designs inspired by our Oregon roots and psychedelic spirit.",
+                                                "in_stock":  true
+                                            },
+                                            {
+                                                "category":  "Tools \u0026 Gear",
+                                                "product_name":  "Sticker Collection · Lucky Elk",
+                                                "price":  "$15.00",
+                                                "image_url":  "https://cdn.shopify.com/s/files/1/0580/5916/1636/files/stickers-group1.jpg?v=1764569892",
+                                                "product_url":  "https://luckyelk.com/products/sticker-collection-lucky-elk",
+                                                "description":  "Carry a little Elk energy wherever you go. This 15-piece Lucky Elk Sticker Collection brings together our classic Lucky Elk Principles series with brand-new designs that lean into the herd's funky side. Each sticker ranges from 2\" to 4\", sized for water bottles, laptops, jars, notebooks, and gear. Inside the pack you’ll find familiar favorites plus fresh artwork—sparkling accents, bold colors, and a few deep-cut references for longtime Lucky Elk supporters. Printed on durable, high-quality vinyl, these stickers hold up through real use, indoors or out. A simple way to rep the herd with designs that are playful, clean, and unmistakably Lucky Elk. Perfect for gifting or collecting.",
+                                                "in_stock":  true
+                                            }
+                                        ]
+                       },
+                       {
+                           "category_name":  "Vape Carts",
+                           "products":  []
+                       }
+                   ]
+}

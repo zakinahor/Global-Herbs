@@ -1,0 +1,50 @@
+# robots.txt for globalherbs.site
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
+
+# Search Engines Allowed Explicitly
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Social Crawlers Allowed for Rich Share Cards
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# XML Sitemap Index
+Sitemap: https://globalherbs.site/sitemap.xml
