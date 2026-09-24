@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star, ShoppingCart, ShieldCheck, FileText, CheckCircle2, Truck, Sparkles, AlertCircle, Phone } from 'lucide-react';
+import { X, ShoppingCart, ShieldCheck, FileText, CheckCircle2, Truck, Sparkles, AlertCircle, Phone } from 'lucide-react';
 import { Product } from '../types';
 import { handleImageError } from '../utils/imageUtils';
 import { getProductWeightVariants, calculateVariantPrice, findVariantByLabel } from '../utils/weightVariants';
@@ -129,23 +129,6 @@ export default function QuickViewModal({
                 <h2 className="font-heading font-bold text-xl text-gray-900 leading-tight mb-2">
                   {product.name}
                 </h2>
-
-                {/* Rating */}
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex text-amber-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={14}
-                        fill={i < Math.floor(product.rating) ? "currentColor" : "none"}
-                        className={i < Math.floor(product.rating) ? "text-amber-400" : "text-gray-200"}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs text-gray-500 font-bold">
-                    {product.rating} ({product.reviews} reviews)
-                  </span>
-                </div>
 
                 {/* Price */}
                 <div className="flex items-baseline gap-3 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100">

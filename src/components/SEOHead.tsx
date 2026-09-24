@@ -88,12 +88,20 @@ export default function SEOHead({
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: categoryName, url: canonicalUrl },
       ];
+    } else if (activePage === 'shop') {
+      title = 'Shop THCa, CBD & Botanical Products | Global Herbs';
+      description = 'Browse Global Herbs products, including flowers, edibles, vapes, concentrates, and botanical wellness products.';
+      canonicalUrl = `${BASE_DOMAIN}/products`;
+      breadcrumbItems = [
+        { name: 'Home', url: `${BASE_DOMAIN}/` },
+        { name: 'Products', url: canonicalUrl },
+      ];
     }
 
     let robotsDirectives = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
     if (isNonIndexableItem) {
-      robotsDirectives = 'noindex, nofollow';
+      robotsDirectives = 'noindex, follow';
     } else if (searchQuery && searchQuery.trim().length > 0) {
       title = `Search results for "${searchQuery}" | Global Herbs`;
       description = `Browse product search results for "${searchQuery}" at Global Herbs.`;
@@ -178,6 +186,12 @@ export default function SEOHead({
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: 'Order Tracking', url: canonicalUrl },
       ];
+    } else if (activePage === 'not-found') {
+      title = 'Page Not Found | Global Herbs';
+      description = 'The page you requested could not be found.';
+      canonicalUrl = `${BASE_DOMAIN}${window.location.pathname}`;
+      robotsDirectives = 'noindex, follow';
+      breadcrumbItems = [{ name: 'Home', url: `${BASE_DOMAIN}/` }];
     }
 
     if (customDescription) {
@@ -309,18 +323,18 @@ export default function SEOHead({
         name: selectedProduct.name,
         image: selectedProduct.image ? [selectedProduct.image] : [],
         description: selectedProduct.description,
-        sku: selectedProduct.sku || `GH-${selectedProduct.id}`,
-        mpn: `GH-PRD-${selectedProduct.id}`,
         category: selectedProduct.category,
-        brand: {
-          '@type': 'Brand',
-          name: selectedProduct.brand || 'Global Herbs',
-        },
+        ...(selectedProduct.sku ? { sku: selectedProduct.sku } : {}),
+        ...(selectedProduct.brand ? {
+          brand: {
+            '@type': 'Brand',
+            name: selectedProduct.brand,
+          },
+        } : {}),
         offers: {
           '@type': 'Offer',
           priceCurrency: 'USD',
           price: selectedProduct.price.toFixed(2),
-          priceValidUntil: '2027-12-31',
           itemCondition: 'https://schema.org/NewCondition',
           availability: selectedProduct.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           url: canonicalUrl,
@@ -328,46 +342,6 @@ export default function SEOHead({
             '@type': 'Organization',
             name: 'Global Herbs',
           },
-          shippingDetails: {
-            '@type': 'OfferShippingDetails',
-            shippingRate: {
-              '@type': 'MonetaryAmount',
-              value: '0.00',
-              currency: 'USD',
-            },
-            shippingDestination: {
-              '@type': 'DefinedRegion',
-              addressCountry: 'US',
-            },
-            deliveryTime: {
-              '@type': 'ShippingDeliveryTime',
-              handlingTime: {
-                '@type': 'QuantitativeValue',
-                minValue: 0,
-                maxValue: 1,
-                unitCode: 'd',
-              },
-              transitTime: {
-                '@type': 'QuantitativeValue',
-                minValue: 2,
-                maxValue: 4,
-                unitCode: 'd',
-              },
-            },
-          },
-          hasMerchantReturnPolicy: {
-            '@type': 'MerchantReturnPolicy',
-            applicableCountry: 'US',
-            returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-            merchantReturnDays: 30,
-            returnMethod: 'https://schema.org/ReturnByMail',
-            returnFees: 'https://schema.org/FreeReturn',
-          },
-        },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: selectedProduct.rating ? Number(selectedProduct.rating.toFixed(1)) : 4.8,
-          reviewCount: selectedProduct.reviews || 12,
         },
       });
     }
@@ -381,7 +355,6 @@ export default function SEOHead({
         description: selectedArticle.metaDescription,
         image: [selectedArticle.featuredImage],
         datePublished: selectedArticle.publishedDate,
-        dateModified: selectedArticle.publishedDate,
         author: {
           '@type': 'Person',
           name: selectedArticle.author.name,
@@ -433,108 +406,6 @@ export default function SEOHead({
               text: faq.answer,
             },
           })),
-        });
-      }
-    }
-
-    // E. Organization, Store & WebSite Search Schema (for Home / General)
-    if (!selectedProduct && !selectedArticle) {
-      schemas.push({
-        '@context': 'https://schema.org',
-        '@type': 'Store',
-        name: 'Global Herbs',
-        legalName: 'Global Herbs Inc.',
-        url: BASE_DOMAIN,
-        logo: `${BASE_DOMAIN}/images/global-herbs-logo.jpg`,
-        image: `${BASE_DOMAIN}/images/global-herbs-logo.jpg`,
-        description: 'Trusted online dispensary for high-grade legal THCa flower, solventless live hash rosin, edibles, vape cartridges, and botanical wellness with guaranteed discreet delivery.',
-        telephone: '+1-213-280-1161',
-        email: 'globalherbsinc@gmail.com',
-        priceRange: '$$',
-        currenciesAccepted: 'USD, EUR, GBP, BTC',
-        paymentAccepted: 'Credit Card, Apple Pay, Google Pay, Cryptocurrency, Zelle, CashApp',
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: '238 Cedar Brook Ln',
-          addressLocality: 'Cave Junction',
-          addressRegion: 'OR',
-          postalCode: '97523',
-          addressCountry: 'US',
-        },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: 42.1643,
-          longitude: -123.6481,
-        },
-        openingHoursSpecification: [
-          {
-            '@type': 'OpeningHoursSpecification',
-            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-            opens: '00:00',
-            closes: '23:59',
-          },
-        ],
-        sameAs: [
-          'https://www.youtube.com/@GlobalMarijuanaDispensary',
-          'https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ',
-          'https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM',
-        ],
-      });
-
-      schemas.push({
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        name: 'Global Herbs',
-        url: BASE_DOMAIN,
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: {
-            '@type': 'EntryPoint',
-            urlTemplate: `${BASE_DOMAIN}/products?q={search_term_string}`,
-          },
-          'query-input': 'required name=search_term_string',
-        },
-      });
-
-      // Homepage Specific Rich FAQ Structured Data Schema
-      if (activePage === 'home') {
-        schemas.push({
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: [
-            {
-              '@type': 'Question',
-              name: 'Is THCa flower legal to order and ship across the United States?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'Yes. Under the federal 2018 Farm Bill (H.R. 2), hemp-derived botanicals containing less than 0.3% Delta-9 THC on a dry-weight basis are federally compliant. Because THCa converts to active THC only upon heat application (decarboxylation), raw THCa flower falls under legal industrial hemp definitions and can be lawfully shipped via USPS directly to your address with our law enforcement notice included.',
-              },
-            },
-            {
-              '@type': 'Question',
-              name: 'How are orders packaged, and is the shipping 100% odourless and discreet?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'Discretion is our standard protocol. Every botanical order is double-vacuum sealed inside industrial multi-barrier, moisture-proof and scent-proof bags before placement into a plain brown box or standard USPS Priority mailer. There is zero mention of dispensary, cannabis, or botanicals on the shipping label, guaranteeing full privacy from dispatch to delivery.',
-              },
-            },
-            {
-              '@type': 'Question',
-              name: 'How can I verify the laboratory testing and Certificate of Analysis (COA)?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'Every production batch undergoes mandatory third-party ISO/IEC-17025 accredited laboratory testing. You can inspect complete cannabinoid profiles, terpene percentages, and negative screening results for pesticides, heavy metals, microbials, and residual solvents via the interactive COA viewer on any product page.',
-              },
-            },
-            {
-              '@type': 'Question',
-              name: 'When will my order dispatch and how do I track my delivery status?',
-              acceptedAnswer: {
-                '@type': 'Answer',
-                text: 'Orders received Monday through Saturday prior to 2:00 PM PST are processed and handed directly to priority postal dispatch the very same day from our Oregon hub. Once scanned, you receive an automated email confirmation with your real-time tracking number, which can also be tracked directly through our on-site Order Tracking page.',
-              },
-            },
-          ],
         });
       }
     }

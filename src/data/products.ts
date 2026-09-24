@@ -1004,8 +1004,6 @@ allRawProducts.forEach((raw: any) => {
     originalPrice,
     onSale,
     image: getValidProductImage(raw.image_url, sub || main, raw.product_name),
-    rating: Number((4.6 + ((idCounter * 13) % 5) * 0.1).toFixed(1)),
-    reviews: 8 + ((idCounter * 19) % 85),
     description: raw.description,
     sku: `GH-${mainSlug.slice(0, 3).toUpperCase()}-${100 + idCounter}`,
     weight: weightVal || undefined,

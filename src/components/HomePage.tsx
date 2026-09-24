@@ -116,7 +116,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
       <SEOHead
         activePage="home"
         customTitle="Global Herbs - Premium Legal Botanicals, THCa Strains & Natural Extracts"
-        customDescription="Discover lab-tested THCa flowers, solventless rosin concentrates, Farm Bill compliant botanicals & natural edibles at Global Herbs. Stealth tracked shipping worldwide."
+        customDescription="Shop lab-tested THCa flowers, solventless rosin, CBD, and botanical products from Global Herbs, with discreet shipping and secure online ordering."
       />
 
       {/* ================================================================ */}

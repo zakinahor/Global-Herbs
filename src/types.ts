@@ -18,8 +18,6 @@ export interface Product {
   originalPrice?: number;
   onSale: boolean;
   image: string;
-  rating: number;
-  reviews: number;
   description: string;
   // Audited fields
   sku?: string;

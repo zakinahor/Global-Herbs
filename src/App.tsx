@@ -185,9 +185,6 @@ function ShopPage({
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOrder) {
       case 'popularity':
-        return b.reviews - a.reviews;
-      case 'rating':
-        return b.rating - a.rating;
       case 'latest':
         return b.id - a.id;
       case 'price-asc':
@@ -294,8 +291,6 @@ function ShopPage({
                 className="bg-transparent outline-none pr-6 cursor-pointer text-xs font-semibold"
                 aria-label="Sort product catalog"
               >
-                <option value="popularity">Sort by Popularity</option>
-                <option value="rating">Sort by Average Rating</option>
                 <option value="latest">Sort by Latest Additions</option>
                 <option value="price-asc">Sort by Price: Low to High</option>
                 <option value="price-desc">Sort by Price: High to Low</option>
@@ -800,7 +795,7 @@ export default function App() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(17400);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('popularity');
+  const [sortOrder, setSortOrder] = useState('latest');
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);

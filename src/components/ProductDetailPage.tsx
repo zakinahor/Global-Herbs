@@ -54,7 +54,7 @@ export default function ProductDetailPage({
     ? calculateVariantPrice(activeProduct.originalPrice, selectedVariant)
     : undefined;
   
-  // Distinct reviews per product loaded from productReviews engine with local persistence
+  // Customer reviews submitted in this browser.
   const [localReviews, setLocalReviews] = useState<ProductReview[]>(() => getProductReviews(activeProduct));
   const [newReviewAuthor, setNewReviewAuthor] = useState('');
   const [newReviewEmail, setNewReviewEmail] = useState('');
@@ -114,9 +114,9 @@ export default function ProductDetailPage({
       author: authorClean,
       rating: newReviewRating,
       date: 'Just now',
-      title: `Verified Experience with ${activeProduct.name}`,
+      title: `Review of ${activeProduct.name}`,
       comment: commentClean,
-      verified: true,
+      verified: false,
       helpfulCount: 1,
     };
 
@@ -298,22 +298,6 @@ export default function ProductDetailPage({
               </div>
             )}
 
-            {/* Stars & Reviews */}
-            <div className="flex items-center gap-2">
-              <div className="flex text-amber-400">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    size={16}
-                    fill={i < Math.floor(activeProduct.rating) ? "currentColor" : "none"}
-                    className={i < Math.floor(activeProduct.rating) ? "text-amber-400" : "text-gray-200"}
-                  />
-                ))}
-              </div>
-              <span className="text-xs text-gray-500 font-bold mt-0.5">
-                {activeProduct.rating} / 5.0 Rating ({activeProduct.reviews} customer reviews)
-              </span>
-            </div>
           </div>
 
           <hr className="border-gray-100" />
@@ -658,17 +642,17 @@ export default function ProductDetailPage({
               <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                   <span className="font-heading font-bold text-base text-gray-900">
-                    Customer Verified Reviews
+                    Customer Reviews
                   </span>
                   <span className="bg-emerald-100 text-emerald-850 text-xs font-black px-2 py-0.5 rounded-full">
                     {localReviews.length}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-bold">
-                  <Star size={14} className="text-amber-400" fill="currentColor" />
-                  <span>{activeProduct.rating} out of 5</span>
-                </div>
               </div>
+
+              {localReviews.length === 0 && (
+                <p className="text-sm text-gray-500 py-4">No customer reviews yet.</p>
+              )}
 
               {localReviews.map((rev) => (
                 <div key={rev.id} className="border-b border-gray-100 pb-6 last:border-0 space-y-2">
@@ -714,7 +698,7 @@ export default function ProductDetailPage({
                   </p>
 
                   <div className="pt-1 flex items-center justify-between text-[11px] text-gray-400">
-                    <span className="text-[10px]">Purchased directly from Global Herbs</span>
+                    {!rev.verified && <span className="text-[10px]">Customer-submitted review</span>}
                     <button
                       onClick={() => handleVoteHelpful(rev.id)}
                       disabled={helpfulVoted[rev.id]}

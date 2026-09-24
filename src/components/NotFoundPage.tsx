@@ -7,6 +7,7 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 py-16 text-center">
       <SEOHead
+        activePage="not-found"
         customTitle="404 Page Not Found | Global Herbs"
         customDescription="The page you are looking for does not exist or has been moved."
       />

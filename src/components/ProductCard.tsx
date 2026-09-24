@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingCart, Info, Eye } from 'lucide-react';
+import { ShoppingCart, Info, Eye } from 'lucide-react';
 import { Product } from '../types';
 import { handleImageError } from '../utils/imageUtils';
 import QuickViewModal from './QuickViewModal';
@@ -132,21 +132,6 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
               {product.name}
             </Link>
           </h3>
-
-          {/* Rating Stars */}
-          <div className="flex items-center gap-1 mb-3">
-            <div className="flex text-amber-400">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={12}
-                  fill={i < Math.floor(product.rating) ? "currentColor" : "none"}
-                  className={i < Math.floor(product.rating) ? "text-amber-400" : "text-gray-200"}
-                />
-              ))}
-            </div>
-            <span className="text-[10px] text-gray-400 font-semibold mt-0.5">({product.reviews})</span>
-          </div>
 
           {/* Prices & Action Button wrapper */}
           <div className="mt-auto space-y-3">

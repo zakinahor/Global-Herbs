@@ -3,15 +3,21 @@ import { blogArticles } from '../data/blogArticles';
 
 export interface SitemapEntry {
   loc: string;
-  lastmod?: string;
-  changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-  priority?: number;
 }
 
 const BASE_URL = 'https://globalherbs.site';
 
 // Non-indexable category slugs (controlled substances, pharmaceuticals, research chemicals, illicit products)
 export const NON_INDEXABLE_CATEGORY_SLUGS = new Set([
+  'benzodiazepines',
+  'buy-peptide-weight-loss',
+  'dmt',
+  'lsd',
+  'magic-mushroom',
+  'mdma',
+  'oxycodone',
+  'painkillers-drugs',
+  'psychedelic',
   'pharmaceuticals',
   'research-chemicals',
   'psychedelics',
@@ -28,55 +34,36 @@ export const NON_INDEXABLE_PRODUCT_IDS = new Set([
  * Excludes non-indexable / controlled substances and utility pages.
  */
 export function generateSitemapEntries(): SitemapEntry[] {
-  const currentDate = new Date().toISOString().split('T')[0];
-
   const entries: SitemapEntry[] = [
-    // Core Canonical Public Pages (8 core indexable landing pages)
-    { loc: `${BASE_URL}/`, lastmod: currentDate, changefreq: 'daily', priority: 1.0 },
-    { loc: `${BASE_URL}/products`, lastmod: currentDate, changefreq: 'daily', priority: 0.9 },
-    { loc: `${BASE_URL}/about`, lastmod: currentDate, changefreq: 'monthly', priority: 0.7 },
-    { loc: `${BASE_URL}/shipping`, lastmod: currentDate, changefreq: 'monthly', priority: 0.7 },
-    { loc: `${BASE_URL}/returns`, lastmod: currentDate, changefreq: 'monthly', priority: 0.7 },
-    { loc: `${BASE_URL}/contact`, lastmod: currentDate, changefreq: 'monthly', priority: 0.7 },
-    { loc: `${BASE_URL}/privacy`, lastmod: currentDate, changefreq: 'yearly', priority: 0.5 },
-    { loc: `${BASE_URL}/blog`, lastmod: currentDate, changefreq: 'weekly', priority: 0.8 },
+    // Canonical public pages. /shop and /terms-conditions are aliases and stay out.
+    { loc: `${BASE_URL}/` },
+    { loc: `${BASE_URL}/products` },
+    { loc: `${BASE_URL}/about` },
+    { loc: `${BASE_URL}/shipping` },
+    { loc: `${BASE_URL}/returns` },
+    { loc: `${BASE_URL}/contact` },
+    { loc: `${BASE_URL}/privacy` },
+    { loc: `${BASE_URL}/terms` },
+    { loc: `${BASE_URL}/blog` },
   ];
 
-  // Add Legitimate Category clean URLs (7 cannabis/hemp/CBD/herbal categories)
+  // Exclude categories marked noindex by SEOHead.
   categories
     .filter((cat) => !NON_INDEXABLE_CATEGORY_SLUGS.has(cat.slug))
     .forEach((cat) => {
       entries.push({
         loc: `${BASE_URL}/category/${encodeURIComponent(cat.slug)}`,
-        lastmod: currentDate,
-        changefreq: 'weekly',
-        priority: 0.8,
       });
     });
 
-  // Add Blog Articles clean URLs (3 expert guides)
+  // Blog article URLs.
   blogArticles.forEach((article) => {
-    let articleDate = currentDate;
-    try {
-      if (article.publishedDate) {
-        const parsed = new Date(article.publishedDate);
-        if (!isNaN(parsed.getTime())) {
-          articleDate = parsed.toISOString().split('T')[0];
-        }
-      }
-    } catch {
-      articleDate = currentDate;
-    }
-
     entries.push({
       loc: `${BASE_URL}/blog/${encodeURIComponent(article.slug)}`,
-      lastmod: articleDate,
-      changefreq: 'monthly',
-      priority: 0.7,
     });
   });
 
-  // Add Legitimate Product detail clean URLs (170 legitimate cannabis/hemp/CBD/herbal products)
+  // Product URLs. Keep these aligned with the category and product noindex rules above.
   const seenProductUrls = new Set<string>();
   products
     .filter((product) => {
@@ -91,9 +78,6 @@ export function generateSitemapEntries(): SitemapEntry[] {
         seenProductUrls.add(loc);
         entries.push({
           loc,
-          lastmod: currentDate,
-          changefreq: 'weekly',
-          priority: 0.8,
         });
       }
     });
@@ -111,9 +95,6 @@ export function generateSitemapXML(): string {
     .map(
       (entry) => `  <url>
     <loc>${escapeXml(entry.loc)}</loc>
-    ${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ''}
-    ${entry.changefreq ? `<changefreq>${entry.changefreq}</changefreq>` : ''}
-    ${entry.priority !== undefined ? `<priority>${entry.priority.toFixed(1)}</priority>` : ''}
   </url>`
     )
     .join('\n');

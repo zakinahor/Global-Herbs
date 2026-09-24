@@ -127,7 +127,7 @@ export const blogArticles: BlogArticle[] = [
         paragraphs: [
           'The Global Herbs mobile application embodies modern minimalist design, pairing soothing sage and botanical emerald tones with readable typography and clean translucent glassmorphism cards.',
           'The interface is organized into four intuitive destinations: Home (curated daily highlights and seasonal drops), Shop (instant category drill-downs from Flower to Edibles, Concentrates, and Topicals), Deals (exclusive VIP discounts and flash specials), and Profile (saved stealth addresses, order history, and digital loyalty rewards).',
-          'On product detail screens, patrons can select exact weights (1g, 1/8 oz, 1/4 oz, or bulk ounce tiers) with dynamic price calculation, read verified customer reviews, and tap "Add to Cart" with instant haptic feedback.',
+          'On product detail screens, patrons can select available product options, review product information, and tap "Add to Cart" to begin an order.',
         ],
         calloutBox: {
           type: 'info',
