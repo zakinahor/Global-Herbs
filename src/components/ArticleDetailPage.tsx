@@ -242,20 +242,22 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
             <div className="relative rounded-2xl overflow-hidden border border-gray-200/80 shadow-md bg-emerald-950 group">
               <img
                 src={article.featuredImage}
-                alt={`${article.title} - Official Global Herbs Mockup Preview`}
+                alt={`${article.title} - Global Herbs Educational Guide`}
                 className="w-full h-auto max-h-[460px] object-cover object-center"
                 loading="eager"
                 decoding="async"
               />
-              <div className="bg-gradient-to-r from-emerald-950/95 via-gray-900/90 to-emerald-950/95 px-5 py-3 border-t border-emerald-800/60 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-100">
-                <span className="font-semibold flex items-center gap-1.5">
-                  <Smartphone size={15} className="text-emerald-400" />
-                  Official Preview: Global Herbs Native Mobile App Interface
-                </span>
-                <span className="text-[11px] bg-emerald-800/80 px-2.5 py-0.5 rounded-full text-emerald-200 font-bold uppercase tracking-wider border border-emerald-600/50">
-                  Coming Soon to iOS &amp; Android
-                </span>
-              </div>
+              {article.id === 'global-herbs-mobile-app-announcement' && (
+                <div className="bg-gradient-to-r from-emerald-950/95 via-gray-900/90 to-emerald-950/95 px-5 py-3 border-t border-emerald-800/60 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-100">
+                  <span className="font-semibold flex items-center gap-1.5">
+                    <Smartphone size={15} className="text-emerald-400" />
+                    Official Preview: Global Herbs Native Mobile App Interface
+                  </span>
+                  <span className="text-[11px] bg-emerald-800/80 px-2.5 py-0.5 rounded-full text-emerald-200 font-bold uppercase tracking-wider border border-emerald-600/50">
+                    Coming Soon to iOS &amp; Android
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
@@ -286,6 +288,63 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
                 <p key={idx} className="text-sm text-gray-700 leading-relaxed font-normal">
                   {p}
                 </p>
+              ))}
+
+              {section.table && (
+                <div className="my-5 overflow-x-auto rounded-xl border border-gray-200 shadow-2xs">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <caption className="bg-emerald-950 text-emerald-100 font-bold uppercase tracking-wider text-[11px] px-4 py-2.5 text-left">
+                      {section.table.caption}
+                    </caption>
+                    <thead>
+                      <tr className="bg-gray-100 text-gray-900 border-b border-gray-200">
+                        {section.table.headers.map((header, hIdx) => (
+                          <th key={hIdx} className="py-3 px-4 font-bold">
+                            {header}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 bg-white">
+                      {section.table.rows.map((row, rIdx) => (
+                        <tr key={rIdx} className="hover:bg-emerald-50/40 transition">
+                          {row.map((cell, cIdx) => (
+                            <td
+                              key={cIdx}
+                              className={`py-3 px-4 leading-relaxed ${
+                                cIdx === 0 ? 'font-bold text-gray-900' : 'text-gray-700'
+                              }`}
+                            >
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {section.subsections && section.subsections.map((sub, sIdx) => (
+                <div key={sIdx} className="space-y-3 pt-2">
+                  <h3 className="font-heading font-bold text-lg text-gray-900">
+                    {sub.subtitle}
+                  </h3>
+                  {sub.paragraphs.map((sp, spIdx) => (
+                    <p key={spIdx} className="text-sm text-gray-700 leading-relaxed font-normal">
+                      {sp}
+                    </p>
+                  ))}
+                  {sub.bullets && sub.bullets.length > 0 && (
+                    <ul className="space-y-2 pl-4 list-disc text-sm text-gray-700">
+                      {sub.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="leading-relaxed">
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               ))}
 
               {section.calloutBox && (

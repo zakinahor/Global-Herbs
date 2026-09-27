@@ -234,6 +234,47 @@ export const categorySeoMap: Record<string, CategorySeoGuide> = {
       },
     ],
   },
+
+  cbd: {
+    slug: 'cbd',
+    categoryName: 'Full-Spectrum CBD & Botanical Drops',
+    targetKeywords: [
+      'buy hemp products online',
+      'full spectrum CBD drops online',
+      'buy herbal products online',
+      'organic CBD tinctures chamomile turmeric',
+      'lab tested CBD oil and gummies',
+    ],
+    metaTitle: 'Buy Full-Spectrum CBD Drops & Hemp Products Online | Global Herbs',
+    metaDescription: 'Shop ISO-17025 lab-tested Full-Spectrum CBD drops, chamomile and cold-infused turmeric hemp tinctures, CBD gummies, and pet relief oils online at Global Herbs.',
+    h1Heading: 'Full-Spectrum CBD Drops, Herbal Hemp Tinctures & Wellness Extracts',
+    wordCount: 390,
+    overview: `Explore Global Herbs’ curated collection of third-party lab-tested Full-Spectrum CBD drops, cold-infused botanical hemp tinctures, soothing fruit gummies, and omega-rich pet formulations. Crafted from organically cultivated industrial hemp compliant with the 2018 U.S. Farm Bill (≤0.3% Delta-9 THC by dry weight), our whole-plant extracts preserve minor phytocannabinoids (CBG, CBN, CBC) and native terpenes alongside functional herbs like chamomile and turmeric.`,
+    geneticsAndTerpenes: {
+      title: 'Whole-Plant Phytocannabinoids & Botanical Co-Infusions',
+      content: `Unlike single-molecule CBD isolates, our full-spectrum oils retain the complete trichome resin profile suspended in clean organic fractionated coconut (MCT) oil. Select formulations pair full-spectrum hemp extract with cold-infused Curcuma longa (turmeric) or Matricaria chamomilla (chamomile) to support targeted daytime recovery or evening calm.`,
+      keyTerpenes: ['Beta-Caryophyllene (CB2 Agonist)', 'Alpha-Bisabolol & Apigenin (Chamomile)', 'Myrcene', 'Linalool'],
+      potencyRange: '200mg – 2000mg Full-Spectrum CBD | ≤0.3% Delta-9 THC',
+    },
+    buyerGuide: {
+      title: 'How to Choose Between Sublingual CBD Drops, Gummies & Dual-Use Oils',
+      paragraphs: [
+        `For rapid onset (15–30 minutes) and drop-by-drop milligram precision, choose sublingual MCT tinctures such as our 1000mg Natural, 1500mg Cold-Infused Turmeric, or 2000mg Chamomile Full-Spectrum CBD Drops.`,
+        `If you want a raw extract suitable for both sublingual ingestion and localized topical skin application, Viridesco Full Spectrum CBD Oil offers an unflavored whole-plant formulation. For companion animals, Faded Cannabis Co. CBD Pet Relief 300mg blends gentle hemp extract with Atlantic krill oil.`,
+      ],
+    },
+    complianceAndQuality: 'Every CBD batch is verified by an ISO/IEC 17025-accredited laboratory for cannabinoid potency, heavy metals, pesticides, and microbial purity.',
+    faqs: [
+      {
+        question: 'What is the difference between Full-Spectrum CBD drops and CBD isolate?',
+        answer: 'Full-spectrum CBD retains minor cannabinoids (CBG, CBN, CBC), native terpenes, and trace Delta-9 THC (≤0.3%) to support the whole-plant entourage effect, whereas CBD isolate contains only purified single-molecule CBD.',
+      },
+      {
+        question: 'Can Viridesco Full Spectrum CBD Oil be applied topically to the skin?',
+        answer: 'Yes. Because it contains raw, unflavored organic full-spectrum hemp extract without artificial flavorings or alcohol, it can be taken sublingually or applied topically to localized skin areas.',
+      },
+    ],
+  },
 };
 
 export function getCategorySeoData(slug: string | null): CategorySeoGuide | null {

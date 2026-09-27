@@ -122,34 +122,60 @@ function getPage(pathname: string): SeoPage | null {
     const article = blogArticles.find((item) => item.slug === slug);
     if (!article) return null;
 
+    const articleSchemas: Record<string, unknown>[] = [
+      breadcrumbSchema([
+        { name: 'Home', url: `${BASE_URL}/` },
+        { name: 'Knowledge Hub', url: `${BASE_URL}/blog` },
+        { name: article.title, url: canonical },
+      ]),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: article.title,
+        description: article.metaDescription || article.excerpt,
+        image: [absoluteUrl(article.featuredImage)],
+        datePublished: article.publishedDate,
+        author: { '@type': 'Person', name: article.author.name, jobTitle: article.author.role },
+        ...(article.reviewer
+          ? {
+              reviewedBy: {
+                '@type': 'Person',
+                name: article.reviewer.name,
+                jobTitle: article.reviewer.credentials,
+              },
+            }
+          : {}),
+        publisher: {
+          '@type': 'Organization',
+          name: 'Global Herbs',
+          logo: { '@type': 'ImageObject', url: DEFAULT_IMAGE },
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+      },
+    ];
+
+    if (article.faqs && article.faqs.length > 0) {
+      articleSchemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: article.faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      });
+    }
+
     return {
       title: article.metaTitle || `${article.title} | Global Herbs Guide`,
       description: article.metaDescription || article.excerpt,
       canonical,
       image: absoluteUrl(article.featuredImage),
       kind: 'article',
-      schema: [
-        breadcrumbSchema([
-          { name: 'Home', url: `${BASE_URL}/` },
-          { name: 'Knowledge Hub', url: `${BASE_URL}/blog` },
-          { name: article.title, url: canonical },
-        ]),
-        {
-          '@context': 'https://schema.org',
-          '@type': 'BlogPosting',
-          headline: article.title,
-          description: article.metaDescription || article.excerpt,
-          image: [absoluteUrl(article.featuredImage)],
-          datePublished: article.publishedDate,
-          author: { '@type': 'Person', name: article.author.name, jobTitle: article.author.role },
-          publisher: {
-            '@type': 'Organization',
-            name: 'Global Herbs',
-            logo: { '@type': 'ImageObject', url: DEFAULT_IMAGE },
-          },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        },
-      ],
+      schema: articleSchemas,
     };
   }
 
