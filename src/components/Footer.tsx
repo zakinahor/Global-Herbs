@@ -104,7 +104,7 @@ export default function Footer({ onSelectPage }: FooterProps) {
                   </div>
                   <div className="flex flex-col min-w-0 flex-grow text-left">
                     <span className="text-[11px] font-bold truncate">YouTube Channel</span>
-                    <span className="text-[9px] text-gray-400 truncate">@GlobalMarijuanaDispensary</span>
+                    <span className="text-[9px] text-gray-400 truncate">@globalherbs</span>
                   </div>
                   <ExternalLink size={12} className="text-gray-500 group-hover:text-red-300 flex-shrink-0" />
                 </a>

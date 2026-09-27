@@ -65,7 +65,7 @@ export default function SupportWidget() {
   return (
     <>
       {/* Floating Trigger Button (Bottom-Left) */}
-      <div className="fixed bottom-20 md:bottom-6 left-3 sm:left-6 z-40">
+      <div className="fixed bottom-20 left-3 sm:left-6 z-40">
         <button
           id="support-widget-trigger-btn"
           onClick={() => setIsOpen(true)}

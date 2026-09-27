@@ -37,7 +37,7 @@ export default function BackToTopButton() {
           transition={{ duration: 0.2 }}
           onClick={scrollToTop}
           aria-label="Back to top"
-          className="fixed bottom-20 md:bottom-6 right-3 sm:right-6 z-40 bg-emerald-800 hover:bg-emerald-900 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer group border border-emerald-700/50 min-w-[44px] min-h-[44px]"
+          className="fixed bottom-4 left-3 sm:left-6 z-40 bg-emerald-800 hover:bg-emerald-900 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 flex items-center justify-center cursor-pointer group border border-emerald-700/50 min-w-[44px] min-h-[44px]"
         >
           <ArrowUp size={20} className="group-hover:-translate-y-0.5 transition-transform" />
         </motion.button>
