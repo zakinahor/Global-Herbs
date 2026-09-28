@@ -16,7 +16,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAddToCart, onSelectProduct }: ProductCardProps) {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, formatBaseUsd, isBaseCurrency, currency } = useCurrency();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -91,10 +91,10 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
                 setIsQuickViewOpen(true);
               }}
               className="p-2.5 bg-white text-gray-900 rounded-full hover:bg-emerald-50 hover:text-emerald-800 transition shadow-md transform translate-y-2 group-hover:translate-y-0 duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold px-3.5"
-              title="Quick View"
+              title={t('btn.quickView', 'Quick View')}
             >
               <Eye size={15} />
-              <span>Quick View</span>
+              <span>{t('btn.quickView', 'Quick View')}</span>
             </button>
           </div>
         </div>
@@ -102,28 +102,28 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
         {/* Content Box */}
         <div className="p-3 sm:p-4 flex flex-col flex-grow text-left">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[120px]">
+            <span className="notranslate text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[120px]" translate="no">
               {product.brand ? `${product.brand}` : product.category}
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" translate="no">
               {product.strainType && (
-                <span className="bg-amber-50 text-amber-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-amber-100">
+                <span className="notranslate bg-amber-50 text-amber-800 text-[9px] font-extrabold px-1.5 py-0.5 rounded border border-amber-100">
                   {product.strainType}
                 </span>
               )}
               {product.weightVariants && product.weightVariants.length > 1 ? (
-                <span className="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
+                <span className="notranslate bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
                   {product.weightVariants[0].shortLabel} – {product.weightVariants[product.weightVariants.length - 1].shortLabel}
                 </span>
               ) : product.weight ? (
-                <span className="bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
+                <span className="notranslate bg-emerald-50 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
                   {product.weight}
                 </span>
               ) : null}
             </div>
           </div>
           
-          <h3 className="font-heading font-bold text-sm text-gray-900 leading-snug group-hover:text-emerald-850 transition line-clamp-2 mb-2 h-10">
+          <h3 className="notranslate font-heading font-bold text-sm text-gray-900 leading-snug group-hover:text-emerald-850 transition line-clamp-2 mb-2 h-10" translate="no">
             <Link
               to={`/products/${product.slug}`}
               onClick={(e) => e.stopPropagation()}
@@ -135,14 +135,30 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
 
           {/* Prices & Action Button wrapper */}
           <div className="mt-auto space-y-3">
-            <div className="flex items-baseline gap-2">
-              {product.onSale && product.originalPrice ? (
-                <>
-                  <span className="text-base font-bold text-red-600">{formatPrice(product.price)}</span>
-                  <span className="text-xs text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
-                </>
-              ) : (
-                <span className="text-base font-bold text-gray-900">{formatPrice(product.price)}</span>
+            <div className="flex flex-col" translate="no">
+              <div className="flex items-baseline gap-2">
+                {product.onSale && product.originalPrice ? (
+                  <>
+                    <span className="notranslate text-base font-bold text-red-600 tabular-nums">
+                      {formatPrice(product.price)}
+                    </span>
+                    <span className="notranslate text-xs text-gray-400 line-through tabular-nums">
+                      {formatPrice(product.originalPrice)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="notranslate text-base font-bold text-gray-900 tabular-nums">
+                    {formatPrice(product.price)}
+                  </span>
+                )}
+                <span className="notranslate text-[10px] font-semibold text-gray-400">
+                  {currency.code}
+                </span>
+              </div>
+              {!isBaseCurrency && (
+                <span className="notranslate text-[10px] text-gray-400 tabular-nums">
+                  {formatBaseUsd(product.price)} USD
+                </span>
               )}
             </div>
 

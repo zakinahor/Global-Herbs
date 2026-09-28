@@ -43,7 +43,7 @@ import AgeVerificationModal from './components/AgeVerificationModal';
 import SupportWidget from './components/SupportWidget';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import { CurrencyProvider } from './context/CurrencyContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 
 // Helper component to scroll window to top on route change
@@ -575,6 +575,22 @@ function AnimatedRoutes({
   setMobileFiltersOpen: (val: boolean) => void;
 }) {
   const location = useLocation();
+  const { currentLanguage, setLanguageCode } = useLanguage();
+  const { locale: urlLocale, strippedPath } = extractLocaleFromPathname(location.pathname);
+
+  useEffect(() => {
+    if (urlLocale && urlLocale !== currentLanguage.code) {
+      setLanguageCode(urlLocale, false);
+    }
+  }, [urlLocale, currentLanguage.code, setLanguageCode]);
+
+  const routedLocation = React.useMemo(
+    () => ({
+      ...location,
+      pathname: strippedPath,
+    }),
+    [location, strippedPath]
+  );
 
   const shopProps = {
     isLoading,
@@ -594,7 +610,7 @@ function AnimatedRoutes({
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location}>
+      <Routes location={routedLocation}>
         <Route
           path="/"
           element={

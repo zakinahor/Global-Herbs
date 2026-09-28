@@ -120,7 +120,7 @@ interface CheckoutPageProps {
 }
 
 export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: CheckoutPageProps) {
-  const { formatPrice, currency } = useCurrency();
+  const { formatPrice, formatBaseUsd, isBaseCurrency, currency } = useCurrency();
   const { t } = useLanguage();
   const { user, isLoggedIn, openAccountModal } = useAuth();
   // Coupon state
@@ -249,7 +249,7 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
       email: email.trim(),
       to: email.trim(),
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-      currency: currency?.code || 'USD',
+      displayCurrency: currency?.code || 'USD',
       billing: {
         name: `${firstName} ${lastName}`.trim() || 'Valued Customer',
         firstName: firstName.trim(),
@@ -291,8 +291,16 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
       couponCode: couponApplied ? couponCode.trim().toUpperCase() : undefined,
       shippingCost,
       total,
+      currency: 'USD',
       paymentMethod,
-      orderNotes: orderNotes.trim(),
+      orderNotes: [
+        orderNotes.trim(),
+        !isBaseCurrency
+          ? `[Display Currency Estimate shown to customer: ${formatPrice(total, { showCode: true })} @ 1 USD = ${currency.rate} ${currency.code}; Authoritative Charge: $${total.toFixed(2)} USD]`
+          : '',
+      ]
+        .filter(Boolean)
+        .join('\n'),
     };
 
     const serverResult = await submitOrder(orderData);
@@ -1333,13 +1341,45 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
 
                 <div className="flex justify-between items-center text-base font-extrabold text-gray-900 pt-3 border-t border-gray-200">
                   <div>
-                    <span>Total Amount:</span>
-                    <span className="block text-[10px] text-gray-400 font-normal">Includes stealth packing &amp; taxes</span>
+                    <span>{t('checkout.total', 'Total Amount')}:</span>
+                    <span className="block text-[10px] text-gray-400 font-normal">
+                      {isBaseCurrency
+                        ? 'Charged in USD (Includes stealth packing)'
+                        : `Charged in USD: ${formatBaseUsd(total)}`}
+                    </span>
                   </div>
-                  <span className="text-xl font-extrabold text-emerald-800">
-                    {formatPrice(total)}
-                  </span>
+                  <div className="text-right" translate="no">
+                    <span className="notranslate text-xl font-extrabold text-emerald-800 block tabular-nums">
+                      {isBaseCurrency
+                        ? `${formatBaseUsd(total)} USD`
+                        : `≈ ${formatPrice(total, { showCode: true })}`}
+                    </span>
+                    {!isBaseCurrency && (
+                      <span className="notranslate text-xs font-bold text-gray-700 block tabular-nums">
+                        {formatBaseUsd(total)} USD
+                      </span>
+                    )}
+                  </div>
                 </div>
+
+                {!isBaseCurrency && (
+                  <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 space-y-1 leading-snug">
+                    <p className="font-bold text-amber-900">
+                      {t('checkout.settlementNoticeTitle', 'Currency & Payment Settlement Notice')}
+                    </p>
+                    <p className="font-normal text-amber-800">
+                      {t(
+                        'checkout.settlementNoticeBody',
+                        `Prices are shown in ${currency.code} (1 USD = ${currency.rate} ${currency.code}) as an estimate. Your order will be invoiced and charged in US Dollars (${formatBaseUsd(total)} USD).`,
+                        {
+                          currency: currency.code,
+                          rate: currency.rate,
+                          usdTotal: formatBaseUsd(total),
+                        }
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {submitError && (
@@ -1356,11 +1396,18 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
                 className="w-full py-4 px-6 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
               >
                 {isSubmitting ? (
-                  <span>Securing &amp; Dispatching Order...</span>
+                  <span>{t('btn.submittingOrder', 'Securing & Dispatching Order...')}</span>
                 ) : (
                   <>
                     <Lock size={15} />
-                    <span>Complete Order • {formatPrice(total)}</span>
+                    <span>
+                      {t('btn.completeOrder', 'Complete Order')} •{' '}
+                      <span className="notranslate" translate="no">
+                        {isBaseCurrency
+                          ? `${formatBaseUsd(total)} USD`
+                          : `${formatBaseUsd(total)} USD (≈ ${formatPrice(total, { showCode: true })})`}
+                      </span>
+                    </span>
                   </>
                 )}
               </button>

@@ -23,6 +23,10 @@ import {
   markOrderProcessed,
   NotificationStatus,
 } from './lib/email/orderNotification';
+import {
+  resolveVisitorLocale,
+  getLiveExchangeRates,
+} from './lib/locale/localeService';
 
 // Persistent storage for orders, form submissions, and newsletter subscribers
 const contactSubmissions: any[] = [];
@@ -412,6 +416,33 @@ async function startServer() {
     }
     res.setHeader('Content-Type', 'text/plain');
     return res.send(`User-agent: *\nAllow: /\nDisallow: /checkout\nDisallow: /api/\n\nSitemap: https://globalherbs.site/sitemap.xml`);
+  });
+
+  // API Route: Coarse Visitor Country, Currency & Live Exchange Rates
+  app.get('/api/locale-info', async (req, res) => {
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    try {
+      const payload = await resolveVisitorLocale(req);
+      return res.status(200).json(payload);
+    } catch (err) {
+      const exchangeRates = await getLiveExchangeRates();
+      return res.status(200).json({
+        countryCode: 'US',
+        countryName: 'United States',
+        currencyCode: 'USD',
+        languageCode: 'en',
+        detectionSource: 'default',
+        privacyNotice: 'Defaulting to United States (en-US / USD).',
+        exchangeRates,
+      });
+    }
+  });
+
+  // API Route: Live Reference Exchange Rates (Base USD)
+  app.get('/api/exchange-rates', async (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+    const exchangeRates = await getLiveExchangeRates();
+    return res.status(200).json(exchangeRates);
   });
 
   // API Route: Order Status Tracking Lookup
@@ -1686,14 +1717,27 @@ async function startServer() {
 
   // Helper to resolve route SEO metadata, HTTP status code, and X-Robots-Tag
   function resolveRouteSeoResponse(req: express.Request, templateHtml: string): { status: number; robotsHeader: string; html: string } {
-    const pathname = req.path === '/' ? '/' : req.path.replace(/\/+$/, '');
+    const rawPathname = req.path === '/' ? '/' : req.path.replace(/\/+$/, '');
+    const supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'nl', 'pt', 'ja'];
+    const pathSegments = rawPathname.split('/').filter(Boolean);
+    let urlLocale: string | null = null;
+    let pathname = rawPathname;
+
+    if (pathSegments.length > 0 && supportedLangs.includes(pathSegments[0].toLowerCase())) {
+      urlLocale = pathSegments[0].toLowerCase();
+      pathname = '/' + pathSegments.slice(1).join('/');
+      if (pathname === '') pathname = '/';
+    }
+
+    const activeLang = urlLocale || 'en';
+    const localizedTemplate = templateHtml.replace('<html lang="en">', `<html lang="${activeLang}">`);
     const hasSearchQuery = Boolean(req.query.q || req.query.search);
 
-    if (pathname === '/checkout') {
-      const html = renderPageHtml(templateHtml, {
-        title: 'Secure Checkout | Global Herbs',
-        description: 'Complete your order securely at Global Herbs.',
-        canonical: 'https://globalherbs.site/checkout',
+    if (pathname === '/checkout' || pathname === '/forms') {
+      const html = renderPageHtml(localizedTemplate, {
+        title: pathname === '/forms' ? 'Google Forms Studio | Global Herbs' : 'Secure Checkout | Global Herbs',
+        description: 'Complete your order or form securely at Global Herbs.',
+        canonical: `https://globalherbs.site${pathname}`,
         robots: 'noindex, nofollow',
         kind: 'website',
         bodyHtml: '<main><h1>Secure Dispensary Checkout</h1></main>',
@@ -1702,7 +1746,7 @@ async function startServer() {
     }
 
     if (pathname === '/order-tracking') {
-      const html = renderPageHtml(templateHtml, {
+      const html = renderPageHtml(localizedTemplate, {
         title: 'Track Your Order Status | Global Herbs',
         description: 'Look up the real-time shipping and fulfillment status of your Global Herbs order.',
         canonical: 'https://globalherbs.site/order-tracking',
@@ -1716,24 +1760,48 @@ async function startServer() {
     const seoPage = getPage(pathname);
     if (seoPage) {
       const isNoIndex = Boolean(seoPage.robots && seoPage.robots.includes('noindex')) || hasSearchQuery;
-      const effectivePage = hasSearchQuery
-        ? { ...seoPage, robots: 'noindex, follow' }
-        : seoPage;
+      const baseCanonicalPath = seoPage.canonical.replace('https://globalherbs.site', '') || '/';
+      const localizedCanonical =
+        urlLocale && urlLocale !== 'en'
+          ? `https://globalherbs.site/${urlLocale}${baseCanonicalPath === '/' ? '' : baseCanonicalPath}`
+          : seoPage.canonical;
+
+      const effectivePage = {
+        ...seoPage,
+        canonical: localizedCanonical,
+        ...(hasSearchQuery ? { robots: 'noindex, follow' } : {}),
+      };
       const robotsHeader = isNoIndex
         ? effectivePage.robots || 'noindex, nofollow'
         : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
+      let renderedHtml = renderPageHtml(localizedTemplate, effectivePage);
+      if (!isNoIndex) {
+        const hreflangTags = [
+          ...supportedLangs.map((code) => {
+            const href =
+              code === 'en'
+                ? `https://globalherbs.site${baseCanonicalPath}`
+                : `https://globalherbs.site/${code}${baseCanonicalPath === '/' ? '' : baseCanonicalPath}`;
+            return `<link rel="alternate" hreflang="${code}" href="${href}" />`;
+          }),
+          `<link rel="alternate" hreflang="x-default" href="https://globalherbs.site${baseCanonicalPath}" />`,
+        ].join('\n    ');
+        renderedHtml = renderedHtml.replace('</head>', `    ${hreflangTags}\n  </head>`);
+      }
+
       return {
         status: 200,
         robotsHeader,
-        html: renderPageHtml(templateHtml, effectivePage),
+        html: renderedHtml,
       };
     }
 
     // Unmatched route -> Real HTTP 404 Not Found (prevents Soft-404s)
-    const notFoundHtml = renderPageHtml(templateHtml, {
+    const notFoundHtml = renderPageHtml(localizedTemplate, {
       title: '404 Page Not Found | Global Herbs',
       description: 'The requested page could not be found on Global Herbs.',
-      canonical: `https://globalherbs.site${pathname}`,
+      canonical: `https://globalherbs.site${rawPathname}`,
       robots: 'noindex, nofollow',
       kind: 'website',
       bodyHtml: '<main><h1>404 — Page Not Found</h1><p>The requested URL was not found on this server. <a href="/">Return to Global Herbs Homepage</a> or <a href="/products">Browse Full Dispensary Catalog</a>.</p></main>',

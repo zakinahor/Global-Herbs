@@ -5,12 +5,18 @@ import RedditIcon from './icons/RedditIcon';
 import FacebookIcon from './icons/FacebookIcon';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
 import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
+import { useLanguage } from '../context/LanguageContext';
+import { useCurrency } from '../context/CurrencyContext';
+import LanguageSwitcher from './LanguageSwitcher';
+import CurrencySwitcher from './CurrencySwitcher';
 
 interface FooterProps {
   onSelectPage?: (page: string) => void;
 }
 
 export default function Footer({ onSelectPage }: FooterProps) {
+  const { t } = useLanguage();
+  const { rateProvider } = useCurrency();
   const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -22,33 +28,33 @@ export default function Footer({ onSelectPage }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-8 border-b border-zinc-900 text-left">
         {/* Contacts */}
         <div className="space-y-4">
-          <h3 className="font-heading font-bold text-sm uppercase tracking-widest text-white border-b border-zinc-800 pb-2">
+          <h3 className="notranslate font-heading font-bold text-sm uppercase tracking-widest text-white border-b border-zinc-800 pb-2" translate="no">
             Global Herbs
           </h3>
           <p className="text-gray-400 leading-relaxed font-semibold">
-            <strong>Dispatch Center Address: </strong> <br />
-            238 Cedar Brook Ln, Cave Junction, OR 97523 United States
+            <strong>{t('footer.dispatchAddress', 'Dispatch Center Address:')} </strong> <br />
+            <span className="notranslate" translate="no">238 Cedar Brook Ln, Cave Junction, OR 97523 United States</span>
           </p>
           <p className="text-gray-400 font-semibold">
-            <strong>Phone Support: </strong>
-            <a href="tel:+12132801161" className="text-emerald-400 hover:underline">+1 (213) 280-1161</a>
+            <strong>{t('footer.phoneSupport', 'Phone Support:')} </strong>
+            <a href="tel:+12132801161" className="notranslate text-emerald-400 hover:underline" translate="no">+1 (213) 280-1161</a>
           </p>
           <p className="text-gray-400 font-semibold">
-            <strong>Dispatch Support Email: </strong>
-            <a href="mailto:globalherbsinc@gmail.com" className="text-emerald-400 hover:underline">
+            <strong>{t('footer.supportEmail', 'Dispatch Support Email:')} </strong>
+            <a href="mailto:globalherbsinc@gmail.com" className="notranslate text-emerald-400 hover:underline" translate="no">
               globalherbsinc@gmail.com
             </a>
           </p>
           <p className="text-gray-400 font-semibold">
-            <strong>Dispatch Operating Hours: </strong> <br />
-            Monday – Saturday: 24 Hours Open (Dispatching Orders continuously), Sunday: Closed
+            <strong>{t('footer.operatingHours', 'Dispatch Operating Hours:')} </strong> <br />
+            {t('footer.operatingHoursVal', 'Monday – Saturday: 24 Hours Open (Dispatching Orders continuously), Sunday: Closed')}
           </p>
         </div>
 
         {/* Proposition 65 Warnings */}
         <div className="space-y-4">
           <h3 className="font-heading font-bold text-sm uppercase tracking-widest text-red-500 border-b border-zinc-800 pb-2">
-            PROPOSITION 65 OFFICIAL WARNING
+            {t('footer.prop65Title', 'PROPOSITION 65 OFFICIAL WARNING')}
           </h3>
           <p className="text-red-400 font-bold leading-none">WARNING:</p>
           <ul className="list-square pl-5 space-y-2 text-gray-400 leading-relaxed font-semibold">
@@ -359,13 +365,27 @@ export default function Footer({ onSelectPage }: FooterProps) {
         </div>
       </div>
 
-      {/* Bottom Bar copyright & payment icons */}
-      <div className="bg-zinc-950 py-6 text-gray-500 text-[10px] font-semibold uppercase tracking-wider">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <p>
-              Copyright 2023 &copy; <strong>Global Herbs</strong>. All Rights Reserved.
+      {/* Bottom Bar copyright, locale selectors & payment icons */}
+      <div className="bg-zinc-950 py-6 text-gray-500 text-[10px] font-semibold">
+        <div className="max-w-7xl mx-auto px-4 space-y-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 pb-4 border-b border-zinc-900">
+            <p className="text-[10px] text-gray-400 normal-case font-normal text-center md:text-left max-w-2xl">
+              {t(
+                'locale.privacyNotice',
+                `Coarse country-level region & live exchange rates provided via ${rateProvider}. No precise device location is requested or stored.`
+              )}
             </p>
+            <div className="flex items-center gap-2">
+              <CurrencySwitcher compact />
+              <LanguageSwitcher compact />
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 uppercase tracking-wider">
+            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+              <p>
+                Copyright 2023 &copy; <strong className="notranslate" translate="no">Global Herbs</strong>. {t('footer.rightsReserved', 'All Rights Reserved.')}
+              </p>
             <div className="hidden sm:block h-3 w-px bg-zinc-800"></div>
             <button
               onClick={() => {
@@ -418,6 +438,7 @@ export default function Footer({ onSelectPage }: FooterProps) {
                 <path d="M38 12.5v7h-2.2v-7H38z" fill="#EA4335"/>
               </svg>
             </div>
+          </div>
           </div>
         </div>
       </div>

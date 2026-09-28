@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
-import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
+import { ChevronDown, Check, RotateCcw } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LanguageSwitcherProps {
   compact?: boolean;
 }
 
 const COUNTRY_FLAGS: Record<string, { countryCode: string; label: string; fallbackEmoji: string }> = {
-  en: { countryCode: 'us', label: 'USA Flag (English)', fallbackEmoji: '🇺🇸' },
-  es: { countryCode: 'es', label: 'Spain Flag (Español)', fallbackEmoji: '🇪🇸' },
-  fr: { countryCode: 'fr', label: 'France Flag (Français)', fallbackEmoji: '🇫🇷' },
-  de: { countryCode: 'de', label: 'Germany Flag (Deutsch)', fallbackEmoji: '🇩🇪' },
-  it: { countryCode: 'it', label: 'Italy Flag (Italiano)', fallbackEmoji: '🇮🇹' },
-  nl: { countryCode: 'nl', label: 'Netherlands Flag (Nederlands)', fallbackEmoji: '🇳🇱' },
-  pt: { countryCode: 'pt', label: 'Portugal Flag (Português)', fallbackEmoji: '🇵🇹' },
-  ja: { countryCode: 'jp', label: 'Japan Flag (日本語)', fallbackEmoji: '🇯🇵' },
+  en: { countryCode: 'us', label: 'English (US)', fallbackEmoji: '🇺🇸' },
+  es: { countryCode: 'es', label: 'Español', fallbackEmoji: '🇪🇸' },
+  fr: { countryCode: 'fr', label: 'Français', fallbackEmoji: '🇫🇷' },
+  de: { countryCode: 'de', label: 'Deutsch', fallbackEmoji: '🇩🇪' },
+  it: { countryCode: 'it', label: 'Italiano', fallbackEmoji: '🇮🇹' },
+  nl: { countryCode: 'nl', label: 'Nederlands', fallbackEmoji: '🇳🇱' },
+  pt: { countryCode: 'pt', label: 'Português', fallbackEmoji: '🇵🇹' },
+  ja: { countryCode: 'jp', label: '日本語', fallbackEmoji: '🇯🇵' },
 };
 
 export function LanguageFlag({
@@ -27,7 +27,7 @@ export function LanguageFlag({
   className?: string;
 }) {
   const [hasError, setHasError] = useState(false);
-  const info = COUNTRY_FLAGS[langCode] || { countryCode: 'us', label: 'USA Flag', fallbackEmoji: '🇺🇸' };
+  const info = COUNTRY_FLAGS[langCode] || { countryCode: 'us', label: 'English (US)', fallbackEmoji: '🇺🇸' };
 
   const dimensions =
     size === 'sm'
@@ -66,51 +66,72 @@ export function LanguageFlag({
 }
 
 export default function LanguageSwitcher({ compact = false }: LanguageSwitcherProps) {
-  const { currentLanguage, setLanguageCode, availableLanguages } = useLanguage();
+  const {
+    currentLanguage,
+    setLanguageCode,
+    resetLanguageToAuto,
+    isManualOverride,
+    availableLanguages,
+    t,
+  } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicked outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
-
-  const currentFlagInfo = COUNTRY_FLAGS[currentLanguage.code] || {
-    countryCode: 'us',
-    label: 'USA Flag',
-    fallbackEmoji: '🇺🇸',
-  };
 
   if (compact) {
     return (
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative" ref={dropdownRef} translate="no">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold transition cursor-pointer border border-gray-200"
-          aria-label={`Select Language - Current: ${currentFlagInfo.label}`}
-          title={currentFlagInfo.label}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          className="notranslate flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold transition cursor-pointer border border-gray-200"
+          aria-label={`${t('language.select', 'Select Language')}: ${currentLanguage.nativeName}`}
+          title={currentLanguage.nativeName}
         >
-          <LanguageFlag langCode={currentLanguage.code} size="md" />
-          <ChevronDown size={11} className={`text-gray-500 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+          <LanguageFlag langCode={currentLanguage.code} size="sm" />
+          <span className="uppercase text-[10px]">{currentLanguage.code}</span>
+          <ChevronDown
+            size={11}
+            className={`text-gray-500 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`}
+          />
         </button>
 
         {isOpen && (
-          <div className="absolute bottom-full left-0 mb-1.5 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-1 z-50 text-left">
+          <div
+            role="listbox"
+            aria-label={t('language.select', 'Select Language')}
+            className="notranslate absolute top-full right-0 mt-1.5 w-48 bg-white border border-gray-200 rounded-xl shadow-xl py-1 z-50 text-left"
+          >
             {availableLanguages.map((lang) => {
               const isSelected = lang.code === currentLanguage.code;
               return (
                 <button
                   key={lang.code}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
-                    setLanguageCode(lang.code);
+                    setLanguageCode(lang.code, true);
                     setIsOpen(false);
                   }}
                   className={`w-full px-3 py-2 text-xs flex items-center justify-between transition cursor-pointer ${
@@ -134,33 +155,37 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
   }
 
   return (
-    <div className="relative inline-flex items-center" ref={dropdownRef}>
-      {/* Dropdown Button with ONLY the country flag for the active language */}
+    <div className="relative inline-flex items-center" ref={dropdownRef} translate="no">
       <button
         id="header-language-switcher-btn"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="flex items-center gap-1.5 text-gray-700 hover:text-emerald-800 transition text-xs px-2 py-1 rounded-md bg-gray-100/90 hover:bg-gray-200/90 border border-gray-200/90 cursor-pointer shadow-2xs"
-        title={`Language: ${currentLanguage.name} (${currentFlagInfo.label}) - Click to switch`}
-        aria-label={`Select Language - Current: ${currentLanguage.name}`}
+        className="notranslate flex items-center gap-1.5 text-gray-700 hover:text-emerald-800 transition text-xs font-bold px-2.5 py-1 rounded-md bg-gray-100/90 hover:bg-gray-200/90 border border-gray-200/90 cursor-pointer shadow-2xs focus-visible:outline-2 focus-visible:outline-emerald-700"
+        title={`${t('language.select', 'Select Language')}: ${currentLanguage.nativeName}`}
+        aria-label={`${t('language.select', 'Select Language')} - ${currentLanguage.nativeName}`}
       >
         <LanguageFlag langCode={currentLanguage.code} size="md" />
+        <span className="uppercase">{currentLanguage.code}</span>
         <ChevronDown
           size={11}
           className={`text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
-      {/* Language Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1.5 w-52 bg-white border border-gray-200 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 text-left">
-          <div className="px-3 py-1.5 border-b border-gray-100 flex items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-gray-400">
-            <span>Select Language</span>
+        <div
+          role="listbox"
+          aria-label={t('language.select', 'Select Language')}
+          className="notranslate absolute top-full right-0 mt-1.5 w-56 bg-white border border-gray-200 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150 text-left"
+        >
+          <div className="px-3 py-1.5 border-b border-gray-100 flex items-center justify-between text-[11px] font-bold text-gray-600">
+            <span>{t('language.select', 'Select Language')}</span>
+            <span className="text-[10px] text-emerald-700 uppercase">{currentLanguage.localeTag}</span>
           </div>
 
-          <div className="max-h-60 overflow-y-auto py-1">
+          <div className="max-h-64 overflow-y-auto py-1">
             {availableLanguages.map((lang) => {
               const isSelected = lang.code === currentLanguage.code;
 
@@ -168,8 +193,10 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
                 <button
                   key={lang.code}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
-                    setLanguageCode(lang.code);
+                    setLanguageCode(lang.code, true);
                     setIsOpen(false);
                   }}
                   className={`w-full px-3 py-2 text-xs flex items-center justify-between transition cursor-pointer ${
@@ -191,6 +218,23 @@ export default function LanguageSwitcher({ compact = false }: LanguageSwitcherPr
               );
             })}
           </div>
+
+          {isManualOverride && (
+            <div className="px-3 py-1.5 border-t border-gray-100 flex items-center justify-between bg-emerald-50/40">
+              <span className="text-[10px] text-gray-600">{t('language.manualOverride', 'Saved preference')}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  resetLanguageToAuto();
+                  setIsOpen(false);
+                }}
+                className="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1 cursor-pointer"
+              >
+                <RotateCcw size={10} />
+                {t('language.resetAuto', 'Reset to automatic')}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

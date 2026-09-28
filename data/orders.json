@@ -1,1 +1,63 @@
-[]
+[
+  {
+    "orderId": "GH-ORDER-845561",
+    "date": "Monday, September 28, 2026 at 06:09 AM",
+    "status": "Received & Stealth Processing",
+    "trackingNumber": "GH-TRK-32002697",
+    "transactionId": "GH-TRK-32002697",
+    "carrier": "Priority Stealth Express Courier",
+    "estimatedDelivery": "2-3 Business Days",
+    "customerName": "Grey Zhom",
+    "customerEmail": "greyzhom@gmail.com",
+    "customerPhone": "+1 (310) 555-0184",
+    "companyName": "Grey Botanicals",
+    "shippingAddress": "742 Evergreen Terrace, Suite 2B, Los Angeles, CA 90028, United States",
+    "shippingDetails": {
+      "name": "Grey Zhom",
+      "address": "742 Evergreen Terrace, Suite 2B",
+      "city": "Los Angeles",
+      "state": "CA",
+      "postalCode": "90028",
+      "country": "United States"
+    },
+    "billingAddress": "{\"name\":\"Grey Zhom\",\"address\":\"742 Evergreen Terrace, Suite 2B\",\"city\":\"Los Angeles\",\"state\":\"CA\",\"postalCode\":\"90028\",\"country\":\"United States\"}",
+    "orderNotes": "Live test order placed by greyzhom@gmail.com — please verify admin notification and customer Reply-To header.",
+    "items": [
+      {
+        "id": "GH-BLUE-DREAM-35",
+        "productId": "GH-BLUE-DREAM-35",
+        "name": "AAA+ Organic Blue Dream Dispensary Flower",
+        "variant": "3.5g Eighth",
+        "quantity": 2,
+        "price": 45,
+        "total": 90
+      },
+      {
+        "id": "GH-LIVE-ROSIN-1G",
+        "productId": "GH-LIVE-ROSIN-1G",
+        "name": "Solventless Hash Rosin Badder (90u)",
+        "variant": "1g Jar",
+        "quantity": 1,
+        "price": 65,
+        "total": 65
+      }
+    ],
+    "subtotal": 155,
+    "discount": 23.25,
+    "couponCode": "HERBS15OFF",
+    "shippingCost": 19.99,
+    "tax": 0,
+    "orderTotal": 151.74,
+    "currency": "USD",
+    "paymentMethod": "btc",
+    "paymentStatus": "Awaiting Payment Confirmation / Stealth Dispatch Queued",
+    "notificationStatus": "sent",
+    "notificationMessageId": "gas-GH-ORDER-845561-1790600945117",
+    "notificationSentAt": "2026-09-28T13:09:05.118Z",
+    "notificationError": null,
+    "notificationAttempts": 1,
+    "customerConfirmationStatus": "sent",
+    "createdAt": "2026-09-28T13:09:03.391Z",
+    "updatedAt": "2026-09-28T13:09:03.391Z"
+  }
+]

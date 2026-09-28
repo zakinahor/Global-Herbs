@@ -27,7 +27,7 @@ export default function CartDrawer({
   onGoToCheckout,
 }: CartDrawerProps) {
   const navigate = useNavigate();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, formatBaseUsd, isBaseCurrency, currency } = useCurrency();
   const { t } = useLanguage();
   const [checkoutMode, setCheckoutMode] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -426,20 +426,40 @@ export default function CartDrawer({
 
             {/* Subtotal & Action buttons in Footer */}
             {cartItems.length > 0 && !checkoutMode && (
-              <div className="p-5 border-t border-gray-100 bg-gray-50/50 space-y-4 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))]">
-                <div className="flex justify-between items-center text-sm font-bold text-gray-900">
+              <div className="p-5 border-t border-gray-100 bg-gray-50/50 space-y-3 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))]">
+                <div className="flex justify-between items-baseline text-sm font-bold text-gray-900">
                   <span>{t('cart.subtotal', 'Subtotal')}:</span>
-                  <span className="text-base text-emerald-800">{formatPrice(subtotal)}</span>
+                  <div className="text-right" translate="no">
+                    <span className="notranslate text-base text-emerald-800 block tabular-nums">
+                      {!isBaseCurrency ? `≈ ${formatPrice(subtotal, { showCode: true })}` : formatPrice(subtotal, { showCode: true })}
+                    </span>
+                    {!isBaseCurrency && (
+                      <span className="notranslate text-[11px] text-gray-500 font-semibold block tabular-nums">
+                        {t('cart.usdTotalNote', `Settlement Total in USD: ${formatBaseUsd(subtotal)}`, {
+                          usdAmount: formatBaseUsd(subtotal),
+                        })}
+                      </span>
+                    )}
+                  </div>
                 </div>
+                {!isBaseCurrency && (
+                  <div className="p-2 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[10px] text-amber-900 font-medium leading-snug">
+                    {t(
+                      'currency.chargedInUsd',
+                      `Final checkout is processed in USD (${formatBaseUsd(subtotal)}). Displayed ${currency.code} amounts are estimates.`,
+                      { usdAmount: formatBaseUsd(subtotal), currency: currency.code }
+                    )}
+                  </div>
+                )}
                 <p className="text-[10px] text-gray-400 font-semibold text-center leading-relaxed">
-                  We discreetly process your packages. Deliveries are packaged in plain boxes with smell-proof bags.
+                  {t('trust.stealth', 'Double Vacuum Sealed Packaging')} · {t('trust.discrete', 'Discreet Worldwide Delivery')}
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={onClearCart}
                     className="flex-1 py-3 border border-gray-200 hover:bg-gray-100 rounded-lg text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition text-center cursor-pointer"
                   >
-                    Clear Cart
+                    {t('btn.clearCart', 'Clear Cart')}
                   </button>
                   <button
                     onClick={() => {
@@ -453,7 +473,7 @@ export default function CartDrawer({
                     className="flex-1 py-3 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-sm transition transform active:scale-95 duration-100 text-center cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <CreditCard size={15} />
-                    <span>Proceed to Checkout</span>
+                    <span>{t('btn.proceedCheckout', 'Proceed to Checkout')}</span>
                   </button>
                 </div>
               </div>

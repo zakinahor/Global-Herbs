@@ -3,7 +3,11 @@ import { Product } from '../types';
 import { BlogArticle } from '../data/blogArticles';
 import { categorySeoMap, getCategorySeoData } from '../data/categorySeoData';
 import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from '../utils/sitemap';
-import { useLanguage } from '../context/LanguageContext';
+import {
+  useLanguage,
+  SUPPORTED_LANGUAGES,
+  extractLocaleFromPathname,
+} from '../context/LanguageContext';
 
 export interface SEOHeadProps {
   activePage?: string;
@@ -245,9 +249,31 @@ export default function SEOHead({
       ? selectedArticle.featuredImage
       : `${BASE_DOMAIN}/images/global-herbs-logo.jpg`;
 
-    // 4. Update Canonical URL (strictly self-referencing canonical, no ?lang= query parameter alternates)
-    setLinkTag('canonical', canonicalUrl);
+    // 4. Update Canonical URL and hreflang tags for indexable translated routes
+    const baseCanonicalPath = canonicalUrl.replace(BASE_DOMAIN, '') || '/';
+    const { locale: activeUrlLocale } =
+      typeof window !== 'undefined'
+        ? extractLocaleFromPathname(window.location.pathname)
+        : { locale: null };
+
+    const localizedCanonicalUrl =
+      activeUrlLocale && activeUrlLocale !== 'en'
+        ? `${BASE_DOMAIN}/${activeUrlLocale}${baseCanonicalPath === '/' ? '' : baseCanonicalPath}`
+        : canonicalUrl;
+
+    setLinkTag('canonical', localizedCanonicalUrl);
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
+
+    if (!robotsDirectives.startsWith('noindex')) {
+      for (const lang of SUPPORTED_LANGUAGES) {
+        const altHref =
+          lang.code === 'en'
+            ? `${BASE_DOMAIN}${baseCanonicalPath}`
+            : `${BASE_DOMAIN}/${lang.code}${baseCanonicalPath === '/' ? '' : baseCanonicalPath}`;
+        setLinkTag('alternate', altHref, { hreflang: lang.code });
+      }
+      setLinkTag('alternate', `${BASE_DOMAIN}${baseCanonicalPath}`, { hreflang: 'x-default' });
+    }
 
     // 6. Update meta description and robots directives
     setMetaTag('name', 'description', description);

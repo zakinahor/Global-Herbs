@@ -6,6 +6,9 @@ import FacebookIcon from './icons/FacebookIcon';
 import { Category } from '../types';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
+import CurrencySwitcher from './CurrencySwitcher';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -25,6 +28,7 @@ export default function MobileMenu({
   onSelectPage,
 }: MobileMenuProps) {
   const { user, isLoggedIn, openAccountModal } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -83,6 +87,17 @@ export default function MobileMenu({
 
         {/* Scrollable menu content */}
         <div className="flex-grow overflow-y-auto p-5 space-y-5">
+          {/* Language & Currency Selector Bar */}
+          <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-200/80">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+              {t('language.current', 'Language')} / {t('currency.select', 'Currency')}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <CurrencySwitcher compact />
+              <LanguageSwitcher compact />
+            </div>
+          </div>
+
           {/* Member Sign In / Dashboard Card */}
           <button
             onClick={() => {

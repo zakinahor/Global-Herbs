@@ -72,6 +72,52 @@
 
       gtag('config', 'G-G4GMVNMCZ7');
     </script>
+    <script>
+      (function() {
+        try {
+          var supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'nl', 'pt', 'ja'];
+          var supportedCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'MXN', 'BRL', 'PLN', 'BTC'];
+          var getCookie = function(name) {
+            var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+          };
+          var pathSeg = (window.location.pathname.split('/')[1] || '').toLowerCase();
+          var urlParams = new URLSearchParams(window.location.search);
+          var queryLang = (urlParams.get('lang') || '').toLowerCase().slice(0, 2);
+          var savedLang = localStorage.getItem('global_herbs_language') || getCookie('gh_lang');
+          var resolvedLang = null;
+
+          if (supportedLangs.indexOf(pathSeg) !== -1) {
+            resolvedLang = pathSeg;
+          } else if (supportedLangs.indexOf(queryLang) !== -1) {
+            resolvedLang = queryLang;
+          } else if (savedLang && supportedLangs.indexOf(savedLang) !== -1) {
+            resolvedLang = savedLang;
+          } else {
+            var navLangs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+            for (var i = 0; i < navLangs.length; i++) {
+              var code = String(navLangs[i] || '').toLowerCase().slice(0, 2);
+              if (supportedLangs.indexOf(code) !== -1) {
+                resolvedLang = code;
+                break;
+              }
+            }
+          }
+          if (!resolvedLang) resolvedLang = 'en';
+          document.documentElement.lang = resolvedLang;
+          document.documentElement.dir = 'ltr';
+
+          var savedCurrency = localStorage.getItem('global_herbs_currency') || getCookie('gh_currency');
+          if (!savedCurrency || supportedCurrencies.indexOf(savedCurrency) === -1) {
+            savedCurrency = null;
+          }
+          window.__GH_INITIAL_LOCALE__ = {
+            language: resolvedLang,
+            currency: savedCurrency
+          };
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <meta name="theme-color" content="#064e3b" />

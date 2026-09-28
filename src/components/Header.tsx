@@ -7,6 +7,7 @@ import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
 import AccountModal from './AccountModal';
 import LanguageSwitcher from './LanguageSwitcher';
+import CurrencySwitcher from './CurrencySwitcher';
 import SearchModal from './SearchModal';
 import { useCurrency } from '../context/CurrencyContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -128,8 +129,9 @@ export default function Header({
               {t('nav.refunds', 'Refunds')} <HelpCircle size={11} />
             </Link>
 
-            {/* Language Switcher - Icon at top right corner */}
-            <div className="border-l border-gray-200 pl-3 py-0.5 flex items-center">
+            {/* Currency & Language Switchers */}
+            <div className="border-l border-gray-200 pl-3 py-0.5 flex items-center gap-2">
+              <CurrencySwitcher />
               <LanguageSwitcher />
             </div>
           </div>
@@ -137,11 +139,12 @@ export default function Header({
       </div>
 
       {/* Mobile Top Alert */}
-      <div className="bg-emerald-900 text-emerald-100 py-1.5 px-4 text-[10px] font-semibold flex md:hidden justify-between items-center">
-        <span className="truncate">Free Shipping above {formatPrice(249.99)}</span>
-        <div className="flex items-center gap-2.5 flex-shrink-0">
-          <Link to="/blog" className="text-amber-300 font-bold hover:underline">Hub</Link>
-          <span className="text-emerald-700">|</span>
+      <div className="bg-emerald-900 text-emerald-100 py-1.5 px-3 text-[10px] font-semibold flex md:hidden justify-between items-center gap-2">
+        <span className="truncate">
+          {t('nav.freeShippingShort', 'Free Shipping above')} {formatPrice(249.99)}
+        </span>
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <CurrencySwitcher compact />
           <LanguageSwitcher compact />
         </div>
       </div>
@@ -158,7 +161,7 @@ export default function Header({
         </button>
 
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleCategorySelect(null)}>
+        <Link to="/" className="notranslate flex items-center gap-2.5 cursor-pointer" translate="no" onClick={() => handleCategorySelect(null)}>
           <img
             src={logoUrl}
             alt="Global Herbs Logo"

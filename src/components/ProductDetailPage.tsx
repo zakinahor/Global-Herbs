@@ -27,7 +27,7 @@ export default function ProductDetailPage({
   onAddToCart,
   onSelectProduct,
 }: ProductDetailPageProps) {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, formatBaseUsd, isBaseCurrency, currency } = useCurrency();
   const { t } = useLanguage();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -323,7 +323,7 @@ export default function ProductDetailPage({
               )}
             </div>
 
-            <h1 className="font-heading font-bold text-2xl sm:text-3xl text-gray-900 uppercase tracking-tight leading-tight">
+            <h1 className="notranslate font-heading font-bold text-2xl sm:text-3xl text-gray-900 uppercase tracking-tight leading-tight" translate="no">
               {activeProduct.name}
             </h1>
 
@@ -340,20 +340,36 @@ export default function ProductDetailPage({
 
           {/* Product pricing tags */}
           <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 flex items-center justify-between">
-            <div>
+            <div translate="no">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Selected Option Price
+                Selected Option Price ({currency.code})
               </span>
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-baseline gap-2.5">
                 {activeProduct.onSale && currentOriginalPrice ? (
                   <>
-                    <span className="text-3xl font-black text-rose-600">{formatPrice(currentPrice)}</span>
-                    <span className="text-sm text-gray-400 line-through font-bold">{formatPrice(currentOriginalPrice)}</span>
+                    <span className="notranslate text-3xl font-black text-rose-600 tabular-nums">
+                      {formatPrice(currentPrice)}
+                    </span>
+                    <span className="notranslate text-sm text-gray-400 line-through font-bold tabular-nums">
+                      {formatPrice(currentOriginalPrice)}
+                    </span>
                   </>
                 ) : (
-                  <span className="text-3xl font-black text-gray-900">{formatPrice(currentPrice)}</span>
+                  <span className="notranslate text-3xl font-black text-gray-900 tabular-nums">
+                    {formatPrice(currentPrice)}
+                  </span>
                 )}
+                <span className="notranslate text-xs font-bold text-gray-500">
+                  {currency.code}
+                </span>
               </div>
+              {!isBaseCurrency && (
+                <span className="notranslate text-[11px] font-semibold text-gray-500 block mt-1 tabular-nums">
+                  {t('product.basePriceLabel', `Base Price: ${formatBaseUsd(currentPrice)} USD`, {
+                    usdAmount: formatBaseUsd(currentPrice),
+                  })}
+                </span>
+              )}
             </div>
 
             {activeProduct.inventory !== undefined && (
