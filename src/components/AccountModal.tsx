@@ -774,7 +774,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                     </h5>
                   </div>
                   <a
-                    href="/track"
+                    href="/order-tracking"
                     className="text-[11px] text-emerald-800 hover:underline font-bold flex items-center gap-1"
                   >
                     <span>Full Tracking Tool</span>

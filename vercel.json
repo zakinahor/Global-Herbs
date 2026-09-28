@@ -1,30 +1,124 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/shop",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/product/:slug",
+      "destination": "/products/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/refunds",
+      "destination": "/returns",
+      "permanent": true
+    },
+    {
+      "source": "/terms-conditions",
+      "destination": "/terms",
+      "permanent": true
+    },
+    {
+      "source": "/categories",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/category/flower",
+      "destination": "/category/flowers",
+      "permanent": true
+    },
+    {
+      "source": "/category/weed",
+      "destination": "/category/flowers",
+      "permanent": true
+    },
+    {
+      "source": "/category/concentrate",
+      "destination": "/category/concentrates",
+      "permanent": true
+    },
+    {
+      "source": "/category/rosin",
+      "destination": "/category/concentrates",
+      "permanent": true
+    },
+    {
+      "source": "/category/hash",
+      "destination": "/category/concentrates",
+      "permanent": true
+    },
+    {
+      "source": "/category/extracts",
+      "destination": "/category/concentrates",
+      "permanent": true
+    },
+    {
+      "source": "/category/vape",
+      "destination": "/category/vapes",
+      "permanent": true
+    },
+    {
+      "source": "/category/carts",
+      "destination": "/category/vapes",
+      "permanent": true
+    },
+    {
+      "source": "/category/disposable-vapes",
+      "destination": "/category/vapes",
+      "permanent": true
+    },
+    {
+      "source": "/category/edible",
+      "destination": "/category/edibles",
+      "permanent": true
+    },
+    {
+      "source": "/category/gummies",
+      "destination": "/category/edibles",
+      "permanent": true
+    },
+    {
+      "source": "/category/preroll",
+      "destination": "/category/prerolls",
+      "permanent": true
+    },
+    {
+      "source": "/category/joints",
+      "destination": "/category/prerolls",
+      "permanent": true
+    },
+    {
+      "source": "/blog/understanding-thca-flower-vs-delta-9-thc-complete-guide",
+      "destination": "/blog/what-is-thca-vs-delta-9-thc-legal-potency-guide",
+      "permanent": true
+    },
+    {
+      "source": "/track",
+      "destination": "/order-tracking",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
-      "source": "/sitemap.xml",
+      "source": "/(checkout|order-tracking|track)",
       "headers": [
         {
-          "key": "Content-Type",
-          "value": "application/xml; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, s-maxage=86400"
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     },
     {
-      "source": "/robots.txt",
+      "source": "/category/(pharmaceuticals|psychedelics|research-chemicals)",
       "headers": [
         {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, s-maxage=86400"
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }
@@ -32,7 +126,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "destination": "/api/index.ts"
     },
     {
       "source": "/(.*)",

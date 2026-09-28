@@ -80,7 +80,12 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
   if (!article) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h2 className="font-heading font-bold text-2xl text-gray-900 mb-2">Guide Not Found</h2>
+        <SEOHead
+          activePage="not-found"
+          customTitle="Guide Not Found | Global Herbs"
+          customDescription="The educational guide you are looking for does not exist or has been moved."
+        />
+        <h1 className="font-heading font-bold text-2xl text-gray-900 mb-2">Guide Not Found</h1>
         <p className="text-gray-600 text-sm mb-6">The educational guide you are looking for does not exist or has been moved.</p>
         <Link
           to="/blog"

@@ -62,7 +62,7 @@ export default function Hero() {
             className="flex flex-wrap gap-4 w-full sm:w-auto"
           >
             <Link
-              to="/shop"
+              to="/products"
               className="px-8 py-3.5 bg-brand-green hover:bg-brand-green-hover text-white font-semibold text-sm uppercase tracking-wider rounded-lg shadow-lg hover:shadow-brand-green/20 transition-all transform active:scale-95 duration-100 flex-grow sm:flex-grow-0 text-center cursor-pointer"
             >
               Shop Inventory

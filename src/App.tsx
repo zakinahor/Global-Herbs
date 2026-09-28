@@ -3,6 +3,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
   useLocation,
   useParams,
   useNavigate,
@@ -15,6 +16,7 @@ import { motion, AnimatePresence } from 'motion/react';
 // Data and Types
 import { CartItem, Product } from './types';
 import { products as initialProducts, categories } from './data/products';
+import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from './utils/sitemap';
 
 // Components
 import Header from './components/Header';
@@ -111,7 +113,7 @@ function ShopPage({
       ? 'concentrates'
       : categorySlug === 'edible' || categorySlug === 'gummies'
       ? 'edibles'
-      : categorySlug === 'vape' || categorySlug === 'carts'
+      : categorySlug === 'vape' || categorySlug === 'carts' || categorySlug === 'disposable-vapes'
       ? 'vapes'
       : categorySlug === 'preroll' || categorySlug === 'joints'
       ? 'prerolls'
@@ -119,7 +121,8 @@ function ShopPage({
 
   const activeCategory = normalizedCategory;
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const pageFromUrl = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
   const ITEMS_PER_PAGE = 18;
 
   // Handle URL query params & legacy query redirects
@@ -128,6 +131,9 @@ function ShopPage({
     if (qParam !== null && qParam !== searchQuery) {
       setSearchQuery(qParam);
     }
+    const pParam = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
+    setCurrentPage(pParam);
+
     const legacyProd = searchParams.get('product');
     if (legacyProd) {
       navigate(`/products/${legacyProd}`, { replace: true });
@@ -140,16 +146,29 @@ function ShopPage({
 
   // Reset to page 1 whenever search, filters, category, or sorting change
   useEffect(() => {
-    setCurrentPage(1);
+    if (!searchParams.get('page')) {
+      setCurrentPage(1);
+    }
   }, [activeCategory, minPrice, maxPrice, searchQuery, sortOrder]);
+
+  if (categorySlug && normalizedCategory && categorySlug !== normalizedCategory) {
+    return <Navigate to={`/category/${normalizedCategory}`} replace />;
+  }
 
   const activeCategoryObject = activeCategory
     ? categories.find((c) => c.slug === activeCategory)
     : null;
 
+  if (activeCategory && !activeCategoryObject) {
+    return <NotFoundPage />;
+  }
+
   const currentDepartmentName = activeCategoryObject
     ? activeCategoryObject.name
     : 'All Products';
+
+  const basePath = activeCategory ? `/category/${activeCategory}` : '/products';
+  const getPageUrl = (page: number) => (page <= 1 ? basePath : `${basePath}?page=${page}`);
 
   const handleSelectCategory = (slug: string | null) => {
     setMobileFiltersOpen(false);
@@ -166,8 +185,15 @@ function ShopPage({
   };
 
   const filteredProducts = initialProducts.filter((p) => {
-    if (activeCategory && p.categorySlug !== activeCategory) {
-      return false;
+    if (activeCategory) {
+      if (p.categorySlug !== activeCategory) return false;
+      if (!NON_INDEXABLE_CATEGORY_SLUGS.has(activeCategory) && NON_INDEXABLE_PRODUCT_IDS.has(p.id)) {
+        return false;
+      }
+    } else {
+      if (NON_INDEXABLE_CATEGORY_SLUGS.has(p.categorySlug) || NON_INDEXABLE_PRODUCT_IDS.has(p.id)) {
+        return false;
+      }
     }
     if (p.price < minPrice || p.price > maxPrice) {
       return false;
@@ -377,22 +403,32 @@ function ShopPage({
 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                  <div className="mt-12 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <nav aria-label="Catalog Pagination" className="mt-12 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-xs text-gray-500 font-medium text-center sm:text-left">
                       Showing <span className="font-bold text-gray-900">{paginatedProducts.length}</span> of{' '}
                       <span className="font-bold text-gray-900">{totalProducts}</span> items
                     </p>
 
                     <div className="flex items-center gap-1.5 flex-wrap justify-center">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-2xs"
-                        aria-label="Previous page"
-                      >
-                        <ChevronLeft size={14} />
-                        <span className="hidden sm:inline">Prev</span>
-                      </button>
+                      {currentPage > 1 ? (
+                        <Link
+                          to={getPageUrl(currentPage - 1)}
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 transition cursor-pointer shadow-2xs"
+                          aria-label="Previous page"
+                        >
+                          <ChevronLeft size={14} />
+                          <span className="hidden sm:inline">Prev</span>
+                        </Link>
+                      ) : (
+                        <span
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-400 bg-white opacity-40 cursor-not-allowed shadow-2xs"
+                          aria-disabled="true"
+                        >
+                          <ChevronLeft size={14} />
+                          <span className="hidden sm:inline">Prev</span>
+                        </span>
+                      )}
 
                       {getPageNumbers().map((p, idx) => {
                         if (typeof p === 'string') {
@@ -404,8 +440,9 @@ function ShopPage({
                         }
                         const isCurrent = p === currentPage;
                         return (
-                          <button
+                          <Link
                             key={p}
+                            to={getPageUrl(p)}
                             onClick={() => handlePageChange(p)}
                             className={`w-8 h-8 text-xs font-bold rounded-lg transition cursor-pointer flex items-center justify-center ${
                               isCurrent
@@ -415,21 +452,52 @@ function ShopPage({
                             aria-current={isCurrent ? 'page' : undefined}
                           >
                             {p}
-                          </button>
+                          </Link>
                         );
                       })}
 
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-2xs"
-                        aria-label="Next page"
-                      >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight size={14} />
-                      </button>
+                      {currentPage < totalPages ? (
+                        <Link
+                          to={getPageUrl(currentPage + 1)}
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 transition cursor-pointer shadow-2xs"
+                          aria-label="Next page"
+                        >
+                          <span className="hidden sm:inline">Next</span>
+                          <ChevronRight size={14} />
+                        </Link>
+                      ) : (
+                        <span
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-400 bg-white opacity-40 cursor-not-allowed shadow-2xs"
+                          aria-disabled="true"
+                        >
+                          <span className="hidden sm:inline">Next</span>
+                          <ChevronRight size={14} />
+                        </span>
+                      )}
                     </div>
-                  </div>
+                  </nav>
+                )}
+
+                {/* Complete Category Product Directory for Direct Crawlability of All Items */}
+                {totalPages > 1 && (!activeCategory || !NON_INDEXABLE_CATEGORY_SLUGS.has(activeCategory)) && (
+                  <section aria-label={`Complete ${currentDepartmentName} Directory`} className="mt-12 pt-8 border-t border-gray-100 text-left">
+                    <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-gray-800 mb-3">
+                      Complete {currentDepartmentName} Index ({sortedProducts.length} Lab-Tested Items)
+                    </h2>
+                    <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-1.5 text-xs text-gray-600">
+                      {sortedProducts.map((item) => (
+                        <li key={item.id} className="truncate">
+                          <Link
+                            to={`/products/${item.slug || item.id}`}
+                            className="hover:text-emerald-800 hover:underline transition"
+                          >
+                            {item.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
                 )}
               </div>
             )}
@@ -443,6 +511,11 @@ function ShopPage({
       <ContactForm />
     </motion.div>
   );
+}
+
+function LegacyProductRedirect() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/products/${slug || ''}`} replace />;
 }
 
 function ExternalRedirect({ url }: { url: string }) {
@@ -536,9 +609,11 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
-        <Route path="/shop" element={<ShopPage {...shopProps} />} />
         <Route path="/products" element={<ShopPage {...shopProps} />} />
+        <Route path="/shop" element={<Navigate to={`/products${location.search}`} replace />} />
+        <Route path="/categories" element={<Navigate to="/products" replace />} />
         <Route path="/category/:categorySlug" element={<ShopPage {...shopProps} />} />
+        <Route path="/product/:slug" element={<LegacyProductRedirect />} />
 
         <Route
           path="/products/:slug"
@@ -606,6 +681,7 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
+        <Route path="/refunds" element={<Navigate to="/returns" replace />} />
 
         <Route
           path="/privacy"
@@ -640,22 +716,11 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
-
+        <Route path="/terms-conditions" element={<Navigate to="/terms" replace />} />
+        <Route path="/track" element={<Navigate to="/order-tracking" replace />} />
         <Route
-          path="/terms-conditions"
-          element={
-            <motion.div
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={pageVariants}
-              transition={pageTransition}
-              className="w-full flex-grow"
-            >
-              <SEOHead activePage="terms" />
-              <TermsPage />
-            </motion.div>
-          }
+          path="/blog/understanding-thca-flower-vs-delta-9-thc-complete-guide"
+          element={<Navigate to="/blog/what-is-thca-vs-delta-9-thc-legal-potency-guide" replace />}
         />
 
         <Route

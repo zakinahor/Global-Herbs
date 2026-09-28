@@ -300,7 +300,7 @@ export function RefundPage({ onSelectPage }: { onSelectPage?: (p: string) => voi
         </h2>
         <p>
           To make a claim, simply contact our Support Dispatch team through our integrated 
-          <Link to="/products#contact-section" className="text-emerald-700 hover:underline font-bold cursor-pointer mx-1">Inquiry Form</Link> 
+          <Link to="/contact" className="text-emerald-700 hover:underline font-bold cursor-pointer mx-1">Inquiry Form</Link> 
           or directly via email. Please specify your Order ID, name, email, and description of your issue.
         </p>
       </div>
@@ -399,6 +399,14 @@ export function PrivacyPage({ onSelectPage }: { onSelectPage?: (p: string) => vo
 export function ContactPage() {
   return (
     <div className="w-full flex-grow py-6">
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-2 text-left">
+        <h1 className="font-heading font-bold text-3xl sm:text-4xl text-gray-900 uppercase tracking-tight mb-2">
+          Contact Us &amp; Wholesale Support
+        </h1>
+        <p className="text-sm text-emerald-800 font-bold uppercase tracking-wider">
+          24/6 Direct Dispensary Dispatch Desk • Cave Junction, Oregon
+        </p>
+      </div>
       <ContactForm />
     </div>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { X, ChevronRight, Phone, MessageSquare, ShieldCheck, User, Youtube, Music2, ExternalLink } from 'lucide-react';
 import RedditIcon from './icons/RedditIcon';
+import FacebookIcon from './icons/FacebookIcon';
 import { Category } from '../types';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
 import { useAuth } from '../context/AuthContext';
@@ -185,7 +186,7 @@ export default function MobileMenu({
               </h4>
               <div className="flex flex-col gap-2">
                 <a
-                  href="https://www.youtube.com/@GlobalMarijuanaDispensary"
+                  href="https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={onClose}
@@ -197,10 +198,29 @@ export default function MobileMenu({
                     </div>
                     <div className="flex flex-col text-left">
                       <span className="text-xs font-bold leading-tight">YouTube Channel</span>
-                      <span className="text-[10px] text-red-700">@GlobalMarijuanaDispensary</span>
+                      <span className="text-[10px] text-red-700">@GlobalHerbsinc</span>
                     </div>
                   </div>
                   <ExternalLink size={13} className="text-red-600" />
+                </a>
+
+                <a
+                  href="https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 hover:bg-blue-100/70 border border-blue-200/60 text-blue-950 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-md bg-[#1877F2] flex items-center justify-center text-white shadow-xs">
+                      <FacebookIcon size={14} />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold leading-tight">Facebook Page</span>
+                      <span className="text-[10px] text-blue-700">@GlobalHerbsinc</span>
+                    </div>
+                  </div>
+                  <ExternalLink size={13} className="text-blue-600" />
                 </a>
 
                 <a

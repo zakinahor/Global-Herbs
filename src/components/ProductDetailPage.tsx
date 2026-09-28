@@ -153,10 +153,21 @@ export default function ProductDetailPage({
     );
   };
 
-  // Get related products (same category but not current product)
-  const relatedProducts = allProducts
-    .filter((p) => p.categorySlug === activeProduct.categorySlug && p.id !== activeProduct.id)
-    .slice(0, 4);
+  // Get related products using circular ring selection so all products in a category receive equal internal links
+  const sameCategoryPool = allProducts.filter(
+    (p) => p.categorySlug === activeProduct.categorySlug && p.categorySlug !== 'pharmaceuticals' && p.categorySlug !== 'psychedelics' && p.categorySlug !== 'research-chemicals'
+  );
+  const currentInCatIdx = sameCategoryPool.findIndex((p) => p.id === activeProduct.id);
+  const relatedProducts: Product[] = [];
+  if (sameCategoryPool.length > 1) {
+    for (let offset = 1; offset <= Math.min(8, sameCategoryPool.length - 1); offset++) {
+      const nextIdx = ((currentInCatIdx >= 0 ? currentInCatIdx : 0) + offset) % sameCategoryPool.length;
+      const candidate = sameCategoryPool[nextIdx];
+      if (candidate && candidate.id !== activeProduct.id) {
+        relatedProducts.push(candidate);
+      }
+    }
+  }
 
   // Available weight choices depending on product type
   const isFlowerOrPreRoll = activeProduct.categorySlug === 'flower' || activeProduct.categorySlug === 'pre-rolls';
@@ -580,30 +591,82 @@ export default function ProductDetailPage({
         {activeTab === 'desc' && (
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl text-sm font-medium">
             <div className="space-y-4">
+              <h2 className="font-heading font-bold text-gray-900 text-base uppercase tracking-wider">
+                About {activeProduct.name}
+              </h2>
               <p>{activeProduct.description}</p>
-              <p>
-                Our laboratory verification certifies that this batch features clean therapeutic chemical bounds, curated and grown under organic climate-controlled environments by professional growers. Delivers quick, targeted action to soothe chronic conditions, muscle stress, inflammation, and anxiety.
-              </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 pt-4">
+            {(activeProduct.genetics || activeProduct.aroma || activeProduct.effects || (activeProduct.terpenes && activeProduct.terpenes.length > 0)) && (
+              <div className="bg-emerald-50/40 rounded-xl p-5 border border-emerald-100 space-y-4">
+                <h3 className="font-heading font-bold text-gray-900 text-xs uppercase tracking-wider">
+                  Botanical Lineage, Terpene Profile &amp; Lab Specifications
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                  {activeProduct.genetics && (
+                    <div>
+                      <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block mb-0.5">Genetic Lineage</span>
+                      <span className="text-gray-900 font-semibold">{activeProduct.genetics}</span>
+                    </div>
+                  )}
+                  {activeProduct.aroma && (
+                    <div>
+                      <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block mb-0.5">Aroma &amp; Flavor Notes</span>
+                      <span className="text-gray-900 font-semibold">{activeProduct.aroma}</span>
+                    </div>
+                  )}
+                  {activeProduct.effects && (
+                    <div>
+                      <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block mb-0.5">Reported Experience</span>
+                      <span className="text-gray-900 font-semibold">{activeProduct.effects}</span>
+                    </div>
+                  )}
+                  {activeProduct.terpenes && activeProduct.terpenes.length > 0 && (
+                    <div>
+                      <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block mb-0.5">Dominant Terpenes</span>
+                      <span className="text-gray-900 font-semibold">{activeProduct.terpenes.join(', ')}</span>
+                    </div>
+                  )}
+                  {activeProduct.labResults && (
+                    <div className="sm:col-span-2 pt-2 border-t border-emerald-100 flex flex-wrap gap-6">
+                      <div>
+                        <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block">THCa / Primary Potency</span>
+                        <span className="text-emerald-900 font-extrabold">{activeProduct.labResults.thca}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block">Delta-9 THC (Dry Weight)</span>
+                        <span className="text-emerald-900 font-extrabold">{activeProduct.labResults.d9thc}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block">Total Cannabinoids</span>
+                        <span className="text-emerald-900 font-extrabold">{activeProduct.labResults.totalCannabinoids}</span>
+                      </div>
+                      <div>
+                        <span className="font-bold text-gray-500 uppercase tracking-wider text-[10px] block">Full-Panel Screening</span>
+                        <span className="text-emerald-800 font-bold">{activeProduct.labResults.status}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-6 pt-2">
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <h4 className="font-bold text-gray-900 mb-2 text-xs uppercase tracking-wider">Suggested Dose Guidelines</h4>
+                <h3 className="font-bold text-gray-900 mb-2 text-xs uppercase tracking-wider">Usage &amp; Serving Guidance</h3>
                 <ul className="list-disc list-inside space-y-1.5 text-xs text-gray-600 font-semibold">
-                  <li>Begin with a microdose or light quantity to assess tolerance.</li>
-                  <li>Allow 45-90 minutes before considering subsequent application.</li>
-                  <li>Use specialized vaporization gear or clinical equipment if required.</li>
-                  <li>In case of intense effects, drink citrus water and sit comfortably.</li>
+                  <li>Begin with a modest initial serving to evaluate cultivar response.</li>
+                  <li>For edibles and tinctures, allow 45–90 minutes before taking an additional serving.</li>
+                  <li>For concentrates and vapes, use low-temperature settings (2.2V–2.6V or 480°F–520°F) to preserve terpenes.</li>
                 </ul>
               </div>
 
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <h4 className="font-bold text-gray-900 mb-2 text-xs uppercase tracking-wider">Storage Advice</h4>
+                <h3 className="font-bold text-gray-900 mb-2 text-xs uppercase tracking-wider">Terpene &amp; Freshness Preservation</h3>
                 <ul className="list-disc list-inside space-y-1.5 text-xs text-gray-600 font-semibold">
-                  <li>Maintain inside original airtight clinical bounds.</li>
-                  <li>Keep stored between 15°C to 21°C.</li>
-                  <li>Minimize exposure to ambient moisture or solar heat rays.</li>
-                  <li>Airtight glass jars are highly recommended for flower preservation.</li>
+                  <li>Store sealed in an airtight UV-resistant glass jar or original barrier pouch.</li>
+                  <li>Maintain ambient temperatures between 58°F and 68°F (15°C–20°C).</li>
+                  <li>Avoid direct sunlight, heat sources, and excess humidity fluctuations.</li>
                 </ul>
               </div>
             </div>
@@ -811,16 +874,16 @@ export default function ProductDetailPage({
       {/* Related Products Catalog Section */}
       {relatedProducts.length > 0 && (
         <div className="border-t border-gray-100 pt-12">
-          <h3 className="font-heading font-black text-gray-900 text-lg uppercase tracking-tight text-left mb-6">
+          <h2 className="font-heading font-black text-gray-900 text-lg uppercase tracking-tight text-left mb-6">
             Recommended Related Products
-          </h3>
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {relatedProducts.map((p) => (
-              <div
+              <Link
                 key={p.id}
+                to={`/products/${p.slug || p.id}`}
                 onClick={() => {
                   if (onSelectProduct) onSelectProduct(p);
-                  navigate(`/products/${p.slug}`);
                 }}
                 className="group border border-gray-100 rounded-xl overflow-hidden bg-white hover:shadow-md transition duration-300 cursor-pointer flex flex-col h-full text-left"
               >
@@ -839,9 +902,9 @@ export default function ProductDetailPage({
                   <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 block">
                     {p.category}
                   </span>
-                  <h4 className="font-heading font-bold text-xs text-gray-900 leading-snug line-clamp-2 h-8 mb-2 group-hover:text-emerald-800 transition">
+                  <h3 className="font-heading font-bold text-xs text-gray-900 leading-snug line-clamp-2 h-8 mb-2 group-hover:text-emerald-800 transition">
                     {p.name}
-                  </h4>
+                  </h3>
                   <div className="flex justify-between items-baseline mt-auto">
                     <span className="text-sm font-extrabold text-gray-900">{formatPrice(p.price)}</span>
                     {p.weight && (
@@ -849,7 +912,7 @@ export default function ProductDetailPage({
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

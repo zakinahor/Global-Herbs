@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, ArrowUpCircle, Youtube, Music2, ExternalLink } from 'lucide-react';
 import RedditIcon from './icons/RedditIcon';
+import FacebookIcon from './icons/FacebookIcon';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
 import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
 
@@ -93,20 +94,37 @@ export default function Footer({ onSelectPage }: FooterProps) {
               </span>
               <div className="flex flex-col gap-2">
                 <a
-                  href="https://www.youtube.com/@GlobalMarijuanaDispensary"
+                  href="https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-zinc-800/80 hover:bg-red-950/40 border border-zinc-700/60 hover:border-red-600/60 text-gray-200 hover:text-red-300 transition-colors group"
-                  title="Official YouTube Channel: Global Marijuana Dispensary"
+                  title="Official YouTube Channel: @GlobalHerbsinc"
                 >
                   <div className="w-6 h-6 rounded-md bg-red-600 flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-transform">
                     <Youtube size={14} />
                   </div>
                   <div className="flex flex-col min-w-0 flex-grow text-left">
                     <span className="text-[11px] font-bold truncate">YouTube Channel</span>
-                    <span className="text-[9px] text-gray-400 truncate">@globalherbs</span>
+                    <span className="text-[9px] text-gray-400 truncate">@GlobalHerbsinc</span>
                   </div>
                   <ExternalLink size={12} className="text-gray-500 group-hover:text-red-300 flex-shrink-0" />
+                </a>
+
+                <a
+                  href="https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-zinc-800/80 hover:bg-blue-950/40 border border-zinc-700/60 hover:border-blue-500/60 text-gray-200 hover:text-blue-300 transition-colors group"
+                  title="Official Facebook Page: @GlobalHerbsinc"
+                >
+                  <div className="w-6 h-6 rounded-md bg-[#1877F2] flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <FacebookIcon size={13} />
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-grow text-left">
+                    <span className="text-[11px] font-bold truncate">Facebook Page</span>
+                    <span className="text-[9px] text-gray-400 truncate">@GlobalHerbsinc</span>
+                  </div>
+                  <ExternalLink size={12} className="text-gray-500 group-hover:text-blue-300 flex-shrink-0" />
                 </a>
 
                 <a
@@ -154,11 +172,11 @@ export default function Footer({ onSelectPage }: FooterProps) {
             <ul className="space-y-1.5 text-gray-400 font-semibold">
               <li>
                 <Link
-                  to="/checkout"
+                  to="/products"
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left"
+                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left text-white font-bold"
                 >
-                  Dispensary Checkout
+                  Full Dispensary Catalog
                 </Link>
               </li>
               <li>
@@ -206,6 +224,15 @@ export default function Footer({ onSelectPage }: FooterProps) {
                   Terms &amp; Discreet Shipping
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/contact"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left"
+                >
+                  Contact &amp; Support Desk
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -217,21 +244,30 @@ export default function Footer({ onSelectPage }: FooterProps) {
             <ul className="space-y-1.5 text-gray-400 font-semibold">
               <li>
                 <Link
-                  to="/blog/announcing-global-herbs-mobile-app-seamless-orders"
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left text-emerald-300 font-bold flex items-center justify-between"
-                >
-                  <span>New Mobile App Announcement</span>
-                  <span className="text-[10px] bg-emerald-900/80 text-emerald-300 border border-emerald-700/50 px-1.5 py-0.2 rounded uppercase">New</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/blog"
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                   className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left text-white font-bold"
                 >
                   All Educational Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/blog/how-to-buy-hemp-products-online-lab-tested-herbal-dispensary-guide"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left text-emerald-300 font-bold"
+                >
+                  Lab-Tested Hemp Buyer&apos;s Guide
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/blog/announcing-global-herbs-mobile-app-seamless-orders"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left flex items-center justify-between"
+                >
+                  <span>New Mobile App Announcement</span>
+                  <span className="text-[10px] bg-emerald-900/80 text-emerald-300 border border-emerald-700/50 px-1.5 py-0.2 rounded uppercase">New</span>
                 </Link>
               </li>
               <li>
@@ -264,17 +300,49 @@ export default function Footer({ onSelectPage }: FooterProps) {
             </ul>
           </div>
 
-          {/* Core message */}
+          {/* Core message & Category Directory */}
           <div className="space-y-4">
             <h4 className="font-heading font-bold text-xs uppercase tracking-widest text-white">
-              Why Global Herbs?
+              Shop By Category
             </h4>
-            <p className="text-gray-400 leading-relaxed font-semibold">
-              At Global Herbs, we prioritize your health, discretion, and absolute safety.
-              Every purchase features triple odour-proof vacuum sealing, trackable delivery codes,
-              and 100% full delivery refunds or free reshipping in the rare event of transit delays.
-            </p>
-            <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
+            <ul className="grid grid-cols-2 gap-1.5 text-gray-400 font-semibold">
+              <li>
+                <Link to="/category/flowers" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  THCa Flowers
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/vapes" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  Vape Carts
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/edibles" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  THC Edibles
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/concentrates" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  Concentrates
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/prerolls" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  Pre-Rolls
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/cbd" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  CBD Wellness
+                </Link>
+              </li>
+              <li className="col-span-2">
+                <Link to="/category/accessories" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-emerald-400 block py-1 border-b border-zinc-800/50">
+                  Vaporizers &amp; Accessories
+                </Link>
+              </li>
+            </ul>
+            <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px] pt-1">
               <ShieldCheck size={16} />
               <span>100% Guaranteed Discreet Delivery</span>
             </div>

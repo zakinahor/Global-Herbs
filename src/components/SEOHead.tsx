@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Product } from '../types';
 import { BlogArticle } from '../data/blogArticles';
-import { categorySeoMap } from '../data/categorySeoData';
+import { categorySeoMap, getCategorySeoData } from '../data/categorySeoData';
 import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from '../utils/sitemap';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -80,7 +80,7 @@ export default function SEOHead({
       if (NON_INDEXABLE_CATEGORY_SLUGS.has(categorySlug)) {
         isNonIndexableItem = true;
       }
-      const seoGuide = categorySeoMap[categorySlug];
+      const seoGuide = getCategorySeoData(categorySlug);
       title = seoGuide?.metaTitle || `Buy ${categoryName} Online - Premium ${categoryName} | Global Herbs`;
       description = seoGuide?.metaDescription || `Shop top-quality ${categoryName} at Global Herbs. Lab-tested products, best prices, fast delivery, and 100% discreet packaging guaranteed.`;
       canonicalUrl = `${BASE_DOMAIN}/category/${encodeURIComponent(categorySlug)}`;
@@ -245,16 +245,9 @@ export default function SEOHead({
       ? selectedArticle.featuredImage
       : `${BASE_DOMAIN}/images/global-herbs-logo.jpg`;
 
-    // 4. Update Canonical URL
+    // 4. Update Canonical URL (strictly self-referencing canonical, no ?lang= query parameter alternates)
     setLinkTag('canonical', canonicalUrl);
-
-    // 5. Update International hreflang alternate links
-    const supportedLocales = ['en', 'es', 'fr', 'de', 'it', 'nl', 'pt', 'ja'];
-    setLinkTag('alternate', canonicalUrl, { hreflang: 'x-default' });
-    supportedLocales.forEach((code) => {
-      const altUrl = code === 'en' ? canonicalUrl : `${canonicalUrl}${canonicalUrl.includes('?') ? '&' : '?'}lang=${code}`;
-      setLinkTag('alternate', altUrl, { hreflang: code });
-    });
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
 
     // 6. Update meta description and robots directives
     setMetaTag('name', 'description', description);
@@ -392,8 +385,8 @@ export default function SEOHead({
     }
 
     // D. Category FAQ Schema (if browsing a category with genuine FAQs)
-    if (activeCategory && !selectedProduct && !selectedArticle) {
-      const seoGuide = categorySeoMap[activeCategory.toLowerCase()];
+    if (activeCategory && !selectedProduct && !selectedArticle && !isNonIndexableItem) {
+      const seoGuide = getCategorySeoData(activeCategory.toLowerCase());
       if (seoGuide && seoGuide.faqs && seoGuide.faqs.length > 0) {
         schemas.push({
           '@context': 'https://schema.org',

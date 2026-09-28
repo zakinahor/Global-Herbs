@@ -3,7 +3,9 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
-import { generateSitemapXML } from './src/utils/sitemap';
+import { generateSitemapXML, NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from './src/utils/sitemap';
+import { products, categories, legacySlugMap } from './src/data/products';
+import { getPage, renderPageHtml } from './scripts/prerender-seo';
 import {
   sendAppsScriptOrderNotification,
   getNotificationConfig,
@@ -214,12 +216,17 @@ async function startServer() {
   app.use(express.json());
 
   // Social Media Direct Redirect Endpoints
-  const OFFICIAL_YOUTUBE_URL = 'https://www.youtube.com/@GlobalMarijuanaDispensary';
+  const OFFICIAL_YOUTUBE_URL = 'https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A';
+  const OFFICIAL_FACEBOOK_URL = 'https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr';
   const OFFICIAL_TIKTOK_URL = 'https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ';
   const OFFICIAL_REDDIT_URL = 'https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM';
 
   app.get(['/youtube', '/yt', '/youtube/'], (req, res) => {
     return res.redirect(301, OFFICIAL_YOUTUBE_URL);
+  });
+
+  app.get(['/facebook', '/fb', '/facebook/'], (req, res) => {
+    return res.redirect(301, OFFICIAL_FACEBOOK_URL);
   });
 
   app.get(['/tiktok', '/tik-tok', '/tiktok/'], (req, res) => {
@@ -231,28 +238,74 @@ async function startServer() {
   });
 
   // SEO Canonical 301 Permanent Redirects (Consolidating duplicate category & shop URLs)
-  app.get(['/shop', '/shop/'], (req, res) => {
-    return res.redirect(301, '/products');
-  });
+  const STATIC_301_REDIRECTS: Record<string, string> = {
+    '/shop': '/products',
+    '/categories': '/products',
+    '/refunds': '/returns',
+    '/terms-conditions': '/terms',
+    '/track': '/order-tracking',
+    '/category/flower': '/category/flowers',
+    '/category/weed': '/category/flowers',
+    '/category/concentrate': '/category/concentrates',
+    '/category/rosin': '/category/concentrates',
+    '/category/hash': '/category/concentrates',
+    '/category/extracts': '/category/concentrates',
+    '/category/vape': '/category/vapes',
+    '/category/carts': '/category/vapes',
+    '/category/disposable-vapes': '/category/vapes',
+    '/category/edible': '/category/edibles',
+    '/category/gummies': '/category/edibles',
+    '/category/preroll': '/category/prerolls',
+    '/category/joints': '/category/prerolls',
+    '/blog/understanding-thca-flower-vs-delta-9-thc-complete-guide':
+      '/blog/what-is-thca-vs-delta-9-thc-legal-potency-guide',
+  };
 
-  app.get(['/category/flower', '/category/weed'], (req, res) => {
-    return res.redirect(301, '/category/flowers');
-  });
+  // Single-hop URL normalization middleware (trailing slash, lowercase, legacy slugs)
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/assets/') || req.path.startsWith('/images/') || req.path.startsWith('/@') || req.path.startsWith('/src/') || req.path.startsWith('/node_modules/') || req.path.includes('.')) {
+      return next();
+    }
 
-  app.get(['/category/concentrate', '/category/rosin', '/category/hash', '/category/extracts'], (req, res) => {
-    return res.redirect(301, '/category/concentrates');
-  });
+    const queryIdx = req.originalUrl.indexOf('?');
+    const queryString = queryIdx !== -1 ? req.originalUrl.slice(queryIdx) : '';
 
-  app.get(['/category/vape', '/category/carts'], (req, res) => {
-    return res.redirect(301, '/category/vapes');
-  });
+    // Normalize trailing slash (except root '/') and lowercase path
+    let normalizedPath = req.path;
+    if (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
+      normalizedPath = normalizedPath.replace(/\/+$/, '');
+    }
+    if (normalizedPath !== normalizedPath.toLowerCase()) {
+      normalizedPath = normalizedPath.toLowerCase();
+    }
 
-  app.get(['/category/edible', '/category/gummies'], (req, res) => {
-    return res.redirect(301, '/category/edibles');
-  });
+    // Check static alias map
+    if (STATIC_301_REDIRECTS[normalizedPath]) {
+      normalizedPath = STATIC_301_REDIRECTS[normalizedPath];
+    }
 
-  app.get(['/category/preroll', '/category/joints'], (req, res) => {
-    return res.redirect(301, '/category/prerolls');
+    // Redirect singular /product/:slug to canonical /products/:slug
+    const singularProdMatch = normalizedPath.match(/^\/product\/([^/]+)$/);
+    if (singularProdMatch) {
+      const rawSlug = singularProdMatch[1];
+      const canonicalSlug = legacySlugMap[rawSlug] || rawSlug;
+      return res.redirect(301, `/products/${canonicalSlug}${queryString}`);
+    }
+
+    // Redirect legacy /products/:slug aliases
+    const pluralProdMatch = normalizedPath.match(/^\/products\/([^/]+)$/);
+    if (pluralProdMatch) {
+      const rawSlug = pluralProdMatch[1];
+      if (legacySlugMap[rawSlug]) {
+        return res.redirect(301, `/products/${legacySlugMap[rawSlug]}${queryString}`);
+      }
+    }
+
+    if (normalizedPath !== req.path) {
+      return res.redirect(301, `${normalizedPath}${queryString}`);
+    }
+
+    return next();
   });
 
   // Sitemap & Robots XML / Text Routes
@@ -1094,19 +1147,100 @@ Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles
     });
   });
 
+  // Helper to resolve route SEO metadata, HTTP status code, and X-Robots-Tag
+  function resolveRouteSeoResponse(req: express.Request, templateHtml: string): { status: number; robotsHeader: string; html: string } {
+    const pathname = req.path === '/' ? '/' : req.path.replace(/\/+$/, '');
+    const hasSearchQuery = Boolean(req.query.q || req.query.search);
+
+    if (pathname === '/checkout') {
+      const html = renderPageHtml(templateHtml, {
+        title: 'Secure Checkout | Global Herbs',
+        description: 'Complete your order securely at Global Herbs.',
+        canonical: 'https://globalherbs.site/checkout',
+        robots: 'noindex, nofollow',
+        kind: 'website',
+        bodyHtml: '<main><h1>Secure Dispensary Checkout</h1></main>',
+      });
+      return { status: 200, robotsHeader: 'noindex, nofollow', html };
+    }
+
+    if (pathname === '/order-tracking') {
+      const html = renderPageHtml(templateHtml, {
+        title: 'Track Your Order Status | Global Herbs',
+        description: 'Look up the real-time shipping and fulfillment status of your Global Herbs order.',
+        canonical: 'https://globalherbs.site/order-tracking',
+        robots: 'noindex, nofollow',
+        kind: 'website',
+        bodyHtml: '<main><h1>Real-Time Order Tracking</h1></main>',
+      });
+      return { status: 200, robotsHeader: 'noindex, nofollow', html };
+    }
+
+    const seoPage = getPage(pathname);
+    if (seoPage) {
+      const isNoIndex = Boolean(seoPage.robots && seoPage.robots.includes('noindex')) || hasSearchQuery;
+      const effectivePage = hasSearchQuery
+        ? { ...seoPage, robots: 'noindex, follow' }
+        : seoPage;
+      const robotsHeader = isNoIndex
+        ? effectivePage.robots || 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+      return {
+        status: 200,
+        robotsHeader,
+        html: renderPageHtml(templateHtml, effectivePage),
+      };
+    }
+
+    // Unmatched route -> Real HTTP 404 Not Found (prevents Soft-404s)
+    const notFoundHtml = renderPageHtml(templateHtml, {
+      title: '404 Page Not Found | Global Herbs',
+      description: 'The requested page could not be found on Global Herbs.',
+      canonical: `https://globalherbs.site${pathname}`,
+      robots: 'noindex, nofollow',
+      kind: 'website',
+      bodyHtml: '<main><h1>404 — Page Not Found</h1><p>The requested URL was not found on this server. <a href="/">Return to Global Herbs Homepage</a> or <a href="/products">Browse Full Dispensary Catalog</a>.</p></main>',
+    });
+    return { status: 404, robotsHeader: 'noindex, nofollow', html: notFoundHtml };
+  }
+
   // Vite middleware for development vs asset hosting for production
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: 'custom',
     });
     app.use(vite.middlewares);
+
+    app.use(async (req, res, next) => {
+      if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+      try {
+        const templatePath = path.join(process.cwd(), 'index.html');
+        const rawTemplate = fs.readFileSync(templatePath, 'utf-8');
+        const transformedTemplate = await vite.transformIndexHtml(req.originalUrl, rawTemplate);
+        const { status, robotsHeader, html } = resolveRouteSeoResponse(req, transformedTemplate);
+        res.setHeader('X-Robots-Tag', robotsHeader);
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.status(status).send(html);
+      } catch (err) {
+        return next(err);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    // SPA routing fallback
-    app.get('*all', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.use(
+      express.static(distPath, {
+        index: false,
+      })
+    );
+    app.use((req, res, next) => {
+      if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+      const templatePath = path.join(distPath, 'index.html');
+      const rawTemplate = fs.readFileSync(templatePath, 'utf-8');
+      const { status, robotsHeader, html } = resolveRouteSeoResponse(req, rawTemplate);
+      res.setHeader('X-Robots-Tag', robotsHeader);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.status(status).send(html);
     });
   }
 

@@ -23,6 +23,7 @@ import {
   Music2,
 } from 'lucide-react';
 import RedditIcon from './icons/RedditIcon';
+import FacebookIcon from './icons/FacebookIcon';
 import { products, categories } from '../data/products';
 import { blogArticles } from '../data/blogArticles';
 import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from '../utils/sitemap';
@@ -92,14 +93,14 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
   const curatedProducts = validProducts
     .filter((p) => {
       if (activeTab === 'all') return true;
-      if (activeTab === 'flower') return p.categorySlug === 'flower';
+      if (activeTab === 'flower') return p.categorySlug === 'flowers' || p.categorySlug === 'flower';
       if (activeTab === 'concentrates') return p.categorySlug === 'concentrates';
       if (activeTab === 'edibles') return p.categorySlug === 'edibles';
       return true;
     })
     .slice(0, 8);
 
-  const featuredArticles = blogArticles.slice(0, 3);
+  const featuredArticles = blogArticles;
   const indexableCategories = categories.filter((c) => !NON_INDEXABLE_CATEGORY_SLUGS.has(c.slug));
 
   const toggleFaq = (idx: number) => {
@@ -107,7 +108,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
   };
 
   const openSampleCoa = () => {
-    const sample = validProducts.find((p) => p.categorySlug === 'flower') || validProducts[0];
+    const sample = validProducts.find((p) => p.categorySlug === 'flowers' || p.categorySlug === 'flower') || validProducts[0];
     setCoaProduct(sample);
   };
 
@@ -551,7 +552,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
 
               <div className="pt-2 flex flex-wrap gap-3">
                 <Link
-                  to="/blog/understanding-thca-flower-vs-delta-9-thc-complete-guide"
+                  to="/blog/what-is-thca-vs-delta-9-thc-legal-potency-guide"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-bold transition"
                 >
                   <span>Read Full Science Guide</span>
@@ -732,47 +733,44 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* YouTube Card */}
             <a
-              href="https://www.youtube.com/@GlobalMarijuanaDispensary"
+              href="https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-red-600/70 transition-all duration-200 hover:shadow-2xl hover:shadow-red-950/30"
+              className="group relative flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-red-600/70 transition-all duration-200 hover:shadow-2xl hover:shadow-red-950/30"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
-                      <Youtube size={26} />
+                    <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform flex-shrink-0">
+                      <Youtube size={24} />
                     </div>
-                    <div>
-                      <span className="text-[11px] font-bold text-red-400 uppercase tracking-wider block">
-                        Official YouTube Channel
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider block">
+                        Official YouTube
                       </span>
-                      <h3 className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-red-300 transition-colors">
-                        Global Herbs
+                      <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-red-300 transition-colors truncate">
+                        @GlobalHerbsinc
                       </h3>
                     </div>
                   </div>
-                  <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-red-400 group-hover:bg-red-950/50 transition-colors">
-                    <ExternalLink size={16} />
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-red-400 group-hover:bg-red-950/50 transition-colors flex-shrink-0">
+                    <ExternalLink size={14} />
                   </div>
                 </div>
 
-                <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                <p className="text-zinc-300 text-xs leading-relaxed">
                   In-depth dispensary video reviews, high-potency THCa flower trichome macro breakdowns, live resin extraction guides, and customer unboxing demonstrations.
                 </p>
 
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Strain Breakdowns
                   </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Terpene Guides
-                  </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
-                    Dispensary Tours
                   </span>
                 </div>
               </div>
@@ -780,7 +778,56 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-red-400 group-hover:text-red-300">
                 <span>Watch on YouTube</span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Subscribe &amp; Watch <ArrowRight size={13} />
+                  Subscribe <ArrowRight size={13} />
+                </span>
+              </div>
+            </a>
+
+            {/* Facebook Card */}
+            <a
+              href="https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-blue-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-blue-950/30"
+            >
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-[#1877F2] flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform flex-shrink-0">
+                      <FacebookIcon size={22} />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block">
+                        Official Facebook
+                      </span>
+                      <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-blue-300 transition-colors truncate">
+                        @GlobalHerbsinc
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-blue-400 group-hover:bg-blue-950/50 transition-colors flex-shrink-0">
+                    <ExternalLink size={14} />
+                  </div>
+                </div>
+
+                <p className="text-zinc-300 text-xs leading-relaxed">
+                  Follow our official Facebook page for daily harvest announcements, verified customer feedback, seasonal specials, and direct community updates.
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
+                    Daily Updates
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
+                    Community News
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-blue-400 group-hover:text-blue-300">
+                <span>Follow on Facebook</span>
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Visit Page <ArrowRight size={13} />
                 </span>
               </div>
             </a>
@@ -790,41 +837,38 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               href="https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-cyan-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-cyan-950/30"
+              className="group relative flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-cyan-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-cyan-950/30"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-black border border-cyan-500/60 flex items-center justify-center text-cyan-400 shadow-lg group-hover:scale-105 transition-transform">
-                      <Music2 size={24} />
+                    <div className="w-11 h-11 rounded-xl bg-black border border-cyan-500/60 flex items-center justify-center text-cyan-400 shadow-lg group-hover:scale-105 transition-transform flex-shrink-0">
+                      <Music2 size={22} />
                     </div>
-                    <div>
-                      <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider block">
-                        Official TikTok Channel
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">
+                        Official TikTok
                       </span>
-                      <h3 className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-cyan-300 transition-colors">
-                        Global Herbs
+                      <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-cyan-300 transition-colors truncate">
+                        @global.herbs6
                       </h3>
                     </div>
                   </div>
-                  <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:bg-cyan-950/50 transition-colors">
-                    <ExternalLink size={16} />
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:bg-cyan-950/50 transition-colors flex-shrink-0">
+                    <ExternalLink size={14} />
                   </div>
                 </div>
 
-                <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                <p className="text-zinc-300 text-xs leading-relaxed">
                   Fast daily clips showcasing fresh top-shelf flower harvests, solventless squish reactions, discreet vacuum-sealing protocols, and drop announcements.
                 </p>
 
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Fresh Harvest Drops
                   </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Stealth Packing
-                  </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
-                    Quick Potency Tips
                   </span>
                 </div>
               </div>
@@ -832,7 +876,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:text-cyan-300">
                 <span>Follow on TikTok</span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  View Latest Drops <ArrowRight size={13} />
+                  Latest Drops <ArrowRight size={13} />
                 </span>
               </div>
             </a>
@@ -842,41 +886,38 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               href="https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-orange-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-orange-950/30 md:col-span-2 lg:col-span-1"
+              className="group relative flex flex-col justify-between p-6 rounded-2xl bg-zinc-900/90 border border-zinc-800 hover:border-orange-500/70 transition-all duration-200 hover:shadow-2xl hover:shadow-orange-950/30"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#FF4500] flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
-                      <RedditIcon size={26} />
+                    <div className="w-11 h-11 rounded-xl bg-[#FF4500] flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform flex-shrink-0">
+                      <RedditIcon size={24} />
                     </div>
-                    <div>
-                      <span className="text-[11px] font-bold text-orange-400 uppercase tracking-wider block">
-                        Official Reddit Channel
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider block">
+                        Official Reddit
                       </span>
-                      <h3 className="font-heading font-bold text-lg sm:text-xl text-white group-hover:text-orange-300 transition-colors">
+                      <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-orange-300 transition-colors truncate">
                         u/globalherbsinc
                       </h3>
                     </div>
                   </div>
-                  <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-950/50 transition-colors">
-                    <ExternalLink size={16} />
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-orange-400 group-hover:bg-orange-950/50 transition-colors flex-shrink-0">
+                    <ExternalLink size={14} />
                   </div>
                 </div>
 
-                <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                <p className="text-zinc-300 text-xs leading-relaxed">
                   Join our official Reddit profile for community strain reviews, batch discussions, drop announcements, direct support, and community Q&amp;A.
                 </p>
 
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Direct Community
                   </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
+                  <span className="px-2 py-0.5 rounded-md bg-zinc-800/80 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                     Drop Q&amp;A
-                  </span>
-                  <span className="px-2.5 py-1 rounded-md bg-zinc-800/80 text-[11px] font-semibold text-zinc-300 border border-zinc-700/50">
-                    Reviews &amp; Feedback
                   </span>
                 </div>
               </div>
@@ -884,7 +925,7 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-bold text-orange-400 group-hover:text-orange-300">
                 <span>Connect on Reddit</span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  View Profile &amp; Posts <ArrowRight size={13} />
+                  View Profile <ArrowRight size={13} />
                 </span>
               </div>
             </a>
@@ -953,6 +994,70 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
               +1 (213) 280-1161
             </a>
             .
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================ */}
+      {/* 7.5. COMPLETE DISPENSARY CATALOG DIRECTORY BY CATEGORY */}
+      {/* ================================================================ */}
+      <section className="py-12 sm:py-16 bg-gray-50 border-t border-gray-200/80 text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-gray-200 pb-4">
+            <div>
+              <span className="text-xs font-bold text-emerald-800 uppercase tracking-widest block mb-1">
+                Complete Strain &amp; Product Index
+              </span>
+              <h2 className="font-heading font-extrabold text-xl sm:text-2xl text-gray-900 tracking-tight">
+                Browse All Lab-Tested Products by Category
+              </h2>
+            </div>
+            <Link
+              to="/products"
+              className="text-xs font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1"
+            >
+              <span>View Full Dispensary Menu</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {indexableCategories.map((cat) => {
+              const catProducts = validProducts.filter((p) => p.categorySlug === cat.slug);
+              return (
+                <div
+                  key={cat.slug}
+                  className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-2xs space-y-3"
+                >
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                    <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-gray-900">
+                      <Link to={`/category/${cat.slug}`} className="hover:text-emerald-800 transition">
+                        {cat.name} ({catProducts.length})
+                      </Link>
+                    </h3>
+                    <Link
+                      to={`/category/${cat.slug}`}
+                      className="text-[11px] font-bold text-emerald-800 hover:underline"
+                    >
+                      Explore {cat.name} &rarr;
+                    </Link>
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-gray-600 max-h-48 overflow-y-auto pr-1">
+                    {catProducts.map((p) => (
+                      <li key={p.id} className="truncate">
+                        <Link
+                          to={`/products/${p.slug || p.id}`}
+                          className="hover:text-emerald-800 hover:underline transition"
+                          title={`${p.name} — ${cat.name}`}
+                        >
+                          {p.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

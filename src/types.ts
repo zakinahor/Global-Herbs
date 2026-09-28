@@ -37,6 +37,16 @@ export interface Product {
   inStock?: boolean;
   sourceUrl?: string;
   subcategory?: string;
+  genetics?: string;
+  aroma?: string;
+  effects?: string;
+  terpenes?: string[];
+  labResults?: {
+    thca: string;
+    d9thc: string;
+    totalCannabinoids: string;
+    status: string;
+  };
 }
 
 export interface Category {

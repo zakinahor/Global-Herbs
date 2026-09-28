@@ -275,6 +275,162 @@ export const categorySeoMap: Record<string, CategorySeoGuide> = {
       },
     ],
   },
+  vapes: {
+    slug: 'vapes',
+    categoryName: 'Live Resin, Liquid Diamond & 510 Vape Cartridges',
+    targetKeywords: [
+      'THCa vape cartridges online',
+      'liquid diamond disposable vapes',
+      'live resin 510 thread carts',
+      'ceramic coil cannabis vapes',
+      'solvent-free terpene vape pens',
+    ],
+    metaTitle: 'Live Resin & Liquid Diamond Vape Cartridges | Global Herbs',
+    metaDescription: 'Shop ISO-17025 lab-tested 510 vape cartridges, liquid diamond all-in-one disposables, and live resin terpene pods with zero cutting agents at Global Herbs.',
+    h1Heading: 'Live Resin 510 Cartridges & Liquid Diamond Disposable Vapes',
+    wordCount: 380,
+    overview: `Browse Global Herbs’ collection of third-party lab-verified 510-thread vape cartridges and rechargeable all-in-one disposable vaporizers. Formulated exclusively from melted THCa liquid diamonds, fresh-frozen live resin, and solventless hash rosin, our vaporizer hardware utilizes medical-grade porous ceramic heating cores to deliver pure cultivar flavor without Vitamin E acetate, MCT, PG, or VG cutting agents.`,
+    geneticsAndTerpenes: {
+      title: 'Cannabis-Derived Terpenes (CDT) vs. Botanical Blends',
+      content: `Authentic strain effects in vaporizers depend on preserving volatile monoterpenes and sesquiterpenes during extraction. Our live resin and liquid diamond cartridges retain strain-specific Cannabis-Derived Terpenes (CDTs) from cultivars like Blue Dream, Papaya, Gelato 41, and Pineapple Express for true-to-flower entourage synergy.`,
+      keyTerpenes: ['Limonene (Citrus Uplift)', 'Beta-Myrcene (Body Calm)', 'Beta-Caryophyllene (Smooth Spice)', 'Alpha-Pinene (Crisp Focus)'],
+      potencyRange: '78% – 92% Total Cannabinoids | 5% – 9% Native Terpenes',
+    },
+    buyerGuide: {
+      title: 'Choosing Between 510 Cartridges, Pod Systems & Disposables',
+      paragraphs: [
+        `Standard 510-thread cartridges pair with any variable-voltage battery—we recommend 2.2V to 2.6V for live resin and rosin carts to prevent terpene scorching and preserve flavor through the final draw.`,
+        `All-in-one rechargeable disposables come pre-calibrated with USB-C charging and anti-clog airflow channels, making them ideal for travel and consistent vapor density right out of the box.`,
+      ],
+    },
+    complianceAndQuality: 'All vaporizer batches undergo full-panel ISO-17025 heavy metal leachate testing (lead, cadmium, arsenic, mercury) and residual solvent screening.',
+    faqs: [
+      {
+        question: 'What voltage should I use for live resin and liquid diamond 510 cartridges?',
+        answer: 'Set your battery between 2.2V and 2.6V. Lower voltage preserves delicate monoterpenes and prevents burnt coil flavors while still producing dense, smooth vapor.',
+      },
+      {
+        question: 'Do Global Herbs vape cartridges contain any PG, VG, or MCT filler oils?',
+        answer: 'Never. Every cartridge and disposable is formulated solely from cannabinoid extract (liquid diamonds, live resin, or rosin) and natural terpenes, verified by third-party lab COAs.',
+      },
+    ],
+  },
+  prerolls: {
+    slug: 'prerolls',
+    categoryName: 'Whole-Flower & Diamond-Infused Pre-Roll Joints',
+    targetKeywords: [
+      'THCa pre-rolls online',
+      'diamond infused pre-roll joints',
+      'whole flower cannabis cones',
+      'live rosin infused blunts',
+      'artisan pre-rolled joints',
+    ],
+    metaTitle: 'Whole-Flower & Infused Pre-Roll Joints Online | Global Herbs',
+    metaDescription: 'Explore whole-flower THCa pre-rolls, live resin and diamond-infused joints, and multi-pack pre-roll tins from 710 Labs, Cannabiotix, and West Coast Cure.',
+    h1Heading: 'Whole-Flower Pre-Roll Joints & Diamond-Infused Cones',
+    wordCount: 370,
+    overview: `Experience effortless convenience without compromising flower quality. Global Herbs’ pre-roll collection is crafted exclusively from freshly milled whole indoor and greenhouse buds—never floor trim, fan leaves, or stem shake. Choose from single 1g artisan cones, 6-pack and 14-pack commuter tins, or high-potency live resin and THCa diamond-infused blunts.`,
+    geneticsAndTerpenes: {
+      title: 'Even Particle Milling & Slow-Burning Cone Architecture',
+      content: `A superior pre-roll depends on gentle low-RPM milling that keeps bulbous capitate-stalked trichomes intact rather than pulverizing flower into dust. Packed into unbleached organic hemp or ultra-thin rice paper cones with W-tip crutches, each joint draws smoothly and burns with clean white ash.`,
+      keyTerpenes: ['Beta-Caryophyllene (Diesel & Cookie Cuts)', 'Limonene (Citrus Sativas)', 'Myrcene (Heavy OG Indicas)', 'Linalool (Floral Hybrids)'],
+      potencyRange: '24% – 31% (Whole Flower) | 38% – 48% (Diamond & Rosin Infused)',
+    },
+    buyerGuide: {
+      title: 'Standard Whole-Flower Cones vs. Infused Pre-Rolls',
+      paragraphs: [
+        `For daytime sessions or pure cultivar tasting—such as 710 Labs Randy Watzon #13, Cannabiotix Casino Kush, or THC Design Lemon Meringue—select non-infused whole-flower pre-rolls.`,
+        `For higher tolerance or evening sessions, diamond- and live-resin-infused pre-rolls blend top-shelf flower with melted concentrates for slower combustion and amplified cannabinoid density.`,
+      ],
+    },
+    complianceAndQuality: 'Packaged in airtight pop-top glass or polymer tubes with humidity seals and full batch COA verification.',
+    faqs: [
+      {
+        question: 'Are Global Herbs pre-rolls made with whole flower or trim/shake?',
+        answer: 'Every pre-roll we carry is packed strictly with milled whole flower buds to ensure smooth, non-harsh smoke, rich terpene flavor, and consistent potency.',
+      },
+      {
+        question: 'How should I store multi-pack pre-rolls to keep them fresh?',
+        answer: 'Keep pre-rolls sealed in their original airtight tube or tin away from heat and direct sunlight; multi-packs include moisture-lock seals to maintain 60–62% relative humidity.',
+      },
+    ],
+  },
+  wholesale: {
+    slug: 'wholesale',
+    categoryName: 'Bulk Flower Pounds, Quarter Pounds & Wholesale Concentrates',
+    targetKeywords: [
+      'bulk THCa flower pounds',
+      'wholesale cannabis concentrates',
+      'quarter pound indoor flower',
+      'half pound living soil flower',
+      'bulk hash and shatter online',
+    ],
+    metaTitle: 'Wholesale & Bulk THCa Flower Pounds & Concentrates | Global Herbs',
+    metaDescription: 'Source direct wholesale THCa indoor flower (quarter pound, half pound, full pound), bulk hash, shatter, and multi-unit edibles with batch COAs at Global Herbs.',
+    h1Heading: 'Wholesale Bulk Flower Lots, Concentrates & Multi-Unit Packs',
+    wordCount: 365,
+    overview: `Global Herbs’ Wholesale & Bulk division provides direct-from-cultivator volume allocations for connoisseurs, buyers, and bulk collectors. Access quarter-pound (4 oz), half-pound (8 oz), and full-pound (16 oz) indoor living-soil flower lots alongside bulk Lebanese hash, Pink Kush shatter, and multi-unit edible cases at institutional tier pricing.`,
+    geneticsAndTerpenes: {
+      title: 'Curing Stability & Bulk Post-Harvest Preservation',
+      content: `Bulk botanical lots require strict moisture activity (0.58–0.62 aw) and oxygen-barrier protection to preserve trichome heads during storage. Every wholesale allocation is slow-cured, hand-sorted for AAAA/AAA bud structure, and sealed in heavy-duty nitrogen-flushed mylar with two-way humidity regulation.`,
+      keyTerpenes: ['Beta-Caryophyllene', 'Limonene', 'Beta-Myrcene', 'Humulene'],
+      potencyRange: '25% – 31% THCa (Bulk Flower) | 45% – 82% (Bulk Hash & Shatter)',
+    },
+    buyerGuide: {
+      title: 'How Wholesale Weight Tiers & Fulfillment Work',
+      paragraphs: [
+        `Select individual flower strains or concentrate listings to configure 28g (1 oz), 113g (1/4 lb), 226g (1/2 lb), or 453g (1 lb) tiers directly in your cart, or browse dedicated bulk reserve listings below.`,
+        `All wholesale orders include printed ISO-17025 Certificates of Analysis, Farm Bill compliance documentation, and priority tracked fulfillment in double-boxed discreet packaging.`,
+      ],
+    },
+    complianceAndQuality: 'Direct cultivator chain-of-custody with batch-matched ISO/IEC 17025 lab COAs and dual-layer vacuum odor protection.',
+    faqs: [
+      {
+        question: 'Do bulk quarter-pound and pound flower orders come with lab COAs?',
+        answer: 'Yes. Every wholesale and bulk flower or concentrate shipment includes printed batch-matched ISO-17025 Certificates of Analysis and federal hemp compliance documentation.',
+      },
+      {
+        question: 'Can I order bulk weight tiers on regular indoor flower strains?',
+        answer: 'Yes. In addition to dedicated wholesale lots, all primary indoor and greenhouse flower listings feature selectable 1 oz, 1/4 lb, 1/2 lb, and 1 lb weight variants with automatic volume savings.',
+      },
+    ],
+  },
+  accessories: {
+    slug: 'accessories',
+    categoryName: 'Herb Grinders, Rolling Papers, Trays & Dispensary Accessories',
+    targetKeywords: [
+      'herb grinders online',
+      'rolling papers and trays',
+      '79mm rolling machine',
+      '3 chamber aluminum herb grinder',
+      'dispensary rolling accessories',
+    ],
+    metaTitle: 'Herb Grinders, Rolling Papers & Trays Online | Global Herbs',
+    metaDescription: 'Shop precision 3-chamber aluminum herb grinders, superfine rolling papers, 79mm rolling machines, and durable metal rolling trays at Global Herbs.',
+    h1Heading: 'Precision Herb Grinders, Rolling Papers & Dispensary Accessories',
+    wordCount: 310,
+    overview: `Complete your preparation setup with Global Herbs’ curated hardware and rolling accessories. From CNC-machined 3-chamber aluminum grinders with micron kief catchers to superfine slow-burning rolling papers, 79mm rolling machines, and heavy-gauge metal trays, every tool is built for clean, consistent botanical preparation.`,
+    geneticsAndTerpenes: {
+      title: 'Why Grind Consistency Matters for Terpene Flavor',
+      content: `Tearing flower by hand compresses resin glands onto fingertips, while over-grinding turns flower into powder that restricts airflow. A sharp diamond-tooth 3-chamber grinder fluffs cured buds to an even medium-coarse consistency while collecting fallen trichome kief in the bottom pollen chamber.`,
+      keyTerpenes: ['Preserves Trichome Heads', 'Even Airflow & Combustion', 'Micron Kief Collection'],
+      potencyRange: 'Hardware & Preparation Tools',
+    },
+    buyerGuide: {
+      title: 'Essential Preparation Tools for Flower Connoisseurs',
+      paragraphs: [
+        `Pair the Green Society 3-Chamber Aluminum Herb Grinder with a raised-edge metal rolling tray to prevent spill loss during preparation.`,
+        `For uniform hand-rolled joints every time, combine a 79mm rolling machine with slow-burning superfine papers.`,
+      ],
+    },
+    complianceAndQuality: 'Durable anodized metals, food-grade plant-fiber papers, and magnetic lid closures.',
+    faqs: [
+      {
+        question: 'How do I clean a 3-chamber aluminum herb grinder?',
+        answer: 'Use a small stiff brush to sweep dry kief from the screen into the bottom chamber, then soak the metal grinding teeth in isopropyl alcohol for 15 minutes and rinse with warm water.',
+      },
+    ],
+  },
 };
 
 export function getCategorySeoData(slug: string | null): CategorySeoGuide | null {
@@ -284,7 +440,10 @@ export function getCategorySeoData(slug: string | null): CategorySeoGuide | null
   if (normalized.includes('flower')) return categorySeoMap['flowers'];
   if (normalized.includes('concentrate') || normalized.includes('rosin')) return categorySeoMap['concentrates'];
   if (normalized.includes('edible') || normalized.includes('gumm')) return categorySeoMap['edibles'];
-  if (normalized.includes('vape')) return categorySeoMap['disposable-vapes'];
+  if (normalized.includes('vape')) return categorySeoMap['vapes'] || categorySeoMap['disposable-vapes'];
+  if (normalized.includes('preroll') || normalized.includes('pre-roll')) return categorySeoMap['prerolls'];
+  if (normalized.includes('wholesale') || normalized.includes('bulk')) return categorySeoMap['wholesale'];
+  if (normalized.includes('accessor')) return categorySeoMap['accessories'];
   if (normalized.includes('shroom') || normalized.includes('mushroom')) return categorySeoMap['magic-mushroom'];
   return null;
 }

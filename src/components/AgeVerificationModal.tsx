@@ -8,14 +8,25 @@ export default function AgeVerificationModal() {
   const [underAgeAttempt, setUnderAgeAttempt] = useState(false);
 
   useEffect(() => {
-    // Check if user has already verified their age in localStorage or sessionStorage
-    const localVerified = localStorage.getItem('globalherbs_age_verified');
-    const sessionVerified = sessionStorage.getItem('globalherbs_age_verified');
+    try {
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|headless|inspect|bingbot|duckduckbot|applebot|slurp|facebookexternalhit|twitterbot|linkedinbot/i.test(ua);
+      if (isBot) {
+        setIsOpen(false);
+        return;
+      }
 
-    if (localVerified === 'true' || sessionVerified === 'true') {
+      // Check if user has already verified their age in localStorage or sessionStorage
+      const localVerified = localStorage.getItem('globalherbs_age_verified');
+      const sessionVerified = sessionStorage.getItem('globalherbs_age_verified');
+
+      if (localVerified === 'true' || sessionVerified === 'true') {
+        setIsOpen(false);
+      } else {
+        setIsOpen(true);
+      }
+    } catch {
       setIsOpen(false);
-    } else {
-      setIsOpen(true);
     }
   }, []);
 
