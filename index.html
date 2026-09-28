@@ -3,38 +3,60 @@
   <head>
     <script>
       (function() {
-        // Intercept console.error to prevent third-party widget (Tawk.to) telemetry/status logs from registering as fatal application errors
+        // Intercept console.error and cross-origin "Script error." events from third-party widgets/scripts
         var origConsoleError = console.error;
         console.error = function() {
           var args = Array.prototype.slice.call(arguments);
           for (var i = 0; i < args.length; i++) {
             var item = args[i];
-            if (typeof item === 'string' && (item.indexOf('[Tawk') !== -1 || item.indexOf('tawk.to') !== -1)) {
-              if (typeof console.debug === 'function') {
-                console.debug.apply(console, args);
-              }
+            if (typeof item === 'string' && (item.indexOf('[Tawk') !== -1 || item.indexOf('tawk.to') !== -1 || item.indexOf('Script error') !== -1)) {
               return;
             }
-            if (item && item.message && typeof item.message === 'string' && (item.message.indexOf('[Tawk') !== -1 || item.message.indexOf('tawk.to') !== -1)) {
-              if (typeof console.debug === 'function') {
-                console.debug.apply(console, args);
-              }
+            if (item && item.message && typeof item.message === 'string' && (item.message.indexOf('[Tawk') !== -1 || item.message.indexOf('tawk.to') !== -1 || item.message.indexOf('Script error') !== -1)) {
               return;
             }
           }
           return origConsoleError.apply(console, args);
         };
         window.addEventListener('error', function(e) {
-          if (e && ((e.message && (e.message.indexOf('[Tawk') !== -1 || e.message.indexOf('tawk.to') !== -1)) || (e.filename && e.filename.indexOf('tawk.to') !== -1))) {
+          if (!e) return;
+          var msg = e.message || '';
+          var file = e.filename || '';
+          var isCrossOriginScriptError =
+            msg === 'Script error.' ||
+            msg.indexOf('Script error') !== -1 ||
+            (!file && e.lineno === 0 && e.colno === 0) ||
+            msg.indexOf('[Tawk') !== -1 ||
+            msg.indexOf('tawk.to') !== -1 ||
+            file.indexOf('tawk.to') !== -1 ||
+            file.indexOf('translate.google') !== -1 ||
+            file.indexOf('googletagmanager') !== -1;
+          if (isCrossOriginScriptError) {
             if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+            if (typeof e.stopPropagation === 'function') e.stopPropagation();
             if (typeof e.preventDefault === 'function') e.preventDefault();
             return true;
           }
         }, true);
+        window.onerror = function(message, source, lineno, colno) {
+          var msg = typeof message === 'string' ? message : '';
+          var src = typeof source === 'string' ? source : '';
+          if (
+            msg === 'Script error.' ||
+            msg.indexOf('Script error') !== -1 ||
+            (!src && lineno === 0 && colno === 0) ||
+            msg.indexOf('[Tawk') !== -1 ||
+            src.indexOf('tawk.to') !== -1 ||
+            src.indexOf('translate.google') !== -1
+          ) {
+            return true;
+          }
+          return false;
+        };
         window.addEventListener('unhandledrejection', function(e) {
           var reason = e && e.reason;
           var msg = reason ? (reason.message || String(reason)) : '';
-          if (msg && (msg.indexOf('[Tawk') !== -1 || msg.indexOf('tawk.to') !== -1)) {
+          if (msg && (msg.indexOf('[Tawk') !== -1 || msg.indexOf('tawk.to') !== -1 || msg.indexOf('Script error') !== -1)) {
             if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
             if (typeof e.preventDefault === 'function') e.preventDefault();
           }
@@ -122,44 +144,8 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    window.$_Tawk = window.$_Tawk || {};
-    if (typeof window.$_Tawk.i18next !== 'function') {
-      window.$_Tawk.i18next = function(key) { return typeof key === 'string' ? key : ''; };
-    }
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    try {
-      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-      s1.async=true;
-      s1.src='https://embed.tawk.to/6a5f468c096ab21d402a905c/1ju22n6db';
-      s1.charset='UTF-8';
-      s1.setAttribute('crossorigin','anonymous');
-      s1.onerror = function() { console.debug('Tawk.to widget offline or unavailable in preview.'); };
-      s0.parentNode.insertBefore(s1,s0);
-    } catch(err) {
-      console.debug('Tawk.to script error:', err);
-    }
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-
-    <!-- Google Website Translator container & script -->
+    <!-- Google Website Translator container (loaded on demand when non-English language is selected) -->
     <div id="google_translate_element" style="display:none"></div>
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-          new window.google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,es,fr,de,it,nl,pt,ja',
-            autoDisplay: false,
-            layout: window.google.translate.TranslateElement.InlineLayout?.SIMPLE || 0
-          }, 'google_translate_element');
-        }
-      }
-    </script>
-    <script id="google-translate-script" type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
   </body>
 </html>
 

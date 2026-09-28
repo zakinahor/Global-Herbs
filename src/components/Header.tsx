@@ -118,6 +118,9 @@ export default function Header({
             <Link to="/blog" className="text-emerald-800 font-bold hover:text-emerald-900 cursor-pointer flex items-center gap-1 text-[11px]">
               <FileText size={12} /> {t('nav.blog', 'Knowledge Hub')}
             </Link>
+            <Link to="/forms" className="text-emerald-800 font-bold hover:text-emerald-900 cursor-pointer flex items-center gap-1 text-[11px]">
+              <span>Google Forms</span>
+            </Link>
             <Link to="/about" className="hover:text-brand-blue cursor-pointer text-[11px]">{t('nav.about', 'About Us')}</Link>
             <Link to="/shipping" className="hover:text-brand-blue cursor-pointer text-[11px]">{t('nav.shipping', 'Shipping')}</Link>
             <Link to="/contact" className="hover:text-brand-blue cursor-pointer text-[11px]">{t('nav.contact', 'Contact')}</Link>
@@ -468,6 +471,14 @@ export default function Header({
               >
                 <FileText size={13} />
                 <span>{t('nav.blog', 'Knowledge Hub')}</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/forms"
+                className="px-4 py-4 hover:bg-emerald-900 transition cursor-pointer flex items-center gap-1 font-bold text-emerald-200"
+              >
+                <span>Google Forms</span>
               </Link>
             </li>
           </ul>

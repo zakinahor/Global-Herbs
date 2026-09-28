@@ -434,9 +434,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.lang = currentLanguage.code;
     document.documentElement.dir = currentLanguage.dir || 'ltr';
 
-    // Initialize full website translation script
-    initGoogleTranslateScript();
+    // Only load external Google Translate script when a non-English language is active
     if (currentLanguage.code !== 'en') {
+      initGoogleTranslateScript();
       triggerFullWebsiteTranslation(currentLanguage.code);
     }
   }, [currentLanguage]);

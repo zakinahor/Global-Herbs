@@ -16,12 +16,22 @@ import {
   parseShippingAddress,
   OrderItem,
 } from './src/server/email/emailService';
-import { sendOrderNotification, sendCustomerInquiryNotification } from './lib/email/orderNotification';
+import {
+  sendOrderNotification,
+  sendCustomerOrderConfirmation,
+  sendCustomerInquiryNotification,
+  markOrderProcessed,
+  NotificationStatus,
+} from './lib/email/orderNotification';
 
-// Simple database in-memory logs for demonstration
+// Persistent storage for orders, form submissions, and newsletter subscribers
 const contactSubmissions: any[] = [];
 const newsletterEmails: string[] = ['zakinahor692@gmail.com', 'globalherbsinc@gmail.com'];
 const ordersStore = new Map<string, any>();
+const recentFormHashes = new Map<string, { timestamp: number; result: any }>();
+
+const ORDERS_FILE_PATH = path.join(process.cwd(), 'data/orders.json');
+const SUBMISSIONS_FILE_PATH = path.join(process.cwd(), 'data/submissions.json');
 
 // User Accounts Storage Interface & Persistence
 export interface UserRecord {
@@ -121,8 +131,74 @@ function loadUsers() {
   }
 }
 
-// Initialize user store immediately on module load
+function persistOrders() {
+  try {
+    ensureDataDir();
+    const array = Array.from(ordersStore.values());
+    fs.writeFileSync(ORDERS_FILE_PATH, JSON.stringify(array, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('[Orders Persistence Error]', err);
+  }
+}
+
+function loadOrders() {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(ORDERS_FILE_PATH)) {
+      const raw = fs.readFileSync(ORDERS_FILE_PATH, 'utf-8');
+      const parsed: any[] = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((o) => {
+          if (o && o.orderId) {
+            const cleanId = String(o.orderId).trim().toUpperCase();
+            ordersStore.set(cleanId, o);
+            if (o.notificationStatus === 'sent') {
+              markOrderProcessed(
+                cleanId,
+                true,
+                o.notificationMessageId || `restored-${cleanId}`,
+                o.notificationSentAt || o.createdAt
+              );
+            }
+          }
+        });
+        console.log(`[Order Storage] Loaded ${ordersStore.size} persisted orders from ${ORDERS_FILE_PATH}`);
+      }
+    }
+  } catch (err) {
+    console.error('[Order Load Error]', err);
+  }
+}
+
+function persistSubmissions() {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(SUBMISSIONS_FILE_PATH, JSON.stringify(contactSubmissions, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('[Submissions Persistence Error]', err);
+  }
+}
+
+function loadSubmissions() {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(SUBMISSIONS_FILE_PATH)) {
+      const raw = fs.readFileSync(SUBMISSIONS_FILE_PATH, 'utf-8');
+      const parsed: any[] = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        contactSubmissions.splice(0, contactSubmissions.length, ...parsed);
+        console.log(`[Submissions Storage] Loaded ${contactSubmissions.length} form submissions from ${SUBMISSIONS_FILE_PATH}`);
+      }
+    }
+  } catch (err) {
+    console.error('[Submissions Load Error]', err);
+  }
+}
+
+// Initialize stores immediately on module load
 loadUsers();
+loadOrders();
+loadSubmissions();
 
 // Helper to determine active server URL for static logo image
 function getAppBaseUrl(): string {
@@ -375,8 +451,111 @@ async function startServer() {
         customerEmail: order.customerEmail,
         shippingAddress: order.shippingAddress,
         items: order.items,
+        subtotal: order.subtotal,
+        discount: order.discount,
+        shippingCost: order.shippingCost,
         orderTotal: order.orderTotal,
+        currency: order.currency || 'USD',
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus,
+        notificationStatus: order.notificationStatus || 'pending',
+        notificationMessageId: order.notificationMessageId || null,
+        notificationSentAt: order.notificationSentAt || null,
+        notificationError: order.notificationError || null,
       },
+    });
+  });
+
+  // API Route: Retry Failed Order Notification
+  app.post('/api/orders/:orderId/retry-notification', async (req, res) => {
+    const { orderId } = req.params;
+    if (!orderId) {
+      return res.status(400).json({ success: false, error: 'Order ID is required.' });
+    }
+
+    const cleanOrderId = orderId.trim().toUpperCase();
+    const order = ordersStore.get(cleanOrderId);
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    }
+
+    // Prevent accidental duplicate notifications if order notification was already sent
+    if (order.notificationStatus === 'sent' && !req.body?.force) {
+      return res.status(200).json({
+        success: true,
+        duplicateSuppressed: true,
+        orderId: order.orderId,
+        notificationStatus: order.notificationStatus,
+        notificationMessageId: order.notificationMessageId,
+        notificationSentAt: order.notificationSentAt,
+        notificationError: null,
+        notificationAttempts: order.notificationAttempts || 1,
+        message: `Order #${order.orderId} notification was already delivered. Duplicate retry suppressed.`,
+      });
+    }
+
+    // Transition FAILED -> PENDING before retry dispatch
+    order.notificationStatus = 'pending';
+    order.updatedAt = new Date().toISOString();
+    ordersStore.set(cleanOrderId, order);
+    persistOrders();
+
+    const parsedShipping = parseShippingAddress(order.shippingDetails || order.shippingAddress);
+    const notifResult = await sendOrderNotification({
+      orderNumber: order.orderId,
+      orderDate: order.date,
+      status: order.status,
+      currency: order.currency || 'USD',
+      customer: {
+        name: order.customerName,
+        email: order.customerEmail,
+        phone: order.customerPhone || '',
+        company: order.companyName || undefined,
+      },
+      items: (order.items || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        variant: item.variant || item.weight || item.size || '',
+        quantity: item.quantity,
+        price: Number(item.price || 0).toFixed(2),
+        subtotal: Number(item.total ?? item.price * item.quantity).toFixed(2),
+      })),
+      totals: {
+        subtotal: Number(order.subtotal || 0).toFixed(2),
+        discount: Number(order.discount || 0).toFixed(2),
+        shipping: Number(order.shippingCost || 0).toFixed(2),
+        tax: Number(order.tax || 0).toFixed(2),
+        total: Number(order.orderTotal || 0).toFixed(2),
+        currency: order.currency || 'USD',
+      },
+      shipping: parsedShipping,
+      billingAddress: order.billingAddress,
+      paymentMethod: order.paymentMethod || 'Dispensary Direct',
+      paymentStatus: order.paymentStatus || 'Awaiting Payment Verification',
+      transactionId: order.transactionId || order.trackingNumber,
+      couponCode: order.couponCode,
+      notes: order.orderNotes || '',
+      forceRetry: true,
+    });
+
+    order.notificationStatus = notifResult.notificationStatus;
+    order.notificationMessageId = notifResult.notificationMessageId;
+    order.notificationSentAt = notifResult.notificationSentAt;
+    order.notificationError = notifResult.notificationError;
+    order.notificationAttempts = (order.notificationAttempts || 0) + notifResult.notificationAttempts;
+    order.updatedAt = new Date().toISOString();
+    ordersStore.set(cleanOrderId, order);
+    persistOrders();
+
+    return res.status(200).json({
+      success: notifResult.success,
+      orderId: order.orderId,
+      notificationStatus: order.notificationStatus,
+      notificationMessageId: order.notificationMessageId,
+      notificationSentAt: order.notificationSentAt,
+      notificationError: order.notificationError,
+      notificationAttempts: order.notificationAttempts,
+      notification: notifResult,
     });
   });
 
@@ -391,51 +570,85 @@ async function startServer() {
     return res.status(404).send('Logo image not found');
   });
 
-  // API Route: Process Order, Account & Support Email Submissions (Admin Notification)
+  // API Route: Process Order, Account, Sample & Support Email Submissions (Admin Notification)
   app.post('/api/send-email', async (req, res) => {
-    const { name, email, subject, message, type } = req.body;
+    const { name, email, phone, subject, message, type, productReference, orderReference } = req.body || {};
 
-    if (!email) {
-      return res.status(400).json({ error: 'Client email is required.' });
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ success: false, error: 'A valid client email address is required.' });
     }
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = (name || 'Valued Client').trim();
+    const cleanPhone = (phone || '').trim();
     const cleanSubject = (subject || 'Inquiry - Global Herbs Inc').trim();
     const cleanMessage = (message || '').trim();
-    const inquiryType = type === 'welcome' || cleanSubject.toLowerCase().includes('account')
-      ? 'Dispensary Account Registration Request'
-      : 'Customer Support / Product Inquiry';
+    const inquiryType =
+      type === 'welcome' || cleanSubject.toLowerCase().includes('account')
+        ? 'Dispensary Account Registration Request'
+        : type === 'sample_request' || cleanSubject.toLowerCase().includes('sample')
+        ? 'Product Sample Pack Request'
+        : 'Customer Support / Product Inquiry';
 
-    const submission = {
-      id: Math.random().toString(36).substring(2, 9),
+    // Deduplicate rapid double-clicks within 60 seconds
+    const dedupKey = `send-email:${cleanEmail}:${cleanSubject}:${cleanMessage.slice(0, 80)}`;
+    const recent = recentFormHashes.get(dedupKey);
+    if (recent && Date.now() - recent.timestamp < 60000) {
+      return res.status(200).json({
+        ...recent.result,
+        duplicateSuppressed: true,
+      });
+    }
+
+    const submissionId = `SUB-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const submission: any = {
+      id: submissionId,
       name: cleanName,
       email: cleanEmail,
-      subject: cleanSubject,
-      message: cleanMessage,
-      type: type || 'standard',
-      createdAt: new Date().toISOString(),
-    };
-    contactSubmissions.push(submission);
-
-    // 1. Dispatch real-time email notification to admin with customer Reply-To
-    const notificationResult = await sendCustomerInquiryNotification({
-      name: cleanName,
-      email: cleanEmail,
+      phone: cleanPhone,
       subject: cleanSubject,
       message: cleanMessage,
       type: inquiryType,
-    }).catch((err) => {
-      console.error('[Send-Email Notification Error]', err);
-      return { success: false, error: err?.message };
+      productReference: productReference || undefined,
+      orderReference: orderReference || undefined,
+      notificationStatus: 'pending' as NotificationStatus,
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: null,
+      createdAt: new Date().toISOString(),
+    };
+    contactSubmissions.push(submission);
+    persistSubmissions();
+
+    // Dispatch real-time email notification to admin with customer Reply-To
+    const notificationResult = await sendCustomerInquiryNotification({
+      id: submissionId,
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      subject: cleanSubject,
+      message: cleanMessage,
+      type: inquiryType,
+      productReference,
+      orderReference,
     });
 
-    return res.status(200).json({
+    submission.notificationStatus = notificationResult.notificationStatus;
+    submission.notificationMessageId = notificationResult.notificationMessageId;
+    submission.notificationSentAt = notificationResult.notificationSentAt;
+    submission.notificationError = notificationResult.notificationError;
+    submission.notificationAttempts = notificationResult.notificationAttempts;
+    persistSubmissions();
+
+    const responsePayload = {
       success: true,
       message: `Your request has been received and dispatched to our admin desk! We will follow up directly at ${cleanEmail}.`,
       submission,
       notification: notificationResult,
-    });
+    };
+    recentFormHashes.set(dedupKey, { timestamp: Date.now(), result: responsePayload });
+
+    return res.status(200).json(responsePayload);
   });
 
   // ==========================================
@@ -503,12 +716,16 @@ async function startServer() {
 
       console.log(`[Member Auth] Registered new member: ${cleanName} (${cleanEmail}) [${newUser.accountType}]`);
 
-      // Dispatch admin notification to globalherbsinc@gmail.com with customer Reply-To
-      sendCustomerInquiryNotification({
+      // Await admin notification so serverless/container execution never drops it
+      const notifResult = await sendCustomerInquiryNotification({
+        id: `REG-${userId}`,
         name: cleanName,
         email: cleanEmail,
+        phone: newUser.phone,
         subject: `New Member Registration: ${cleanName} (${newUser.accountType})`,
-        message: `A new member account has been registered on Global Herbs Inc:\n\n` +
+        message:
+          `A new member account has been registered on Global Herbs Inc:\n\n` +
+          `Member ID: ${userId}\n` +
           `Name: ${cleanName}\n` +
           `Email: ${cleanEmail}\n` +
           `Account Tier: ${newUser.accountType}\n` +
@@ -517,13 +734,14 @@ async function startServer() {
           `Notes / Preferences: ${newUser.notes || 'None'}\n` +
           `Registered At: ${newUser.createdAt}`,
         type: 'Dispensary Member Registration',
-      }).catch((err) => console.error('[Member Registration Notification Error]', err));
+      });
 
       return res.status(201).json({
         success: true,
         message: `Welcome to Global Herbs, ${cleanName}! Your member account is now active.`,
         user: sanitizeUser(newUser),
         token: `gh_tok_${newUser.id}_${Date.now()}`,
+        notificationStatus: notifResult.notificationStatus,
       });
     } catch (err: any) {
       console.error('[Register Endpoint Error]', err);
@@ -644,25 +862,27 @@ async function startServer() {
   app.post('/api/auth/forgot-password', async (req, res) => {
     const { email } = req.body || {};
 
-    if (!email) {
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
       return res.status(400).json({ success: false, error: 'Please enter your registered email address.' });
     }
 
     const cleanEmail = email.trim().toLowerCase();
     const user = usersStore.get(cleanEmail);
 
-    // Notify dispensary admin desk to assist or reset
-    sendCustomerInquiryNotification({
+    // Notify dispensary admin desk to assist or reset (awaited for guaranteed delivery)
+    const notifResult = await sendCustomerInquiryNotification({
       name: user ? user.name : 'Registered Client',
       email: cleanEmail,
+      phone: user?.phone,
       subject: `Password Reset Request for ${cleanEmail}`,
       message: `A client requested password assistance for their account:\n\nEmail: ${cleanEmail}\nMember Name: ${user ? user.name : 'Unknown'}\nTimestamp: ${new Date().toISOString()}\n\nPlease respond to client with password assistance.`,
       type: 'Password Reset Request',
-    }).catch((err) => console.error('[Password Reset Notification Error]', err));
+    });
 
     return res.status(200).json({
       success: true,
       message: `Password reset instructions have been forwarded to ${cleanEmail} and our dispensary support desk. Please check your inbox or reply to the email.`,
+      notification: notifResult,
     });
   });
 
@@ -691,7 +911,10 @@ async function startServer() {
           discount: order.discount,
           shippingCost: order.shippingCost,
           orderTotal: order.orderTotal,
+          currency: order.currency || 'USD',
           paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          notificationStatus: order.notificationStatus || 'sent',
           createdAt: order.createdAt,
         });
       }
@@ -705,61 +928,142 @@ async function startServer() {
     });
   });
 
-  // API Route: Checkout Function (Order Capture & Transactional Email Admin Notification)
+  // API Route: Checkout Function (Order Capture, Persistence & Transactional Email Notifications)
   app.post('/api/checkout', async (req, res) => {
     try {
       const {
         orderId: clientOrderId,
+        idempotencyKey,
         customerName,
         customerEmail,
         customerPhone,
         companyName,
-        shippingAddress,
-        shippingDetails,
-        billingAddress,
-        orderNotes,
-        cartItems,
+        shippingAddress: rawShippingAddress,
+        shipping,
+        shippingDetails: rawShippingDetails,
+        billingAddress: rawBillingAddress,
+        billing,
+        orderNotes: rawOrderNotes,
+        notes,
+        cartItems: rawCartItems,
+        items,
         subtotal,
         discount,
         couponCode,
-        shippingCost,
-        orderTotal,
+        discountCode,
+        shippingCost: rawShippingCost,
+        shippingFee,
+        tax,
+        orderTotal: rawOrderTotal,
+        total,
+        currency,
         paymentMethod,
+        paymentStatus,
+        transactionId,
       } = req.body || {};
 
-      // 1. Validate checkout data
-      if (!customerName || !customerEmail || !shippingAddress || !cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
-        return res.status(400).json({ success: false, error: 'Missing required order fields (name, email, shipping address, or items).' });
+      const cartItems = Array.isArray(rawCartItems) ? rawCartItems : Array.isArray(items) ? items : [];
+      const shippingDetails = rawShippingDetails || (typeof shipping === 'object' && shipping !== null ? shipping : undefined);
+      const shippingAddress =
+        rawShippingAddress ||
+        (typeof shipping === 'string'
+          ? shipping
+          : shipping && typeof shipping === 'object'
+          ? [shipping.address, shipping.city, shipping.state, shipping.zip, shipping.country].filter(Boolean).join(', ')
+          : '');
+      const billingAddress =
+        rawBillingAddress ||
+        (typeof billing === 'string'
+          ? billing
+          : billing && typeof billing === 'object'
+          ? [billing.address, billing.city, billing.state, billing.zip, billing.country].filter(Boolean).join(', ')
+          : shippingAddress);
+      const orderNotes = rawOrderNotes ?? notes ?? '';
+      const shippingCost = rawShippingCost ?? shippingFee;
+      const orderTotal = rawOrderTotal ?? total;
+      const resolvedCouponCode = couponCode || discountCode;
+
+      // 1. Validate required checkout data
+      if (
+        !customerName ||
+        typeof customerName !== 'string' ||
+        !customerName.trim() ||
+        !customerEmail ||
+        typeof customerEmail !== 'string' ||
+        !shippingAddress ||
+        !cartItems ||
+        !Array.isArray(cartItems) ||
+        cartItems.length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required order fields (name, email, shipping address, or items).',
+        });
       }
 
+      const cleanEmail = customerEmail.trim().toLowerCase();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(customerEmail)) {
-        return res.status(400).json({ success: false, error: 'Invalid customer email address format.' });
+      if (!emailRegex.test(cleanEmail)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid customer email address format.',
+        });
       }
 
-      // 2. Resolve order ID
-      const orderId = (typeof clientOrderId === 'string' && clientOrderId.trim())
-        ? clientOrderId.trim()
-        : `GH-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      // 2. Resolve deterministic/unique Order ID
+      const rawOrderId =
+        (typeof clientOrderId === 'string' && clientOrderId.trim()) ||
+        (typeof idempotencyKey === 'string' && idempotencyKey.trim()) ||
+        `GH-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const orderId = rawOrderId.trim().toUpperCase();
 
-      const orderDate = new Date().toLocaleString('en-US', {
-        timeZone: 'America/Los_Angeles',
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
+      // 3. Idempotency Check: If this Order ID already exists in our persistent store
+      const existingOrder = ordersStore.get(orderId);
+      if (existingOrder && existingOrder.notificationStatus === 'sent') {
+        console.log(`[Checkout Idempotency] Order #${orderId} already created and notified. Suppressing duplicate.`);
+        return res.status(200).json({
+          success: true,
+          orderId: existingOrder.orderId,
+          order: existingOrder,
+          emailNotification: {
+            sent: true,
+            provider: 'google_apps_script',
+            recipient: getNotificationConfig().adminEmail,
+            replyTo: existingOrder.customerEmail,
+            duplicateSuppressed: true,
+            notificationStatus: existingOrder.notificationStatus,
+            notificationMessageId: existingOrder.notificationMessageId,
+            notificationSentAt: existingOrder.notificationSentAt,
+          },
+          message: `Order #${orderId} already registered. Duplicate notification suppressed.`,
+        });
+      }
 
-      // 3. Parse and structure cart items
+      const orderDate =
+        existingOrder?.date ||
+        new Date().toLocaleString('en-US', {
+          timeZone: 'America/Los_Angeles',
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+      // 4. Parse and validate cart items
       const parsedItems: OrderItem[] = cartItems.map((item: any, idx: number) => {
-        const itemPrice = Number(item.price ?? item.unitPrice ?? item.product?.price ?? 0);
-        const itemQty = Math.max(1, Number(item.quantity ?? 1));
-        const itemTotal = Number(item.total ?? (itemPrice * itemQty));
-        const variant = item.variant || item.selectedWeight || item.weight || item.size || item.option || undefined;
+        const itemPrice = Math.max(0, Number(item.price ?? item.unitPrice ?? item.product?.price ?? 0) || 0);
+        const itemQty = Math.max(1, Math.round(Number(item.quantity ?? 1) || 1));
+        const itemTotal = Number(item.total ?? itemPrice * itemQty);
+        const variant =
+          item.variant || item.selectedWeight || item.weight || item.size || item.option || undefined;
 
         return {
           id: item.id || item.product?.id || `ITEM-${idx + 1}`,
           productId: item.productId || item.id || item.product?.id || `ITEM-${idx + 1}`,
-          name: item.name || item.product?.name || item.title || 'Dispensary Botanical Item',
-          variant,
+          name: String(item.name || item.product?.name || item.title || 'Dispensary Botanical Item').trim(),
+          variant: variant ? String(variant).trim() : undefined,
           weight: item.weight || item.selectedWeight || undefined,
           size: item.size || undefined,
           quantity: itemQty,
@@ -769,58 +1073,100 @@ async function startServer() {
         };
       });
 
-      // 4. Calculate or verify totals
-      const computedSubtotal = parsedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const resolvedSubtotal = (subtotal !== undefined && Number(subtotal) >= 0) ? Number(subtotal) : computedSubtotal;
-      const resolvedDiscount = (discount !== undefined && Number(discount) >= 0) ? Number(discount) : 0;
-      const resolvedShipping = (shippingCost !== undefined && Number(shippingCost) >= 0)
-        ? Number(shippingCost)
-        : (resolvedSubtotal >= 250 ? 0 : 19.99);
-      const resolvedTotal = (orderTotal !== undefined && Number(orderTotal) >= 0)
-        ? Number(orderTotal)
-        : Math.max(0, resolvedSubtotal - resolvedDiscount + resolvedShipping);
+      // 5. Calculate & verify financial totals
+      const computedSubtotal = parsedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const resolvedSubtotal =
+        subtotal !== undefined && !isNaN(Number(subtotal)) && Number(subtotal) >= 0
+          ? Number(subtotal)
+          : computedSubtotal;
+      const resolvedDiscount =
+        discount !== undefined && !isNaN(Number(discount)) && Number(discount) >= 0
+          ? Number(discount)
+          : 0;
+      const resolvedShipping =
+        shippingCost !== undefined && !isNaN(Number(shippingCost)) && Number(shippingCost) >= 0
+          ? Number(shippingCost)
+          : resolvedSubtotal >= 250
+          ? 0
+          : 19.99;
+      const resolvedTax =
+        tax !== undefined && !isNaN(Number(tax)) && Number(tax) >= 0 ? Number(tax) : 0;
+      const resolvedTotal =
+        orderTotal !== undefined && !isNaN(Number(orderTotal)) && Number(orderTotal) >= 0
+          ? Number(orderTotal)
+          : Math.max(0, resolvedSubtotal - resolvedDiscount + resolvedShipping + resolvedTax);
+      const resolvedCurrency = (currency || 'USD').trim().toUpperCase();
 
-      // 5. Persist order in store (order is preserved regardless of email outcome)
-      const trackingNum = `GH-TRK-${Math.floor(10000000 + Math.random() * 90000000)}`;
-      const savedOrder = {
+      // 6. Save order to persistent store BEFORE triggering email (with notificationStatus: 'pending')
+      const trackingNum =
+        existingOrder?.trackingNumber || `GH-TRK-${Math.floor(10000000 + Math.random() * 90000000)}`;
+      const resolvedTransactionId =
+        transactionId || existingOrder?.transactionId || trackingNum;
+      const resolvedPaymentStatus =
+        paymentStatus || 'Awaiting Payment Confirmation / Stealth Dispatch Queued';
+
+      const savedOrder: any = {
         orderId,
         date: orderDate,
         status: 'Received & Stealth Processing',
         trackingNumber: trackingNum,
+        transactionId: resolvedTransactionId,
         carrier: 'Priority Stealth Express Courier',
         estimatedDelivery: '2-3 Business Days',
         customerName: customerName.trim(),
-        customerEmail: customerEmail.trim().toLowerCase(),
+        customerEmail: cleanEmail,
         customerPhone: customerPhone ? String(customerPhone).trim() : '',
         companyName: companyName ? String(companyName).trim() : '',
-        shippingAddress: typeof shippingAddress === 'string' ? shippingAddress : JSON.stringify(shippingAddress),
-        billingAddress: billingAddress ? (typeof billingAddress === 'string' ? billingAddress : JSON.stringify(billingAddress)) : shippingAddress,
+        shippingAddress:
+          typeof shippingAddress === 'string' ? shippingAddress : JSON.stringify(shippingAddress),
+        shippingDetails: shippingDetails || undefined,
+        billingAddress: billingAddress
+          ? typeof billingAddress === 'string'
+            ? billingAddress
+            : JSON.stringify(billingAddress)
+          : shippingAddress,
         orderNotes: orderNotes ? String(orderNotes).trim() : '',
         items: parsedItems,
         subtotal: resolvedSubtotal,
         discount: resolvedDiscount,
-        couponCode: couponCode ? String(couponCode).trim() : undefined,
+        couponCode: resolvedCouponCode ? String(resolvedCouponCode).trim() : undefined,
         shippingCost: resolvedShipping,
+        tax: resolvedTax,
         orderTotal: resolvedTotal,
+        currency: resolvedCurrency,
         paymentMethod: paymentMethod || 'btc',
-        createdAt: new Date().toISOString(),
+        paymentStatus: resolvedPaymentStatus,
+        notificationStatus: 'pending' as NotificationStatus,
+        notificationMessageId: null,
+        notificationSentAt: null,
+        notificationError: null,
+        notificationAttempts: existingOrder?.notificationAttempts || 0,
+        customerConfirmationStatus: 'pending',
+        createdAt: existingOrder?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       ordersStore.set(orderId, savedOrder);
-      console.log(`[Order Processing] Order #${orderId} saved to orders store for ${customerName} ($${resolvedTotal.toFixed(2)})`);
+      persistOrders();
+      console.log(
+        `[Order Processing] Order #${orderId} saved to persistent store for ${savedOrder.customerName} ($${resolvedTotal.toFixed(2)} ${resolvedCurrency})`
+      );
 
-      // 6. Send transactional Admin Order Notification via Google Apps Script (with customer Reply-To)
+      // 7. Trigger server-side Admin Order Notification Email
       const parsedShipping = parseShippingAddress(shippingDetails || savedOrder.shippingAddress);
-      const appsScriptPayload: AppsScriptOrderPayload = {
+      const orderNotificationInput = {
         orderNumber: orderId,
         orderDate,
         status: savedOrder.status,
+        currency: resolvedCurrency,
         customer: {
           name: savedOrder.customerName,
           email: savedOrder.customerEmail,
           phone: savedOrder.customerPhone || '',
+          company: savedOrder.companyName || undefined,
         },
-        items: parsedItems.map(item => ({
+        items: parsedItems.map((item) => ({
+          id: item.id,
           name: item.name,
           variant: item.variant || item.weight || item.size || '',
           quantity: item.quantity,
@@ -831,19 +1177,44 @@ async function startServer() {
           subtotal: resolvedSubtotal.toFixed(2),
           discount: resolvedDiscount.toFixed(2),
           shipping: resolvedShipping.toFixed(2),
-          tax: '0.00',
+          tax: resolvedTax.toFixed(2),
           total: resolvedTotal.toFixed(2),
+          currency: resolvedCurrency,
         },
         shipping: parsedShipping,
+        billingAddress: billingAddress || savedOrder.billingAddress,
         paymentMethod: savedOrder.paymentMethod || 'Dispensary Direct',
+        paymentStatus: savedOrder.paymentStatus,
+        transactionId: resolvedTransactionId,
+        couponCode: savedOrder.couponCode,
         notes: savedOrder.orderNotes || '',
       };
 
-      const notifResult = await sendOrderNotification(appsScriptPayload);
+      const notifResult = await sendOrderNotification(orderNotificationInput);
 
-      // 7. Order is preserved and guaranteed successful regardless of notification outcome
+      // Update order with notification outcome
+      savedOrder.notificationStatus = notifResult.notificationStatus;
+      savedOrder.notificationMessageId = notifResult.notificationMessageId;
+      savedOrder.notificationSentAt = notifResult.notificationSentAt;
+      savedOrder.notificationError = notifResult.notificationError;
+      savedOrder.notificationAttempts =
+        (savedOrder.notificationAttempts || 0) + notifResult.notificationAttempts;
+
+      // 8. Customer confirmation is included in the Apps Script payload (`sendCustomerConfirmation: true`).
+      // If a dedicated separate customer confirmation webhook is configured, dispatch it separately.
+      const adminEmailLower = getNotificationConfig().adminEmail.toLowerCase();
+      if (process.env.CUSTOMER_CONFIRMATION_WEBHOOK_URL && cleanEmail && cleanEmail !== adminEmailLower) {
+        const custConfResult = await sendCustomerOrderConfirmation(orderNotificationInput);
+        savedOrder.customerConfirmationStatus = custConfResult.notificationStatus;
+      } else {
+        savedOrder.customerConfirmationStatus = notifResult.notificationStatus;
+      }
+
+      ordersStore.set(orderId, savedOrder);
+      persistOrders();
+
       if (!notifResult.success) {
-        console.error(`[Checkout] Admin notification notice for #${orderId}: ${notifResult.error}`);
+        console.error(`[Checkout] Admin notification failed for #${orderId}: ${notifResult.error}`);
         return res.status(200).json({
           success: true,
           orderId,
@@ -854,12 +1225,18 @@ async function startServer() {
             error: notifResult.error,
             recipient: notifResult.recipient,
             replyTo: notifResult.replyTo,
+            notificationStatus: savedOrder.notificationStatus,
+            notificationMessageId: savedOrder.notificationMessageId,
+            notificationSentAt: savedOrder.notificationSentAt,
+            notificationError: savedOrder.notificationError,
           },
-          message: `Order #${orderId} registered successfully. Notification note: ${notifResult.error}`,
+          message: `Order #${orderId} registered and saved safely. Admin email notification encountered an issue and is logged for retry.`,
         });
       }
 
-      console.log(`[Checkout] Order #${orderId} complete. Notification sent to admin (${notifResult.recipient}) via Google Apps Script`);
+      console.log(
+        `[Checkout] Order #${orderId} complete. Admin notification sent to ${notifResult.recipient} [msgId: ${notifResult.notificationMessageId}]`
+      );
       return res.status(200).json({
         success: true,
         orderId,
@@ -871,14 +1248,18 @@ async function startServer() {
           replyTo: notifResult.replyTo,
           duplicateSuppressed: notifResult.duplicateSuppressed || false,
           unconfigured: notifResult.unconfigured || false,
+          notificationStatus: savedOrder.notificationStatus,
+          notificationMessageId: savedOrder.notificationMessageId,
+          notificationSentAt: savedOrder.notificationSentAt,
+          notificationError: null,
         },
-        message: `Order #${orderId} successfully registered and admin notification dispatched via Google Apps Script!`,
+        message: `Order #${orderId} successfully registered and admin notification dispatched!`,
       });
     } catch (err: any) {
       console.error('[Checkout API Exception]:', err);
       return res.status(500).json({
         success: false,
-        error: 'An error occurred while processing the checkout submission.',
+        error: 'An unexpected server error occurred while processing your order. Please try again.',
       });
     }
   });
@@ -890,18 +1271,21 @@ async function startServer() {
       provider: 'Google Apps Script (MailApp)',
       configured: config.isConfigured,
       adminEmail: config.adminEmail,
+      emailFrom: config.emailFrom,
       hasScriptUrl: Boolean(config.appsScriptUrl),
       maskedUrl: config.appsScriptUrl ? `${config.appsScriptUrl.substring(0, 35)}...` : 'NOT_SET',
+      totalOrdersTracked: ordersStore.size,
+      totalSubmissionsTracked: contactSubmissions.length,
       instruction: 'To receive live order notifications, set GOOGLE_APPS_SCRIPT_URL in .env to your deployed Web App URL.',
     });
   });
 
   // API Route: Contact Form Trigger (Admin Email Notification)
   app.post('/api/contact', async (req, res) => {
-    const { name, email, subject, message, phone, subscribeNewsletter } = req.body;
+    const { name, email, subject, message, phone, subscribeNewsletter, productReference, orderReference } = req.body || {};
 
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ error: 'A valid email address is required.' });
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ success: false, error: 'A valid email address is required.' });
     }
 
     const cleanName = (name || '').trim() || 'Valued Client';
@@ -910,36 +1294,76 @@ async function startServer() {
     const cleanSubject = (subject || 'Product Question').trim();
     const cleanMessage = (message || '').trim();
 
+    if (!cleanMessage) {
+      return res.status(400).json({ success: false, error: 'Please enter a message for our support team.' });
+    }
+
+    // Deduplicate rapid double-clicks within 60 seconds
+    const dedupKey = `contact:${cleanEmail}:${cleanSubject}:${cleanMessage.slice(0, 80)}`;
+    const recent = recentFormHashes.get(dedupKey);
+    if (recent && Date.now() - recent.timestamp < 60000) {
+      return res.status(200).json({
+        ...recent.result,
+        duplicateSuppressed: true,
+      });
+    }
+
+    const submissionId = `CNT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const submissionRecord: any = {
+      id: submissionId,
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      subject: cleanSubject,
+      message: cleanMessage,
+      subscribeNewsletter: Boolean(subscribeNewsletter),
+      type: 'contact_form',
+      notificationStatus: 'pending' as NotificationStatus,
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: null,
+      createdAt: new Date().toISOString(),
+    };
+    contactSubmissions.push(submissionRecord);
+    persistSubmissions();
+
     // 1. Dispatch real-time email notification to admin with customer Reply-To
     const notificationResult = await sendCustomerInquiryNotification({
+      id: submissionId,
       name: cleanName,
       email: cleanEmail,
       phone: cleanPhone,
       subject: cleanSubject,
       message: cleanMessage,
       type: 'Customer Contact Form',
-    }).catch((err) => {
-      console.error('[Contact Notification Error]', err);
-      return { success: false, error: err?.message };
+      productReference,
+      orderReference,
+      metadata: {
+        NewsletterOptIn: subscribeNewsletter ? 'Yes' : 'No',
+      },
     });
 
-    // 2. Log to local store
-    contactSubmissions.push({
-      id: Math.random().toString(36).substring(2, 9),
-      name: cleanName,
-      email: cleanEmail,
-      phone: cleanPhone,
-      subject: cleanSubject,
-      message: cleanMessage,
-      type: 'contact_form',
-      createdAt: new Date().toISOString(),
-    });
+    // 2. Update persistent submission record with notification status
+    submissionRecord.notificationStatus = notificationResult.notificationStatus;
+    submissionRecord.notificationMessageId = notificationResult.notificationMessageId;
+    submissionRecord.notificationSentAt = notificationResult.notificationSentAt;
+    submissionRecord.notificationError = notificationResult.notificationError;
+    submissionRecord.notificationAttempts = notificationResult.notificationAttempts;
+    persistSubmissions();
 
-    return res.status(200).json({
+    if (subscribeNewsletter && !newsletterEmails.includes(cleanEmail)) {
+      newsletterEmails.push(cleanEmail);
+    }
+
+    const responsePayload = {
       success: true,
+      submissionId,
       message: `Thank you, ${cleanName}! Your inquiry has been sent directly to the dispensary admin team. We will reply to your email shortly.`,
       notification: notificationResult,
-    });
+    };
+    recentFormHashes.set(dedupKey, { timestamp: Date.now(), result: responsePayload });
+
+    return res.status(200).json(responsePayload);
   });
 
   // API Route: Scheduled Cron & Bulk Digest Notifications
@@ -955,32 +1379,80 @@ async function startServer() {
 
   // API Route: Newsletter email subscription
   app.post('/api/subscribe', async (req, res) => {
-    const { email } = req.body;
+    const { email } = req.body || {};
 
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ error: 'Please specify a valid email address.' });
+    if (!email || typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ success: false, error: 'Please specify a valid email address.' });
     }
 
-    if (!newsletterEmails.includes(email)) {
-      newsletterEmails.push(email);
+    const cleanEmail = email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, error: 'Please enter a valid email address format.' });
     }
 
-    // Notify admin about new newsletter / waitlist subscriber
-    sendCustomerInquiryNotification({
+    const dedupKey = `subscribe:${cleanEmail}`;
+    const recent = recentFormHashes.get(dedupKey);
+    if (recent && Date.now() - recent.timestamp < 60000) {
+      return res.status(200).json({
+        ...recent.result,
+        duplicateSuppressed: true,
+      });
+    }
+
+    if (!newsletterEmails.includes(cleanEmail)) {
+      newsletterEmails.push(cleanEmail);
+    }
+
+    const subId = `SUB-VIP-${Date.now().toString(36).toUpperCase()}`;
+    const subRecord: any = {
+      id: subId,
       name: 'New Subscriber / VIP Lead',
-      email: email.trim().toLowerCase(),
-      subject: `New VIP Newsletter Subscriber: ${email.trim().toLowerCase()}`,
-      message: `A customer has subscribed to the Global Herbs newsletter / VIP access club:
-Subscriber Email: ${email.trim().toLowerCase()}
-Discount Coupon Issued: HERBS15OFF
-Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}`,
-      type: 'VIP Newsletter Subscription',
-    }).catch((err) => console.warn('[Subscribe Notification Notice]', err?.message));
+      email: cleanEmail,
+      subject: 'VIP Newsletter Subscription',
+      message: 'Discount Coupon Issued: HERBS15OFF',
+      type: 'newsletter_subscription',
+      notificationStatus: 'pending' as NotificationStatus,
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: null,
+      notificationAttempts: 0,
+      createdAt: new Date().toISOString(),
+    };
+    contactSubmissions.push(subRecord);
+    persistSubmissions();
 
-    return res.status(200).json({
-      success: true,
-      message: `Successfully subscribed ${email}! Check your inbox for your 15% off coupon: HERBS15OFF`,
+    // Notify admin about new newsletter / waitlist subscriber (awaited)
+    const notificationResult = await sendCustomerInquiryNotification({
+      id: subId,
+      name: 'New Subscriber / VIP Lead',
+      email: cleanEmail,
+      subject: `New VIP Newsletter Subscriber: ${cleanEmail}`,
+      message: [
+        `A customer has subscribed to the Global Herbs newsletter / VIP access club:`,
+        `Subscriber Email: ${cleanEmail}`,
+        `Discount Coupon Issued: HERBS15OFF`,
+        `Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}`,
+      ].join('\n'),
+      type: 'VIP Newsletter Subscription',
     });
+
+    subRecord.notificationStatus = notificationResult.notificationStatus;
+    subRecord.notificationMessageId = notificationResult.notificationMessageId;
+    subRecord.notificationSentAt = notificationResult.notificationSentAt;
+    subRecord.notificationError = notificationResult.notificationError;
+    subRecord.notificationAttempts = notificationResult.notificationAttempts;
+    persistSubmissions();
+
+    const responsePayload = {
+      success: true,
+      submissionId: subId,
+      message: `Successfully subscribed ${cleanEmail}! Check your inbox for your 15% off coupon: HERBS15OFF`,
+      notification: notificationResult,
+    };
+    recentFormHashes.set(dedupKey, { timestamp: Date.now(), result: responsePayload });
+
+    return res.status(200).json(responsePayload);
   });
 
   // API Route: Customer Product Review Submission & Admin Notification
@@ -992,18 +1464,49 @@ Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles
     }
 
     const cleanAuthor = String(author).trim();
-    const cleanEmail = (email && String(email).includes('@'))
-      ? String(email).trim().toLowerCase()
-      : 'reviews@globalherbsinc.com';
+    const cleanEmail =
+      email && String(email).includes('@')
+        ? String(email).trim().toLowerCase()
+        : 'reviews@globalherbsinc.com';
     const cleanProduct = String(productName || 'Botanical Product').trim();
     const cleanComment = String(comment).trim();
-    const numRating = Number(rating) || 5;
+    const numRating = Math.min(5, Math.max(1, Number(rating) || 5));
+
+    const dedupKey = `review:${cleanEmail}:${cleanProduct}:${cleanComment.slice(0, 80)}`;
+    const recent = recentFormHashes.get(dedupKey);
+    if (recent && Date.now() - recent.timestamp < 60000) {
+      return res.status(200).json({
+        ...recent.result,
+        duplicateSuppressed: true,
+      });
+    }
+
+    const reviewId = `REV-${Date.now().toString(36).toUpperCase()}`;
+    const reviewRecord: any = {
+      id: reviewId,
+      name: cleanAuthor,
+      email: cleanEmail,
+      subject: `Review: ${cleanProduct} (${numRating}/5)`,
+      message: cleanComment,
+      productReference: `${cleanProduct} (ID: ${productId || 'N/A'})`,
+      type: 'product_review',
+      notificationStatus: 'pending' as NotificationStatus,
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: null,
+      notificationAttempts: 0,
+      createdAt: new Date().toISOString(),
+    };
+    contactSubmissions.push(reviewRecord);
+    persistSubmissions();
 
     // Dispatch email notification to admin with reviewer details and Reply-To
     const notificationResult = await sendCustomerInquiryNotification({
+      id: reviewId,
       name: cleanAuthor,
       email: cleanEmail,
       subject: `New ${numRating}★ Review: ${cleanProduct} — ${cleanAuthor}`,
+      productReference: `${cleanProduct} (ID: ${productId || 'N/A'})`,
       message: [
         `CUSTOMER PRODUCT REVIEW DETAILS:`,
         `--------------------------------`,
@@ -1017,44 +1520,68 @@ Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles
         `"${cleanComment}"`,
       ].join('\n'),
       type: 'Customer Product Review',
-    }).catch((err) => {
-      console.error('[Review Notification Error]', err);
-      return { success: false, error: err?.message };
     });
 
-    return res.status(200).json({
+    reviewRecord.notificationStatus = notificationResult.notificationStatus;
+    reviewRecord.notificationMessageId = notificationResult.notificationMessageId;
+    reviewRecord.notificationSentAt = notificationResult.notificationSentAt;
+    reviewRecord.notificationError = notificationResult.notificationError;
+    reviewRecord.notificationAttempts = notificationResult.notificationAttempts;
+    persistSubmissions();
+
+    const responsePayload = {
       success: true,
+      reviewId,
       message: 'Thank you! Your product review has been submitted and shared with dispensary management.',
       notification: notificationResult,
-    });
+    };
+    recentFormHashes.set(dedupKey, { timestamp: Date.now(), result: responsePayload });
+
+    return res.status(200).json(responsePayload);
   });
 
   // Dedicated Test Endpoint for Checkout Confirmation Verification
   app.post('/api/test/checkout', async (req, res) => {
-    const targetEmail = req.body?.email || 'nahor692@gmail.com';
+    const targetEmail = req.body?.email || 'globalherbsinc@gmail.com';
     const targetName = req.body?.name || 'Dispensary Client';
 
     const testOrderId = `GH-TEST-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     const testItems = [
       {
         productId: 'GH-BLUE-DREAM-01',
-        title: 'AAA+ Organic Blue Dream Dispensary Flower (3.5g)',
-        price: 45.00,
+        name: 'AAA+ Organic Blue Dream Dispensary Flower (3.5g)',
+        variant: '3.5g',
+        price: 45.0,
         quantity: 2,
-        imageUrl: 'https://images.unsplash.com/photo-1568644396922-5c3bfae12521?auto=format&fit=crop&q=80&w=400',
+        total: 90.0,
       },
       {
         productId: 'GH-CBD-TINCTURE-02',
-        title: 'Full Spectrum Organic CBD Botanical Tincture (1000mg)',
-        price: 65.00,
+        name: 'Full Spectrum Organic CBD Botanical Tincture (1000mg)',
+        variant: '1000mg',
+        price: 65.0,
         quantity: 1,
-        imageUrl: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=400',
+        total: 65.0,
       },
     ];
-    const total = 155.00;
+    const total = 155.0;
 
-    // Save into in-memory order tracking
-    ordersStore.set(testOrderId, {
+    const notifResult = await sendOrderNotification({
+      orderNumber: testOrderId,
+      customerName: targetName,
+      customerEmail: targetEmail,
+      customerPhone: '+1 (213) 280-1161',
+      items: testItems,
+      subtotal: 155.0,
+      discount: 0,
+      shippingCost: 0,
+      orderTotal: total,
+      shippingAddress: '100 Botanical Way, Suite 400, Los Angeles, CA 90001, United States',
+      paymentMethod: 'btc',
+      notes: 'Automated diagnostic checkout verification order.',
+    });
+
+    const savedOrder = {
       orderId: testOrderId,
       date: new Date().toISOString(),
       status: 'Stealth Dispatched & Active',
@@ -1064,21 +1591,30 @@ Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles
       customerName: targetName,
       customerEmail: targetEmail,
       shippingAddress: '100 Botanical Way, Suite 400, Los Angeles, CA 90001, United States',
-      items: testItems.map(i => ({ name: i.title, quantity: i.quantity, price: i.price })),
+      items: testItems,
       orderTotal: total,
-    });
+      notificationStatus: notifResult.notificationStatus,
+      notificationMessageId: notifResult.notificationMessageId,
+      notificationSentAt: notifResult.notificationSentAt,
+      notificationError: notifResult.notificationError,
+      createdAt: new Date().toISOString(),
+    };
+
+    ordersStore.set(testOrderId, savedOrder);
+    persistOrders();
 
     return res.status(200).json({
       success: true,
-      message: `Test order ${testOrderId} registered for ${targetEmail}!`,
+      message: `Test order ${testOrderId} registered and notification dispatched!`,
       orderId: testOrderId,
-      recipient: targetEmail,
+      recipient: notifResult.recipient,
+      notification: notifResult,
     });
   });
 
   // API Route: Send Test Order Notification Email via Google Apps Script
   app.all('/api/test-email', async (req, res) => {
-    const targetEmail = req.body?.email || req.query?.email || 'nahor692@gmail.com';
+    const targetEmail = req.body?.email || req.query?.email || getNotificationConfig().adminEmail;
     const testOrderId = `GH-TEST-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const testPayload = {
@@ -1141,6 +1677,7 @@ Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles
         provider: 'google_apps_script',
         configured: notifConfig.isConfigured,
         adminEmail: notifConfig.adminEmail,
+        emailFrom: notifConfig.emailFrom,
         hasScriptUrl: Boolean(notifConfig.appsScriptUrl),
       },
       logoAvailable: fs.existsSync(path.join(process.cwd(), 'src/assets/images/global_herbs_logo_1784328365704.jpg')),

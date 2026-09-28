@@ -233,6 +233,15 @@ export default function Footer({ onSelectPage }: FooterProps) {
                   Contact &amp; Support Desk
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/forms"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="hover:text-emerald-400 cursor-pointer block py-1 border-b border-zinc-800/50 text-left text-emerald-300 font-bold"
+                >
+                  Google Forms Studio
+                </Link>
+              </li>
             </ul>
           </div>
 

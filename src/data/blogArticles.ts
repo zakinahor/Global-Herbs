@@ -79,9 +79,9 @@ export const blogArticles: BlogArticle[] = [
     category: 'CBD & Wellness',
     categorySlug: 'cbd',
     author: {
-      name: 'Elena Rostova',
-      role: 'Holistic Wellness & Cannabinoid Specialist',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+      name: 'Dr. Julian Mercer',
+      role: 'Clinical Phytochemist & Herbal Formulator',
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200',
     },
     reviewer: {
       name: 'Dr. Arthur Vance, Ph.D.',

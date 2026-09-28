@@ -22,6 +22,9 @@ import {
 } from 'lucide-react';
 import { useAuth, MemberOrder } from '../context/AuthContext';
 import { analytics } from '../utils/analytics';
+import GoogleSignInButton from './GoogleSignInButton';
+import { googleSignIn } from '../utils/googleWorkspaceAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -40,6 +43,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
     modalTab,
     setModalTab,
   } = useAuth();
+  const navigate = useNavigate();
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -469,6 +473,29 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   </>
                 )}
               </button>
+
+              <div className="pt-3 border-t border-gray-100 flex flex-col items-center gap-2.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Or Connect Google Workspace for Forms &amp; Surveys
+                </span>
+                <GoogleSignInButton
+                  onClick={async () => {
+                    try {
+                      const res = await googleSignIn();
+                      if (res) {
+                        onClose();
+                        navigate('/forms');
+                      }
+                    } catch {
+                      setFeedback({
+                        success: false,
+                        text: 'Google Sign-In was cancelled or could not complete.',
+                      });
+                    }
+                  }}
+                  label="Sign in with Google"
+                />
+              </div>
 
               <div className="pt-2 text-center text-[11px] text-gray-500 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
                 <span>Don't have an account yet?</span>

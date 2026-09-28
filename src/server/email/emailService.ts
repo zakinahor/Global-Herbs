@@ -1,12 +1,6 @@
 /**
  * Order Notification Service Adapter
- * Powered exclusively by Google Apps Script (MailApp).
- *
- * Direct Flow:
- * Website Order Saved -> Google Apps Script Web App -> Admin Gmail Inbox (globalherbsinc@gmail.com)
- * Admin taps "Reply" -> Customer receives direct reply
- *
- * No third-party email providers (MailerSend, Resend, SMTP, SendGrid, etc.).
+ * Powered by the canonical server-side notification engine (`lib/email/orderNotification.ts`).
  */
 
 import {
@@ -17,6 +11,7 @@ import {
   markOrderAsNotified,
   getNotificationConfig,
 } from '../orderNotificationService';
+import { parseAddressBlock } from '../../../lib/email/orderNotification';
 
 export interface OrderItem {
   id?: string | number;
@@ -45,6 +40,7 @@ export interface ShippingAddressData {
   postalCode?: string;
   country?: string;
   phone?: string;
+  email?: string;
 }
 
 export interface AdminOrderNotificationData {
@@ -52,6 +48,9 @@ export interface AdminOrderNotificationData {
   orderDate?: string;
   orderStatus?: string;
   paymentMethod?: string;
+  paymentStatus?: string;
+  transactionId?: string;
+  currency?: string;
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -77,6 +76,9 @@ export interface EmailSendResult {
   error?: string | null;
   duplicateSuppressed?: boolean;
   simulated?: boolean;
+  notificationStatus?: 'pending' | 'sent' | 'failed';
+  notificationMessageId?: string | null;
+  notificationSentAt?: string | null;
 }
 
 export {
@@ -86,73 +88,41 @@ export {
   getNotificationConfig,
 };
 
-/**
- * Format shipping address into structured parts for the payload
- */
 export function parseShippingAddress(addr: string | ShippingAddressData | undefined): {
+  name?: string;
   address: string;
   city: string;
   state: string;
   postalCode: string;
   country: string;
 } {
-  if (!addr) {
-    return { address: 'Not provided', city: '', state: '', postalCode: '', country: 'United States' };
-  }
-
-  if (typeof addr === 'object' && addr !== null) {
-    const street = [addr.address || addr.street1, addr.street2].filter(Boolean).join(', ');
-    return {
-      address: street || addr.name || 'Not provided',
-      city: addr.city || '',
-      state: addr.state || '',
-      postalCode: addr.postalCode || addr.zipCode || (addr as any).zip || '',
-      country: addr.country || 'United States',
-    };
-  }
-
-  const str = String(addr).trim();
-  const lines = str.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
-  if (lines.length >= 3) {
-    const street = lines[0];
-    const cityStateZip = lines.slice(1).join(', ');
-    return {
-      address: street,
-      city: lines[1] || '',
-      state: lines[2] || '',
-      postalCode: lines[3] || '',
-      country: 'United States',
-    };
-  }
-
-  return {
-    address: str,
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'United States',
-  };
+  return parseAddressBlock(addr);
 }
 
-/**
- * Convert internal order structure into Google Apps Script JSON payload
- */
 export function buildAppsScriptOrderPayload(data: AdminOrderNotificationData): AppsScriptOrderPayload {
   const shippingParsed = parseShippingAddress(data.shippingAddress);
+  const billingParsed = data.billingAddress ? parseShippingAddress(data.billingAddress) : shippingParsed;
 
   return {
     orderNumber: data.orderId,
     orderDate: data.orderDate || new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
-    status: data.orderStatus || 'New Order',
+    status: data.orderStatus || 'Received & Stealth Processing',
+    currency: data.currency || 'USD',
+    paymentMethod: data.paymentMethod || 'Dispensary Direct',
+    paymentStatus: data.paymentStatus || 'Awaiting Payment Verification',
+    transactionId: data.transactionId || `REF-${data.orderId}`,
+    couponCode: data.couponCode,
     customer: {
       name: data.customerName,
       email: data.customerEmail,
       phone: data.customerPhone || '',
+      company: data.companyName || undefined,
     },
     items: data.items.map(item => {
       const unitPrice = typeof item.price === 'number' ? item.price : parseFloat(String(item.price)) || 0;
       const total = item.total !== undefined ? item.total : (unitPrice * item.quantity);
       return {
+        id: item.id || item.productId ? String(item.id || item.productId) : undefined,
         name: item.name,
         variant: item.variant || item.weight || item.size || '',
         quantity: item.quantity,
@@ -166,22 +136,31 @@ export function buildAppsScriptOrderPayload(data: AdminOrderNotificationData): A
       shipping: Number(data.shippingCost || 0).toFixed(2),
       tax: Number(data.tax || 0).toFixed(2),
       total: Number(data.orderTotal || 0).toFixed(2),
+      currency: data.currency || 'USD',
     },
     shipping: {
+      name: shippingParsed.name || data.customerName,
       address: shippingParsed.address,
       city: shippingParsed.city,
       state: shippingParsed.state,
       postalCode: shippingParsed.postalCode,
       country: shippingParsed.country,
     },
-    paymentMethod: data.paymentMethod || 'Dispensary Direct',
+    billing: {
+      name: billingParsed.name || data.customerName,
+      company: data.companyName,
+      address: billingParsed.address,
+      city: billingParsed.city,
+      state: billingParsed.state,
+      postalCode: billingParsed.postalCode,
+      country: billingParsed.country,
+      phone: data.customerPhone,
+      email: data.customerEmail,
+    },
     notes: data.orderNotes || '',
   };
 }
 
-/**
- * Primary Server Function: Send Admin Order Notification via Google Apps Script
- */
 export async function sendAdminOrderNotification(
   data: AdminOrderNotificationData
 ): Promise<EmailSendResult> {
@@ -197,5 +176,8 @@ export async function sendAdminOrderNotification(
     duplicateSuppressed: result.duplicateSuppressed || false,
     simulated: result.unconfigured || false,
     error: result.error || null,
+    notificationStatus: result.notificationStatus,
+    notificationMessageId: result.notificationMessageId,
+    notificationSentAt: result.notificationSentAt,
   };
 }

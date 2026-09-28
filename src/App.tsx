@@ -41,6 +41,7 @@ import ArticleDetailPage from './components/ArticleDetailPage';
 import OrderTrackingPage from './components/OrderTrackingPage';
 import AgeVerificationModal from './components/AgeVerificationModal';
 import SupportWidget from './components/SupportWidget';
+import GoogleFormsPage from './components/GoogleFormsPage';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -804,6 +805,23 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
+
+        <Route
+          path="/forms"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <GoogleFormsPage />
+            </motion.div>
+          }
+        />
+        <Route path="/google-forms" element={<Navigate to="/forms" replace />} />
 
         {/* Official Social Media Direct Redirection Routes */}
         <Route

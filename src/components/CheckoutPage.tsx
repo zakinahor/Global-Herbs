@@ -31,25 +31,29 @@ import { useAuth } from '../context/AuthContext';
 
 async function submitOrder(order: any) {
   try {
-    const shippingDetails = typeof order.shipping === 'object' && order.shipping !== null
-      ? {
-          address: order.shipping.address || '',
-          city: order.shipping.city || '',
-          state: order.shipping.state || '',
-          postalCode: order.shipping.zip || order.shipping.postalCode || '',
-          country: order.shipping.country || 'United States',
-        }
-      : {
-          address: order.billing?.address || '',
-          city: order.billing?.city || '',
-          state: order.billing?.state || '',
-          postalCode: order.billing?.zipCode || order.billing?.postalCode || '',
-          country: order.billing?.country || 'United States',
-        };
+    const shippingDetails =
+      typeof order.shipping === 'object' && order.shipping !== null
+        ? {
+            name: order.shipping.name || order.customerName || '',
+            address: order.shipping.address || '',
+            city: order.shipping.city || '',
+            state: order.shipping.state || '',
+            postalCode: order.shipping.zip || order.shipping.postalCode || '',
+            country: order.shipping.country || order.billing?.country || 'United States',
+          }
+        : {
+            name: order.billing?.name || order.customerName || '',
+            address: order.billing?.address || '',
+            city: order.billing?.city || '',
+            state: order.billing?.state || '',
+            postalCode: order.billing?.zipCode || order.billing?.postalCode || '',
+            country: order.billing?.country || 'United States',
+          };
 
-    const shippingAddressFormatted = typeof order.shipping === 'object' && order.shipping !== null
-      ? `${order.shipping.name || ''}\n${order.shipping.address || ''}\n${order.shipping.city || ''}, ${order.shipping.state || ''} ${order.shipping.zip || ''}`.trim()
-      : `${order.billing?.address || ''}\n${order.billing?.city || ''}, ${order.billing?.state || ''} ${order.billing?.zipCode || ''}\n${order.billing?.country || 'United States'}`.trim();
+    const shippingAddressFormatted =
+      typeof order.shipping === 'object' && order.shipping !== null
+        ? `${order.shipping.name || ''}\n${order.shipping.address || ''}\n${[order.shipping.city, order.shipping.state, order.shipping.zip].filter(Boolean).join(', ')}\n${order.shipping.country || order.billing?.country || 'United States'}`.trim()
+        : `${order.billing?.name || ''}\n${order.billing?.address || ''}\n${[order.billing?.city, order.billing?.state, order.billing?.zipCode].filter(Boolean).join(', ')}\n${order.billing?.country || 'United States'}`.trim();
 
     const response = await fetch('/api/checkout', {
       method: 'POST',
@@ -58,7 +62,11 @@ async function submitOrder(order: any) {
       },
       body: JSON.stringify({
         orderId: order.orderId,
-        customerName: `${order.billing?.firstName || ''} ${order.billing?.lastName || ''}`.trim() || order.customerName || 'Valued Customer',
+        idempotencyKey: order.orderId,
+        customerName:
+          `${order.billing?.firstName || ''} ${order.billing?.lastName || ''}`.trim() ||
+          order.customerName ||
+          'Valued Customer',
         customerEmail: order.billing?.email || order.customerEmail || '',
         customerPhone: order.billing?.phone || '',
         companyName: order.billing?.company || '',
@@ -68,12 +76,13 @@ async function submitOrder(order: any) {
         orderNotes: order.orderNotes || '',
         cartItems: (order.items || []).map((item: any) => ({
           id: item.id,
+          productId: item.id,
           name: item.name,
-          variant: item.weight || item.variant || item.size,
+          variant: item.weight || item.variant || item.size || 'Standard',
           weight: item.weight,
           quantity: item.quantity,
           price: item.price,
-          total: item.total || item.price * item.quantity,
+          total: item.total ?? item.price * item.quantity,
           image: item.image,
         })),
         subtotal: order.subtotal || 0,
@@ -81,17 +90,26 @@ async function submitOrder(order: any) {
         couponCode: order.couponCode,
         shippingCost: order.shippingCost || 0,
         orderTotal: order.total || 0,
+        currency: order.currency || 'USD',
         paymentMethod: order.paymentMethod || 'btc',
+        paymentStatus: 'Awaiting Payment Confirmation / Stealth Dispatch Queued',
       }),
     });
-    const data = await response.json();
-    if (!response.ok || !data.success) {
-      console.warn('Order submission response notice:', data);
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data || !data.success) {
+      return {
+        success: false,
+        error: data?.error || `Order submission failed (HTTP ${response.status}). Please verify your details and try again.`,
+      };
     }
     return data;
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to submit order via checkout API:', err);
-    return null;
+    return {
+      success: false,
+      error: 'Network error communicating with checkout server. Please check your connection and try again.',
+    };
   }
 }
 
@@ -102,7 +120,7 @@ interface CheckoutPageProps {
 }
 
 export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: CheckoutPageProps) {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency } = useCurrency();
   const { t } = useLanguage();
   const { user, isLoggedIn, openAccountModal } = useAuth();
   // Coupon state
@@ -155,8 +173,22 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [termsError, setTermsError] = useState(false);
 
-  // Status states
+  // Status states & deterministic session Order ID (persisted in sessionStorage across page refreshes, retries, and double-clicks)
+  const [sessionOrderId, setSessionOrderId] = useState(() => {
+    try {
+      const existing = typeof window !== 'undefined' ? window.sessionStorage.getItem('gh_checkout_session_order_id') : null;
+      if (existing && existing.startsWith('GM-')) return existing;
+      const generated = `GM-${Math.floor(100000 + Math.random() * 900000)}-${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('gh_checkout_session_order_id', generated);
+      }
+      return generated;
+    } catch {
+      return `GM-${Math.floor(100000 + Math.random() * 900000)}-${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+    }
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [orderComplete, setOrderComplete] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
   const [copiedBtc, setCopiedBtc] = useState(false);
@@ -195,6 +227,8 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
   // Submit Order Handler
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     if (!agreeTerms) {
       setTermsError(true);
       const termsEl = document.getElementById('checkout-terms-container');
@@ -204,43 +238,48 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
       return;
     }
     setTermsError(false);
-
+    setSubmitError(null);
     setIsSubmitting(true);
 
-    const orderId = `GM-${Math.floor(100000 + Math.random() * 900000)}`;
-    const orderData = {
+    const orderId = sessionOrderId;
+    const orderData: any = {
       orderId,
       customerName: `${firstName} ${lastName}`.trim() || 'Valued Customer',
-      customerEmail: email,
-      email: email,
-      to: email,
+      customerEmail: email.trim(),
+      email: email.trim(),
+      to: email.trim(),
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+      currency: currency?.code || 'USD',
       billing: {
         name: `${firstName} ${lastName}`.trim() || 'Valued Customer',
-        firstName,
-        lastName,
-        company: companyName,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        company: companyName.trim(),
         country,
-        address: `${streetAddress1}${streetAddress2 ? ', ' + streetAddress2 : ''}`,
-        city,
-        state,
-        zipCode,
-        phone,
-        email,
+        address: `${streetAddress1.trim()}${streetAddress2.trim() ? ', ' + streetAddress2.trim() : ''}`,
+        city: city.trim(),
+        state: state.trim(),
+        zipCode: zipCode.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
       },
-      shipping: shipToDifferent ? {
-        name: `${shipFirstName} ${shipLastName}`.trim() || `${firstName} ${lastName}`.trim(),
-        address: shipAddress,
-        city: shipCity,
-        state: shipState,
-        zip: shipZip,
-      } : 'Same as billing address',
-      items: cartItems.map(item => {
+      shipping: shipToDifferent
+        ? {
+            name: `${shipFirstName} ${shipLastName}`.trim() || `${firstName} ${lastName}`.trim(),
+            address: shipAddress.trim() || streetAddress1.trim(),
+            city: shipCity.trim() || city.trim(),
+            state: shipState.trim() || state.trim(),
+            zip: shipZip.trim() || zipCode.trim(),
+            country,
+          }
+        : 'Same as billing address',
+      items: cartItems.map((item) => {
         const itemPrice = item.unitPrice !== undefined ? item.unitPrice : item.product.price;
         return {
           id: item.product.id,
           name: item.product.name,
           weight: item.selectedWeight || item.product.weight,
+          variant: item.selectedWeight || item.product.weight,
           quantity: item.quantity,
           price: itemPrice,
           total: itemPrice * item.quantity,
@@ -249,52 +288,71 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
       }),
       subtotal,
       discount,
-      couponCode: couponApplied ? couponCode : undefined,
+      couponCode: couponApplied ? couponCode.trim().toUpperCase() : undefined,
       shippingCost,
       total,
       paymentMethod,
-      orderNotes,
+      orderNotes: orderNotes.trim(),
     };
 
-    try {
-      const serverResult = await submitOrder(orderData);
-      if (serverResult && serverResult.orderId) {
-        orderData.orderId = serverResult.orderId;
-      }
-    } catch (err) {
-      console.error('Order submission error:', err);
+    const serverResult = await submitOrder(orderData);
+
+    // Backend is the strict source of truth: do NOT complete order if backend validation/save failed
+    if (!serverResult || !serverResult.success) {
+      setIsSubmitting(false);
+      setSubmitError(
+        serverResult?.error ||
+          'Unable to register your order at this time. Please verify your required fields and try again.'
+      );
+      return;
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setCompletedOrder(orderData);
-      setOrderComplete(true);
+    if (serverResult.orderId) {
+      orderData.orderId = serverResult.orderId;
+    }
+    if (serverResult.emailNotification) {
+      orderData.emailNotification = serverResult.emailNotification;
+    }
 
-      // Identify contact & track purchase in Google Analytics 4
-      analytics.identify({
-        email,
-        firstName,
-        lastName,
-        phone,
-      });
+    setIsSubmitting(false);
+    setCompletedOrder(orderData);
+    setOrderComplete(true);
 
-      analytics.purchase({
-        orderId: orderData.orderId,
-        value: total,
-        items: cartItems.map((item) => ({
-          id: item.product.id,
-          name: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-          category: item.product.category,
-        })),
-        shipping: shippingCost,
-        coupon: couponApplied ? couponCode : undefined,
-      });
+    // Generate fresh session ID for any future orders and update sessionStorage
+    const nextSessionOrderId = `GM-${Math.floor(100000 + Math.random() * 900000)}-${Math.random().toString(36).substring(2, 5).toUpperCase()}`;
+    setSessionOrderId(nextSessionOrderId);
+    try {
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('gh_checkout_session_order_id', nextSessionOrderId);
+      }
+    } catch {
+      // Ignore storage quota errors
+    }
 
-      onClearCart();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1000);
+    // Identify contact & track purchase in Google Analytics 4
+    analytics.identify({
+      email,
+      firstName,
+      lastName,
+      phone,
+    });
+
+    analytics.purchase({
+      orderId: orderData.orderId,
+      value: total,
+      items: cartItems.map((item) => ({
+        id: item.product.id,
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        category: item.product.category,
+      })),
+      shipping: shippingCost,
+      coupon: couponApplied ? couponCode : undefined,
+    });
+
+    onClearCart();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const BTC_WALLET_ADDRESS = '1CxJc1KVwjapJsw559cpYyBy7PxnD6UNkM';
@@ -833,14 +891,46 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
                       </div>
                     </div>
                     <div>
-                      <label className="block text-gray-700 mb-1">Alternate Shipping Address</label>
+                      <label className="block text-gray-700 mb-1">Alternate Street Address</label>
                       <input
                         type="text"
-                        placeholder="Alternate Street Address, City, State, ZIP"
+                        placeholder="Alternate Street Address, Apt/Suite"
                         value={shipAddress}
                         onChange={(e) => setShipAddress(e.target.value)}
                         className="w-full border border-gray-300 p-2.5 rounded-lg bg-white"
                       />
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-gray-700 mb-1">City</label>
+                        <input
+                          type="text"
+                          placeholder="City"
+                          value={shipCity}
+                          onChange={(e) => setShipCity(e.target.value)}
+                          className="w-full border border-gray-300 p-2.5 rounded-lg bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 mb-1">State / Region</label>
+                        <input
+                          type="text"
+                          placeholder="State"
+                          value={shipState}
+                          onChange={(e) => setShipState(e.target.value)}
+                          className="w-full border border-gray-300 p-2.5 rounded-lg bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 mb-1">ZIP / Postal</label>
+                        <input
+                          type="text"
+                          placeholder="ZIP"
+                          value={shipZip}
+                          onChange={(e) => setShipZip(e.target.value)}
+                          className="w-full border border-gray-300 p-2.5 rounded-lg bg-white"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1251,6 +1341,13 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
                   </span>
                 </div>
               </div>
+
+              {submitError && (
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-start gap-2.5">
+                  <AlertCircle size={16} className="text-red-600 flex-shrink-0 mt-0.5" />
+                  <span>{submitError}</span>
+                </div>
+              )}
 
               {/* Main Submit Button */}
               <button

@@ -101,7 +101,7 @@ export default function ProductDetailPage({
     setAdding(false);
   };
 
-  const handleAddReview = (e: React.FormEvent) => {
+  const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReviewAuthor.trim() || !newReviewComment.trim()) return;
 
@@ -123,26 +123,51 @@ export default function ProductDetailPage({
     const updated = saveProductReview(activeProduct.id, newRev);
     setLocalReviews(updated);
 
-    // Non-blocking dispatch to server & admin notification
-    fetch('/api/review', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        productId: activeProduct.id,
-        productName: activeProduct.name,
-        author: authorClean,
-        email: emailClean || undefined,
-        rating: newReviewRating,
-        comment: commentClean,
-      }),
-    }).catch((err) => console.warn('[Review Notification Notice]', err?.message));
-
     setNewReviewAuthor('');
     setNewReviewEmail('');
     setNewReviewRating(5);
     setNewReviewComment('');
     setReviewSubmitted(true);
     setTimeout(() => setReviewSubmitted(false), 4000);
+
+    try {
+      await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: activeProduct.id,
+          productName: activeProduct.name,
+          author: authorClean,
+          email: emailClean || undefined,
+          rating: newReviewRating,
+          comment: commentClean,
+        }),
+      });
+    } catch (err: any) {
+      console.warn('[Review Notification Notice]', err?.message);
+    }
+  };
+
+  const handleRequestB2BSample = async () => {
+    if (sampleRequested) return;
+    setSampleRequested(true);
+    try {
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newReviewAuthor.trim() || 'B2B Wholesale Prospect',
+          email: newReviewEmail.trim() || 'wholesale-inquiry@globalherbs.site',
+          subject: `B2B Sample Request: ${activeProduct.name} (${selectedVariant.shortLabel})`,
+          productReference: `${activeProduct.name} (ID: ${activeProduct.id}, SKU: ${activeProduct.sku || 'N/A'})`,
+          message: `A customer/prospect requested a B2B wholesale sample evaluation for:\nProduct: ${activeProduct.name}\nSelected Weight/Option: ${selectedVariant.shortLabel}\nUnit Price: $${currentPrice.toFixed(2)}\nCategory: ${activeProduct.category}`,
+          type: 'sample_request',
+        }),
+      });
+    } catch (err: any) {
+      console.warn('[B2B Sample Notification Notice]', err?.message);
+    }
+    setTimeout(() => setSampleRequested(false), 5000);
   };
 
   const handleVoteHelpful = (revId: string) => {
@@ -469,13 +494,11 @@ export default function ProductDetailPage({
                   <span>Wholesale B2B Volume Discount Tiers</span>
                 </span>
                 <button
-                  onClick={() => {
-                    setSampleRequested(true);
-                    setTimeout(() => setSampleRequested(false), 4000);
-                  }}
+                  type="button"
+                  onClick={handleRequestB2BSample}
                   className="text-[10px] font-bold text-emerald-800 hover:text-emerald-900 underline cursor-pointer"
                 >
-                  {sampleRequested ? '✓ Sample Request Logged' : 'Request B2B Sample'}
+                  {sampleRequested ? '✓ Sample Request Dispatched' : 'Request B2B Sample'}
                 </button>
               </div>
 
