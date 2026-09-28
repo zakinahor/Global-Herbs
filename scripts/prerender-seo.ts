@@ -731,15 +731,9 @@ function writeRouteFiles(template: string, pathname: string, page: SeoPage) {
     return;
   }
 
-  // 1. Write /dist/<segments>/index.html
   const indexHtmlPath = path.join(DIST_DIR, ...relativeSegments, 'index.html');
   fs.mkdirSync(path.dirname(indexHtmlPath), { recursive: true });
   fs.writeFileSync(indexHtmlPath, rendered, 'utf8');
-
-  // 2. Write /dist/<segments>.html for cleanUrls edge serving on Vercel & static CDNs
-  const cleanHtmlPath = `${path.join(DIST_DIR, ...relativeSegments)}.html`;
-  fs.mkdirSync(path.dirname(cleanHtmlPath), { recursive: true });
-  fs.writeFileSync(cleanHtmlPath, rendered, 'utf8');
 }
 
 function prerenderSeoPages() {
@@ -837,7 +831,6 @@ function prerenderSeoPages() {
   console.log(`[SEO Prerender] Wrote full HTML & metadata for ${pagesWritten} canonical indexable routes.`);
 }
 
-const isDirectRun = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(import.meta.filename || '');
-if (isDirectRun || process.argv[1]?.endsWith('prerender-seo.ts')) {
+if (process.argv[1]?.endsWith('prerender-seo.ts')) {
   prerenderSeoPages();
 }

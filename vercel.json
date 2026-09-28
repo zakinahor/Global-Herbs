@@ -1,6 +1,6 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "redirects": [
     {
       "source": "/shop",
@@ -101,11 +101,57 @@
       "source": "/track",
       "destination": "/order-tracking",
       "permanent": true
+    },
+    {
+      "source": "/youtube",
+      "destination": "https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A",
+      "permanent": true
+    },
+    {
+      "source": "/facebook",
+      "destination": "https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr",
+      "permanent": true
+    },
+    {
+      "source": "/tiktok",
+      "destination": "https://www.tiktok.com/@global.herbs6?_r=1&_t=ZS-99wVEhJX5DJ",
+      "permanent": true
+    },
+    {
+      "source": "/reddit",
+      "destination": "https://www.reddit.com/u/globalherbsinc/s/4G5I46fLMM",
+      "permanent": true
     }
   ],
   "headers": [
     {
-      "source": "/(checkout|order-tracking|track)",
+      "source": "/sitemap.xml",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/checkout",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -114,7 +160,34 @@
       ]
     },
     {
-      "source": "/category/(pharmaceuticals|psychedelics|research-chemicals)",
+      "source": "/order-tracking",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/category/pharmaceuticals",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/category/psychedelics",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/category/research-chemicals",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -126,7 +199,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.ts"
+      "destination": "/api/$1"
     },
     {
       "source": "/(.*)",
