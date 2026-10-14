@@ -23,6 +23,9 @@ interface HeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onSelectPage?: (page: string) => void;
+  isSearchModalOpen?: boolean;
+  onOpenSearchModal?: () => void;
+  onCloseSearchModal?: () => void;
 }
 
 export default function Header({
@@ -35,6 +38,9 @@ export default function Header({
   searchQuery,
   onSearchChange,
   onSelectPage,
+  isSearchModalOpen: controlledSearchModalOpen,
+  onOpenSearchModal,
+  onCloseSearchModal,
 }: HeaderProps) {
   const { formatPrice } = useCurrency();
   const { t } = useLanguage();
@@ -42,7 +48,16 @@ export default function Header({
   const [searchInput, setSearchInput] = useState(searchQuery);
   const [searchCat, setSearchCat] = useState('');
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [internalSearchModalOpen, setInternalSearchModalOpen] = useState(false);
+  const isSearchModalOpen = controlledSearchModalOpen !== undefined ? controlledSearchModalOpen : internalSearchModalOpen;
+  const handleOpenSearchModal = () => {
+    if (onOpenSearchModal) onOpenSearchModal();
+    else setInternalSearchModalOpen(true);
+  };
+  const handleCloseSearchModal = () => {
+    if (onCloseSearchModal) onCloseSearchModal();
+    else setInternalSearchModalOpen(false);
+  };
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,7 +76,7 @@ export default function Header({
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setIsSearchModalOpen(true);
+        handleOpenSearchModal();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -140,9 +155,19 @@ export default function Header({
 
       {/* Mobile Top Alert */}
       <div className="bg-emerald-900 text-emerald-100 py-1.5 px-3 text-[10px] font-semibold flex md:hidden justify-between items-center gap-2">
-        <span className="truncate">
-          {t('nav.freeShippingShort', 'Free Shipping above')} {formatPrice(249.99)}
-        </span>
+        <div className="flex items-center gap-2 truncate">
+          <span className="truncate">
+            {t('nav.freeShippingShort', 'Free Shipping above')} {formatPrice(249.99)}
+          </span>
+          <span className="text-emerald-500/60 hidden xs:inline">|</span>
+          <Link
+            to="/blog"
+            className="text-amber-300 hover:text-amber-200 font-extrabold flex items-center gap-1 flex-shrink-0"
+          >
+            <FileText size={11} />
+            <span>{t('nav.blog', 'Knowledge Hub')}</span>
+          </Link>
+        </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <CurrencySwitcher compact />
           <LanguageSwitcher compact />
@@ -256,10 +281,10 @@ export default function Header({
             )}
           </button>
 
-          {/* Cart Button */}
+          {/* Search Button (Mobile & Tablet) */}
           <button
-            onClick={() => setIsSearchModalOpen(true)}
-            className="hidden sm:flex md:hidden items-center justify-center p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
+            onClick={handleOpenSearchModal}
+            className="flex md:hidden items-center justify-center p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition"
             aria-label="Open search dialog"
           >
             <Search size={18} />
@@ -267,7 +292,7 @@ export default function Header({
 
           <button
             onClick={onOpenCart}
-            className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3.5 sm:px-4 py-2 rounded-lg font-semibold text-sm transition relative cursor-pointer"
+            className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm transition relative cursor-pointer"
             aria-label="View shopping cart"
           >
             <ShoppingBag size={18} />
@@ -303,12 +328,27 @@ export default function Header({
           </button>
         </form>
 
+        {/* Mobile Horizontal Quick Navigation Strip */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scroll-smooth -mx-1 px-1">
+          {/* 🌟 Prominent Knowledge Hub Mobile Access Tab */}
+          <Link
+            to="/blog"
+            className={`px-3 py-1.5 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 flex-shrink-0 shadow-2xs ${
+              location.pathname.startsWith('/blog')
+                ? 'bg-amber-400 text-gray-950 ring-2 ring-amber-500/60'
+                : 'bg-emerald-900 text-amber-300 hover:bg-emerald-950 border border-emerald-700/80'
+            }`}
+          >
+            <FileText size={12} className={location.pathname.startsWith('/blog') ? 'text-gray-950' : 'text-amber-300'} />
+            <span>{t('nav.blog', 'Knowledge Hub')}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          </Link>
+
           <Link
             to="/products"
             onClick={() => handleCategorySelect(null)}
-            className={`px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors flex-shrink-0 ${
-              currentCategory === null
+            className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors flex-shrink-0 ${
+              currentCategory === null && !location.pathname.startsWith('/blog') && location.pathname !== '/forms'
                 ? 'bg-emerald-800 text-white shadow-2xs'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -322,7 +362,7 @@ export default function Header({
                 key={cat.slug}
                 to={`/category/${cat.slug}`}
                 onClick={() => handleCategorySelect(cat.slug)}
-                className={`px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors flex-shrink-0 ${
+                className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors flex-shrink-0 ${
                   isSelected
                     ? 'bg-emerald-800 text-white shadow-2xs'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -332,6 +372,16 @@ export default function Header({
               </Link>
             );
           })}
+          <Link
+            to="/forms"
+            className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors flex-shrink-0 flex items-center gap-1 ${
+              location.pathname === '/forms'
+                ? 'bg-emerald-800 text-white shadow-2xs'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span>Google Forms</span>
+          </Link>
         </div>
       </div>
 
@@ -505,7 +555,7 @@ export default function Header({
       {/* Global Predictive Search Modal */}
       <SearchModal
         isOpen={isSearchModalOpen}
-        onClose={() => setIsSearchModalOpen(false)}
+        onClose={handleCloseSearchModal}
         initialQuery={searchInput}
       />
     </header>

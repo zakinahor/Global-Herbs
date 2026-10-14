@@ -40,8 +40,10 @@ import BlogHubPage from './components/BlogHubPage';
 import ArticleDetailPage from './components/ArticleDetailPage';
 import OrderTrackingPage from './components/OrderTrackingPage';
 import AgeVerificationModal from './components/AgeVerificationModal';
+import CookieConsentBanner from './components/CookieConsentBanner';
 import SupportWidget from './components/SupportWidget';
 import GoogleFormsPage from './components/GoogleFormsPage';
+import MobileBottomNav from './components/MobileBottomNav';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -900,6 +902,7 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -1012,7 +1015,7 @@ export default function App() {
           <AuthProvider>
             <ScrollToTop />
 
-          <div className="min-h-screen bg-white flex flex-col justify-between text-left">
+          <div className="min-h-screen bg-white flex flex-col justify-between text-left pb-16 md:pb-0">
             <AgeVerificationModal />
             <Header
               categories={categories}
@@ -1021,6 +1024,9 @@ export default function App() {
               onOpenMobileMenu={() => setMobileMenuOpen(true)}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              isSearchModalOpen={searchModalOpen}
+              onOpenSearchModal={() => setSearchModalOpen(true)}
+              onCloseSearchModal={() => setSearchModalOpen(false)}
             />
 
             <AnimatedRoutes
@@ -1043,7 +1049,16 @@ export default function App() {
 
             <Footer />
 
+            {/* Mobile Bottom Sticky Navigation Bar */}
+            <MobileBottomNav
+              onOpenMobileMenu={() => setMobileMenuOpen(true)}
+              onOpenCart={() => setCartOpen(true)}
+              onOpenSearch={() => setSearchModalOpen(true)}
+              cartCount={cartCount}
+            />
+
             <BackToTopButton />
+            <CookieConsentBanner />
             <SupportWidget />
 
             <AnimatePresence>

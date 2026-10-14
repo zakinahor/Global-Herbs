@@ -150,7 +150,7 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
             {article.category}
           </div>
 
-          <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+          <h1 className="font-heading font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
             {article.title}
           </h1>
 
@@ -193,10 +193,10 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
       </header>
 
       {/* Main Body Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
         
-        {/* Left Sticky Table of Contents & Social Share (lg:col-span-3) */}
-        <aside className="lg:col-span-3 space-y-6">
+        {/* Left Sticky Table of Contents & Social Share (lg:col-span-3) - ordered after main on mobile */}
+        <aside className="order-2 lg:order-1 lg:col-span-3 space-y-6">
           <div className="sticky top-24 bg-gray-50 border border-gray-200 rounded-2xl p-5 shadow-2xs space-y-4">
             <div className="flex items-center justify-between border-b border-gray-200 pb-3">
               <div className="flex items-center gap-2 text-xs font-bold text-gray-900 uppercase tracking-wider">
@@ -239,8 +239,8 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
           </div>
         </aside>
 
-        {/* Center Article Content (lg:col-span-9) */}
-        <main className="lg:col-span-9 space-y-8">
+        {/* Center Article Content (lg:col-span-9) - ordered first on mobile */}
+        <main className="order-1 lg:order-2 lg:col-span-9 space-y-8">
           
           {/* Featured Hero Image Banner */}
           {article.featuredImage && (

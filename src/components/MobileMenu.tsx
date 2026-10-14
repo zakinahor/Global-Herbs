@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { X, ChevronRight, Phone, MessageSquare, ShieldCheck, User, Youtube, Music2, ExternalLink } from 'lucide-react';
+import { X, ChevronRight, Phone, MessageSquare, ShieldCheck, User, Youtube, Music2, ExternalLink, BookOpen, FileText, Sparkles } from 'lucide-react';
 import RedditIcon from './icons/RedditIcon';
 import FacebookIcon from './icons/FacebookIcon';
 import { Category } from '../types';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
+import { blogArticles } from '../data/blogArticles';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -134,21 +135,111 @@ export default function MobileMenu({
             <ChevronRight size={16} className={isLoggedIn ? 'text-emerald-200' : 'text-emerald-700'} />
           </button>
 
+          {/* 🌟 Featured Knowledge Hub & Educational Guides Card */}
+          <Link
+            to="/blog"
+            onClick={onClose}
+            className={`w-full p-3.5 rounded-xl border flex items-center justify-between text-left transition-all duration-200 cursor-pointer shadow-xs group ${
+              location.pathname.startsWith('/blog')
+                ? 'bg-amber-400 text-gray-950 border-amber-500 shadow-md ring-2 ring-amber-400/50'
+                : 'bg-gradient-to-r from-emerald-950 via-emerald-900 to-gray-950 text-white border-emerald-700/80 hover:border-amber-400/60'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold flex-shrink-0 shadow-xs transition-transform group-hover:scale-105 ${
+                  location.pathname.startsWith('/blog')
+                    ? 'bg-gray-950 text-amber-300'
+                    : 'bg-amber-400 text-gray-950'
+                }`}
+              >
+                <BookOpen size={18} />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`text-[9px] font-extrabold uppercase tracking-wider block ${
+                      location.pathname.startsWith('/blog') ? 'text-gray-900' : 'text-amber-300'
+                    }`}
+                  >
+                    Dispensary Knowledge Hub
+                  </span>
+                  <span
+                    className={`text-[8px] font-black px-1.5 py-0.2 rounded uppercase ${
+                      location.pathname.startsWith('/blog')
+                        ? 'bg-gray-950 text-white'
+                        : 'bg-amber-400/20 text-amber-200 border border-amber-400/30'
+                    }`}
+                  >
+                    Free Guides
+                  </span>
+                </div>
+                <span className="text-xs font-bold block leading-tight truncate max-w-[170px] mt-0.5">
+                  Cannabis Science &amp; Guides ({blogArticles.length})
+                </span>
+              </div>
+            </div>
+            <ChevronRight
+              size={16}
+              className={`group-hover:translate-x-0.5 transition-transform flex-shrink-0 ${
+                location.pathname.startsWith('/blog') ? 'text-gray-950' : 'text-amber-300'
+              }`}
+            />
+          </Link>
+
           <div className="space-y-1.5">
             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">
-              Departments
+              Departments &amp; Resources
             </h4>
             
             <Link
               to="/products"
               onClick={() => handleCategorySelect(null)}
               className={`w-full text-left py-2.5 px-3 rounded-lg flex justify-between items-center text-xs font-bold uppercase tracking-wider transition ${
-                currentCategory === null
+                currentCategory === null && !location.pathname.startsWith('/blog') && location.pathname !== '/forms'
                   ? 'bg-emerald-50 text-emerald-800'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <span>Shop All Products</span>
+              <ChevronRight size={14} className="text-gray-400" />
+            </Link>
+
+            {/* Knowledge Hub Department Tab */}
+            <Link
+              to="/blog"
+              onClick={onClose}
+              className={`w-full text-left py-2.5 px-3 rounded-lg flex justify-between items-center text-xs font-bold uppercase tracking-wider transition ${
+                location.pathname.startsWith('/blog')
+                  ? 'bg-amber-400 text-gray-950 ring-1 ring-amber-500'
+                  : 'bg-emerald-50/70 text-emerald-900 hover:bg-emerald-100 border border-emerald-200/50'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <FileText size={15} className={location.pathname.startsWith('/blog') ? 'text-gray-950' : 'text-emerald-700'} />
+                <span>Knowledge Hub</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                  location.pathname.startsWith('/blog') ? 'bg-gray-950 text-amber-300' : 'bg-amber-200 text-amber-950'
+                }`}>
+                  {blogArticles.length} Guides
+                </span>
+                <ChevronRight size={14} className={location.pathname.startsWith('/blog') ? 'text-gray-950' : 'text-gray-400'} />
+              </div>
+            </Link>
+
+            {/* Google Forms Tab */}
+            <Link
+              to="/forms"
+              onClick={onClose}
+              className={`w-full text-left py-2.5 px-3 rounded-lg flex justify-between items-center text-xs font-bold uppercase tracking-wider transition ${
+                location.pathname === '/forms'
+                  ? 'bg-emerald-50 text-emerald-800'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <span>Google Forms &amp; Inquiries</span>
               <ChevronRight size={14} className="text-gray-400" />
             </Link>
 
@@ -295,9 +386,21 @@ export default function MobileMenu({
                 <Link
                   to="/blog"
                   onClick={onClose}
-                  className="text-left hover:text-emerald-800"
+                  className={`text-left flex items-center justify-between p-2 rounded-lg transition font-extrabold ${
+                    location.pathname.startsWith('/blog')
+                      ? 'bg-amber-400 text-gray-950 shadow-xs'
+                      : 'text-emerald-900 bg-emerald-50/80 hover:bg-emerald-100'
+                  }`}
                 >
-                  Knowledge Hub
+                  <span className="flex items-center gap-2">
+                    <FileText size={14} className={location.pathname.startsWith('/blog') ? 'text-gray-950' : 'text-emerald-700'} />
+                    <span>Knowledge Hub &amp; Guides</span>
+                  </span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                    location.pathname.startsWith('/blog') ? 'bg-gray-950 text-amber-300' : 'bg-amber-200 text-amber-950'
+                  }`}>
+                    {blogArticles.length} Guides
+                  </span>
                 </Link>
                 <Link
                   to="/checkout"
