@@ -659,8 +659,9 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
                     <img
                       src={article.featuredImage}
                       alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 ease-out"
                       loading="lazy"
+                      onError={(e) => { e.currentTarget.src = '/images/indoor_flower_buds.jpg'; }}
                     />
                     <div className="absolute top-3 left-3 bg-emerald-950/80 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                       {article.category}

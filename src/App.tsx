@@ -44,6 +44,7 @@ import CookieConsentBanner from './components/CookieConsentBanner';
 import SupportWidget from './components/SupportWidget';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
+import AdminBlogManager from './components/admin/AdminBlogManager';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -839,7 +840,23 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
-        <Route path="/google-forms" element={<Navigate to="/forms" replace />} />
+        <Route
+          path="/admin/blog"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <AdminBlogManager />
+            </motion.div>
+          }
+        />
+        <Route path="/admin/seo-blog" element={<Navigate to="/admin/blog" replace />} />
+        <Route path="/admin" element={<Navigate to="/admin/blog" replace />} />
 
         {/* Official Social Media Direct Redirection Routes */}
         <Route

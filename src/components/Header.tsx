@@ -134,6 +134,9 @@ export default function Header({
             <Link to="/blog" className="text-emerald-800 font-bold hover:text-emerald-900 cursor-pointer flex items-center gap-1 text-[11px]">
               <FileText size={12} /> {t('nav.blog', 'Knowledge Hub')}
             </Link>
+            <Link to="/admin/blog" className="text-gray-600 hover:text-emerald-700 font-semibold cursor-pointer flex items-center gap-1 text-[11px]" title="Administrator SEO Blog Manager">
+              <span>Admin Blog</span>
+            </Link>
             <Link to="/forms" className="text-emerald-800 font-bold hover:text-emerald-900 cursor-pointer flex items-center gap-1 text-[11px]">
               <span>Google Forms</span>
             </Link>

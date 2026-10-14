@@ -27,6 +27,8 @@ import {
   resolveVisitorLocale,
   getLiveExchangeRates,
 } from './lib/locale/localeService';
+import { blogRouter } from './src/server/blog/blogRoutes';
+import { blogScheduler } from './src/server/blog/blogSchedulerService';
 
 // Persistent storage for orders, form submissions, and newsletter subscribers
 const contactSubmissions: any[] = [];
@@ -294,6 +296,9 @@ async function startServer() {
 
   // JSON request body parser
   app.use(express.json());
+
+  // Mount Automated SEO Blog & Publishing Management Router
+  app.use(blogRouter);
 
   // Social Media Direct Redirect Endpoints
   const OFFICIAL_YOUTUBE_URL = 'https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A';
@@ -1851,6 +1856,7 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[API Server] Global Herbs running on port ${PORT} with PID ${process.pid}`);
+    blogScheduler.start();
   });
 }
 

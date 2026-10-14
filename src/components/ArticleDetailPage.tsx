@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronRight,
   Clock,
@@ -22,7 +22,7 @@ import {
   Scale,
   FileText,
 } from 'lucide-react';
-import { getArticleBySlug, blogArticles } from '../data/blogArticles';
+import { getArticleBySlug, blogArticles, BlogArticle } from '../data/blogArticles';
 import { products } from '../data/products';
 import ProductCard from './ProductCard';
 import SEOHead from './SEOHead';
@@ -33,6 +33,7 @@ interface ArticleDetailPageProps {
 
 export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProps) {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -43,7 +44,22 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
   const [waitlistLoading, setWaitlistLoading] = useState(false);
   const [waitlistError, setWaitlistError] = useState<string | null>(null);
 
-  const article = getArticleBySlug(slug || '');
+  const [liveArticle, setLiveArticle] = useState<BlogArticle | undefined>(() => getArticleBySlug(slug || ''));
+
+  useEffect(() => {
+    if (!slug) return;
+    const isPreview = searchParams.get('preview') === 'true';
+    fetch(`/api/blog/${encodeURIComponent(slug)}${isPreview ? '?preview=true' : ''}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.article) {
+          setLiveArticle(data.article);
+        }
+      })
+      .catch(() => {});
+  }, [slug, searchParams]);
+
+  const article = liveArticle || getArticleBySlug(slug || '');
 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,9 +264,10 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
               <img
                 src={article.featuredImage}
                 alt={`${article.title} - Global Herbs Educational Guide`}
-                className="w-full h-auto max-h-[460px] object-cover object-center"
+                className="w-full h-auto max-h-[460px] object-cover object-center transform group-hover:scale-102 transition duration-700 ease-out"
                 loading="eager"
                 decoding="async"
+                onError={(e) => { e.currentTarget.src = '/images/indoor_flower_buds.jpg'; }}
               />
               {article.id === 'global-herbs-mobile-app-announcement' && (
                 <div className="bg-gradient-to-r from-emerald-950/95 via-gray-900/90 to-emerald-950/95 px-5 py-3 border-t border-emerald-800/60 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-100">

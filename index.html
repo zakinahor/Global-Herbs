@@ -20,18 +20,21 @@
         };
         window.addEventListener('error', function(e) {
           if (!e) return;
-          var msg = e.message || '';
-          var file = e.filename || '';
-          var isCrossOriginScriptError =
+          var msg = (e.message || '').toString();
+          var file = (e.filename || '').toString();
+          var isIgnoredError =
             msg === 'Script error.' ||
             msg.indexOf('Script error') !== -1 ||
+            msg.indexOf('WebSocket') !== -1 ||
+            msg.indexOf('vite:ws') !== -1 ||
+            file.indexOf('@vite/client') !== -1 ||
             (!file && e.lineno === 0 && e.colno === 0) ||
             msg.indexOf('[Tawk') !== -1 ||
             msg.indexOf('tawk.to') !== -1 ||
             file.indexOf('tawk.to') !== -1 ||
             file.indexOf('translate.google') !== -1 ||
             file.indexOf('googletagmanager') !== -1;
-          if (isCrossOriginScriptError) {
+          if (isIgnoredError) {
             if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
             if (typeof e.stopPropagation === 'function') e.stopPropagation();
             if (typeof e.preventDefault === 'function') e.preventDefault();
@@ -44,6 +47,9 @@
           if (
             msg === 'Script error.' ||
             msg.indexOf('Script error') !== -1 ||
+            msg.indexOf('WebSocket') !== -1 ||
+            msg.indexOf('vite:ws') !== -1 ||
+            src.indexOf('@vite/client') !== -1 ||
             (!src && lineno === 0 && colno === 0) ||
             msg.indexOf('[Tawk') !== -1 ||
             src.indexOf('tawk.to') !== -1 ||
@@ -56,9 +62,20 @@
         window.addEventListener('unhandledrejection', function(e) {
           var reason = e && e.reason;
           var msg = reason ? (reason.message || String(reason)) : '';
-          if (msg && (msg.indexOf('[Tawk') !== -1 || msg.indexOf('tawk.to') !== -1 || msg.indexOf('Script error') !== -1)) {
+          var stack = reason ? (reason.stack || '') : '';
+          if (
+            (msg && (
+              msg.indexOf('WebSocket') !== -1 ||
+              msg.indexOf('vite:ws') !== -1 ||
+              msg.indexOf('[Tawk') !== -1 ||
+              msg.indexOf('tawk.to') !== -1 ||
+              msg.indexOf('Script error') !== -1
+            )) ||
+            stack.indexOf('@vite/client') !== -1
+          ) {
             if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
             if (typeof e.preventDefault === 'function') e.preventDefault();
+            return true;
           }
         }, true);
       })();

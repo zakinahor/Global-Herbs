@@ -33,7 +33,7 @@ export const NON_INDEXABLE_PRODUCT_IDS = new Set([
  * Ensures clean canonical, non-redirected URLs for search engine compliance.
  * Excludes non-indexable / controlled substances and utility pages.
  */
-export function generateSitemapEntries(): SitemapEntry[] {
+export function generateSitemapEntries(customArticles?: { slug: string }[]): SitemapEntry[] {
   const entries: SitemapEntry[] = [
     // Canonical public pages. /shop and /terms-conditions are aliases and stay out.
     { loc: `${BASE_URL}/` },
@@ -56,8 +56,9 @@ export function generateSitemapEntries(): SitemapEntry[] {
       });
     });
 
-  // Blog article URLs.
-  blogArticles.forEach((article) => {
+  // Blog article URLs (published only).
+  const articlesToInclude = customArticles || blogArticles;
+  articlesToInclude.forEach((article) => {
     entries.push({
       loc: `${BASE_URL}/blog/${encodeURIComponent(article.slug)}`,
     });
@@ -88,8 +89,8 @@ export function generateSitemapEntries(): SitemapEntry[] {
 /**
  * Generates complete XML string for sitemap.xml
  */
-export function generateSitemapXML(): string {
-  const entries = generateSitemapEntries();
+export function generateSitemapXML(customArticles?: { slug: string }[]): string {
+  const entries = generateSitemapEntries(customArticles);
 
   const urlNodes = entries
     .map(

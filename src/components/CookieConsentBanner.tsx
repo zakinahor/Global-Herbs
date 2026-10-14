@@ -35,7 +35,7 @@ export default function CookieConsentBanner() {
     <div
       role="region"
       aria-label="Cookie preferences"
-      className="fixed bottom-0 inset-x-0 z-45 p-3 sm:p-4 bg-zinc-950/95 text-white backdrop-blur-md border-t border-emerald-900/60 shadow-2xl animate-in fade-in slide-in-from-bottom-3 duration-300"
+      className="fixed bottom-0 inset-x-0 z-50 p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] bg-zinc-950/95 text-white backdrop-blur-md border-t border-emerald-900/60 shadow-2xl animate-in fade-in slide-in-from-bottom-3 duration-300"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-start gap-3 text-left">

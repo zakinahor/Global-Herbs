@@ -479,7 +479,19 @@ export function getPage(pathname: string): SeoPage | null {
   const articleMatch = pathname.match(/^\/blog\/([^/]+)$/);
   if (articleMatch) {
     const slug = decodeURIComponent(articleMatch[1]);
-    const article = blogArticles.find((item) => item.slug === slug);
+    let dynamicArticle: any = null;
+    try {
+      const dynamicPath = path.resolve(process.cwd(), 'data/blog_articles.json');
+      if (fs.existsSync(dynamicPath)) {
+        const list = JSON.parse(fs.readFileSync(dynamicPath, 'utf-8'));
+        if (Array.isArray(list)) {
+          dynamicArticle = list.find((a: any) => a.slug === slug && a.status === 'published');
+        }
+      }
+    } catch {
+      // Fallback to static
+    }
+    const article = dynamicArticle || blogArticles.find((item) => item.slug === slug);
     if (!article) return null;
 
     const articleSchemas: Record<string, unknown>[] = [

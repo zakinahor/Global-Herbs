@@ -1,0 +1,134 @@
+[
+  {
+    "id": "LOG-1791972934772-7d01a9cc",
+    "timestamp": "2026-10-14T10:15:34.772Z",
+    "action": "deleted",
+    "articleId": "art-1791972732928-54d57d",
+    "articleSlug": "cold-cure-vs-fresh-press-rosin-difference-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist",
+    "status": "failed",
+    "user": "Dispensary Admin",
+    "details": "Permanently deleted article \"The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist\""
+  },
+  {
+    "id": "LOG-1791972934765-aa730685",
+    "timestamp": "2026-10-14T10:15:34.765Z",
+    "action": "deleted",
+    "articleId": "art-1791972888026-252523",
+    "articleSlug": "difference-between-cold-cure-and-fresh-press-rosin-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist",
+    "status": "failed",
+    "user": "Dispensary Admin",
+    "details": "Permanently deleted article \"The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist\""
+  },
+  {
+    "id": "LOG-1791972934758-7b825f97",
+    "timestamp": "2026-10-14T10:15:34.758Z",
+    "action": "deleted",
+    "articleId": "art-1791972922216-7dcefa",
+    "articleSlug": "optimal-rosin-dabbing-temperatures-guide-2098-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist",
+    "status": "published",
+    "user": "Dispensary Admin",
+    "details": "Permanently deleted article \"The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist\""
+  },
+  {
+    "id": "LOG-1791972922255-bfb3f3a5",
+    "timestamp": "2026-10-14T10:15:22.255Z",
+    "action": "published",
+    "articleId": "art-1791972922216-7dcefa",
+    "articleSlug": "optimal-rosin-dabbing-temperatures-guide-2098-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist",
+    "status": "published",
+    "user": "Manual Admin Trigger by Admin Manual Trigger",
+    "details": "Published article live at /blog/optimal-rosin-dabbing-temperatures-guide-2098-complete-educational-guide"
+  },
+  {
+    "id": "LOG-1791972922247-beed50d5",
+    "timestamp": "2026-10-14T10:15:22.248Z",
+    "action": "scheduled",
+    "articleId": "art-1791972922216-7dcefa",
+    "articleSlug": "optimal-rosin-dabbing-temperatures-guide-2098-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist",
+    "status": "scheduled",
+    "user": "Dispensary Admin",
+    "details": "Scheduled article publication for 10/14/2026, 10:14:22 AM"
+  },
+  {
+    "id": "LOG-1791972922232-f3a93113",
+    "timestamp": "2026-10-14T10:15:22.232Z",
+    "action": "edited",
+    "articleId": "art-1791972922216-7dcefa",
+    "articleSlug": "optimal-rosin-dabbing-temperatures-guide-2098-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist",
+    "status": "draft",
+    "user": "Dispensary Admin",
+    "details": "Created new article \"The Complete Guide to Optimal Rosin Dabbing Temperatures Guide 2098: Science, Dosing & Buyer Checklist\" (Status: draft)"
+  },
+  {
+    "id": "LOG-1791972888046-23e6f8fb",
+    "timestamp": "2026-10-14T10:14:48.047Z",
+    "action": "failed",
+    "articleId": "art-1791972888026-252523",
+    "articleSlug": "difference-between-cold-cure-and-fresh-press-rosin-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist",
+    "status": "failed",
+    "user": "Manual Admin Trigger by Admin Manual Trigger",
+    "details": "Publish rejected: Article content is too thin (340 words). Minimum required is 350 words., Broken internal links detected: Broken category link: /category/cbd-oils, Broken category link: /category/concentrates-wax"
+  },
+  {
+    "id": "LOG-1791972888039-5a026ce9",
+    "timestamp": "2026-10-14T10:14:48.040Z",
+    "action": "scheduled",
+    "articleId": "art-1791972888026-252523",
+    "articleSlug": "difference-between-cold-cure-and-fresh-press-rosin-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist",
+    "status": "scheduled",
+    "user": "Dispensary Admin",
+    "details": "Scheduled article publication for 10/14/2026, 10:13:48 AM"
+  },
+  {
+    "id": "LOG-1791972888027-23e8849b",
+    "timestamp": "2026-10-14T10:14:48.028Z",
+    "action": "edited",
+    "articleId": "art-1791972888026-252523",
+    "articleSlug": "difference-between-cold-cure-and-fresh-press-rosin-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist",
+    "status": "draft",
+    "user": "Dispensary Admin",
+    "details": "Created new article \"The Complete Guide to Difference Between Cold Cure And Fresh Press Rosin: Science, Dosing & Buyer Checklist\" (Status: draft)"
+  },
+  {
+    "id": "LOG-1791972732976-5b708aae",
+    "timestamp": "2026-10-14T10:12:12.976Z",
+    "action": "failed",
+    "articleId": "art-1791972732928-54d57d",
+    "articleSlug": "cold-cure-vs-fresh-press-rosin-difference-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist",
+    "status": "failed",
+    "user": "Manual Admin Trigger by Admin Manual Trigger",
+    "details": "Publish rejected: Article content is too thin (339 words). Minimum required is 350 words., Broken internal links detected: Recommended category slug \"/category/concentrates-wax\" does not exist in store., Broken category link: /category/cbd-oils, Broken category link: /category/concentrates-wax"
+  },
+  {
+    "id": "LOG-1791972732967-29048b5c",
+    "timestamp": "2026-10-14T10:12:12.967Z",
+    "action": "scheduled",
+    "articleId": "art-1791972732928-54d57d",
+    "articleSlug": "cold-cure-vs-fresh-press-rosin-difference-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist",
+    "status": "scheduled",
+    "user": "Dispensary Admin",
+    "details": "Scheduled article publication for 10/14/2026, 10:11:12 AM"
+  },
+  {
+    "id": "LOG-1791972732950-164ce814",
+    "timestamp": "2026-10-14T10:12:12.950Z",
+    "action": "edited",
+    "articleId": "art-1791972732928-54d57d",
+    "articleSlug": "cold-cure-vs-fresh-press-rosin-difference-complete-educational-guide",
+    "articleTitle": "The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist",
+    "status": "draft",
+    "user": "Dispensary Admin",
+    "details": "Created new article \"The Complete Guide to Cold Cure Vs Fresh Press Rosin Difference: Science, Dosing & Buyer Checklist\" (Status: draft)"
+  }
+]

@@ -61,6 +61,316 @@ export interface BlogArticle {
 
 export const blogArticles: BlogArticle[] = [
   {
+    id: 'how-strong-are-thc-edibles-pharmacological-dosing-guide',
+    slug: 'how-strong-are-thc-edibles-pharmacological-dosing-guide',
+    title: 'How Strong Are THC Edibles? The Pharmacological Dosing & Potency Guide',
+    metaTitle: 'How Strong Are THC Edibles? Milligram Dosing & Potency Chart | Global Herbs',
+    metaDescription: 'Explore the clinical science of THC edible strength. Learn how 11-hydroxy-THC hepatic metabolism alters potency, compare 1mg to 100mg dosing tiers, and review lab safety protocols.',
+    targetKeywords: [
+      'how strong are thc edibles',
+      'thc edible dosing chart',
+      'how many mg of edibles should i take',
+      '11-hydroxy-THC pharmacokinetics',
+      'cannabis edible strength guide',
+      'delta 9 gummies potency milligrams',
+      'edible onset timeline',
+      'global herbs lab tested edibles',
+      'how to stop an edible green out',
+      'edibles vs smoking potency comparison',
+    ],
+    category: 'Dosing & Guides',
+    categorySlug: 'dosing-guides',
+    author: {
+      name: 'Dr. Julian Mercer',
+      role: 'Professor of Clinical Phytochemistry & Pharmacokinetics',
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200',
+    },
+    reviewer: {
+      name: 'Dr. Arthur Vance, Ph.D.',
+      credentials: 'Chief Analytical Chemist & ISO-17025 Cannabinoid Lab Auditor',
+    },
+    publishedDate: 'October 14, 2026',
+    readTime: '12 min read',
+    featuredImage: '/images/thc_edibles_gummies.jpg',
+    excerpt: 'Why does a 10 mg oral THC gummy feel substantially more psychoactive and endure hours longer than inhaling 10 mg of vaporized flower? Uncover the hepatic enzymatic pathways converting Delta-9 THC into 11-hydroxy-THC, evaluate the clinical milligram dosing hierarchy from 1 mg microdoses to 100 mg medical protocols, and master the biological variables that govern cannabis edible pharmacodynamics.',
+    keyTakeaways: [
+      'Hepatic First-Pass Bioconversion: Ingested Delta-9 THC undergoes phase I hepatic oxidation via cytochrome P450 enzymes (specifically CYP2C9 and CYP3A4) to yield 11-hydroxy-THC (11-OH-THC), an active metabolite exhibiting 2- to 4-fold higher CB1 binding affinity and accelerated blood-brain barrier penetration.',
+      'The 10 mg Clinical Standard: In licensed botanical dispensaries, 10 mg of Delta-9 THC represents a single standard reference serving. Novice and sensitive consumers should begin at a 2.5–5 mg baseline, observing a mandatory 90–120 minute latency window prior to supplemental titration.',
+      'Biphasic Dose-Response Curve: Low doses of THC stimulate anxiolytic, mild euphoric, and neuroprotective cascades, whereas supra-therapeutic doses (above individual physiological tolerance thresholds) can induce transient dysphoria, tachycardia, and sensory disorientation ("green-out").',
+      'Lipophilic Chylomicron Transport: Cannabinoid absorption improves 3- to 5-fold when ingested alongside dietary lipids (e.g., coconut medium-chain triglycerides or nut butter), which facilitate micellar dissolution and lymphatic circulation.',
+      'Rigorous Homogeneity Assurance: Laboratory-grade edibles at Global Herbs undergo ISO/IEC 17025 third-party high-performance liquid chromatography (HPLC) testing to ensure sub-milligram dosing precision across every single gummy piece without hot spots.',
+    ],
+    tableOfContents: [
+      { id: 'hepatic-biochemistry-11-hydroxy-thc', title: '1. The Hepatic Biotransformation: Why Ingested THC Hits Harder Than Inhalation' },
+      { id: 'milligram-potency-matrix', title: '2. The Milligram Potency Matrix: Complete Clinical Dosing Scale (1 mg to 100 mg)' },
+      { id: 'modulating-biological-variables', title: '3. Biological & Formulation Variables That Alter Perceived Potency' },
+      { id: 'global-herbs-analytical-standards', title: '4. Dispensary Quality & Precision: How Global Herbs Guarantees Dose Uniformity' },
+      { id: 'harm-reduction-green-out-rescue', title: '5. The Clinical Harm-Reduction Protocol: How to Mitigate an Overwhelming Dose' },
+    ],
+    contentSections: [
+      {
+        id: 'hepatic-biochemistry-11-hydroxy-thc',
+        title: '1. The Hepatic Biotransformation: Why Ingested THC Hits Harder Than Inhalation',
+        paragraphs: [
+          'Among consumers transitioning from inhalable cannabis flower or solventless extracts to ingested gummies and baked edibles, the most prevalent question is deceptively straightforward: "Why does a 10 mg THC edible feel so much more intensely psychoactive than a puff of a 20% THC preroll?"',
+          'The answer lies not in botanical variance, but in human gastrointestinal and hepatic pharmacokinetics. When cannabis vapor or smoke is inhaled through pulmonary alveoli, Delta-9-tetrahydrocannabinol (Delta-9 THC) diffuses instantaneously into pulmonary capillary beds and reaches arterial blood circulation within seconds, crossing into the central nervous system before systemic circulation dilutes it. The elimination half-life is swift, with peak plasma concentrations (Cmax) arriving between 3 and 10 minutes, and subjective intoxication tapering off within 2 to 3 hours.',
+          'In stark contrast, oral ingestion subjects Delta-9 THC to gastrointestinal transit, gastric acid dissolution, intestinal mucosal permeation, and subsequent transport through the mesenteric venous system directly into the hepatic portal vein. This process initiates First-Pass Hepatic Metabolism.',
+          'Within hepatocytes, microsomal cytochrome P450 monooxygenase enzymes—principally the polymorphic CYP2C9 and CYP3A4 isozymes—catalyze the allylic oxidation of Delta-9 THC into 11-hydroxy-Delta-9-tetrahydrocannabinol (11-OH-THC). Subsequent phase II enzymatic glucuronidation converts 11-OH-THC into the inactive terminal metabolite 11-nor-9-carboxy-THC (THC-COOH), which is eliminated via biliary and renal pathways.',
+          'Crucially, 11-OH-THC is not an inert intermediary; it is a profoundly bioactive compound. Pharmacological assays and binding affinity studies demonstrate that 11-OH-THC possesses up to four times greater affinity and intrinsic efficacy at human Cannabinoid Type 1 (CB1) orthosteric receptor sites in the basal ganglia, substantia nigra, cerebellum, and cerebral cortex compared to unmodified Delta-9 THC. Furthermore, despite its hydroxyl functional group, 11-OH-THC exhibits accelerated transit across the blood-brain barrier (BBB).',
+          'Consequently, while only 10% to 20% of an oral dose enters systemic circulation due to incomplete digestive absorption and hepatic clearance, the high molar ratio of circulating 11-OH-THC relative to parent Delta-9 produces a qualitatively distinct, somatic, and protracted psychoactive experience.',
+        ],
+        calloutBox: {
+          type: 'info',
+          title: 'Pharmacological Mechanism: Delta-9-THC vs. 11-Hydroxy-THC',
+          text: 'Pulmonary inhalation bypasses the liver, delivering predominantly parent Delta-9 THC to brain receptors with peak effects at 15 minutes. Oral ingestion funnels cannabinoids through hepatic portal circulation, where CYP2C9 enzymes synthesize 11-hydroxy-THC—a significantly more potent metabolite that binds CB1 receptors with higher efficacy and extends subjective duration up to 8 hours.',
+        },
+      },
+      {
+        id: 'milligram-potency-matrix',
+        title: '2. The Milligram Potency Matrix: Complete Clinical Dosing Scale (1 mg to 100 mg)',
+        paragraphs: [
+          'Because individual cannabinoid sensitivity is governed by endogenous cannabinoid receptor density, hepatic enzyme kinetics, and previous exposure history, universal dosage labels can be misleading. To establish an evidence-based taxonomy, clinical phytochemists categorize edible dosages into six distinct milligram thresholds.',
+          'Review the structured potency matrix below to calibrate your intake according to specific physiological targets and pharmacological tolerances.',
+        ],
+        table: {
+          caption: 'Pharmacological THC Edible Dosage, Pharmacodynamics & Target Experience Matrix',
+          headers: ['Dosage Tier', 'Active THC (mg)', 'Target CB1 Receptor Load', 'Expected Subjective & Physiological Effects', 'Typical Onset & Peak', 'Clinical Profile & Suitability'],
+          rows: [
+            ['Microdose', '1.0 – 2.5 mg', 'Sub-perceptual / Minimal (<15% occupancy)', 'Subtle mood elevation, mild stress reduction, executive focus, zero motor impairment', 'Onset: 45–75 min; Peak: 2.0 hrs; Duration: 3–4 hrs', 'Daytime productivity, anxiety-sensitive individuals, first-time botanical consumers'],
+            ['Therapeutic Entry', '2.5 – 5.0 mg', 'Mild / Gentle (15–35% occupancy)', 'Mild euphoria, palpable musculoskeletal relaxation, sensory brightening, social ease', 'Onset: 45–90 min; Peak: 2.5 hrs; Duration: 4–6 hrs', 'Beginners seeking recreational relaxation, mild sleep support, introductory dispensary users'],
+            ['Standard Moderate', '5.0 – 10.0 mg', 'Moderate / Classical (35–65% occupancy)', 'Prominent somatic relaxation, cognitive euphoria, enhanced gustatory & auditory perception, mild ataxia', 'Onset: 45–90 min; Peak: 2.5–3.5 hrs; Duration: 5–7 hrs', 'The universal legal dispensary benchmark. Experienced consumers, persistent stress, bedtime sedation'],
+            ['High Potency', '10.0 – 25.0 mg', 'Elevated / Intensive (65–85% occupancy)', 'Potent psychoactive state, deep somatic couch-lock, altered temporal perception, heightened appetite', 'Onset: 30–75 min; Peak: 3.0 hrs; Duration: 6–8 hrs', 'High-tolerance cannabis consumers, chronic neuropathic discomfort, severe sleep disturbances'],
+            ['Very High Potency', '25.0 – 50.0 mg', 'Near Saturation (>85% occupancy)', 'Profound sedation, intensive cerebral stimulation, heavy physical gravitational sensations, potential disorientation', 'Onset: 30–60 min; Peak: 3.0–4.0 hrs; Duration: 8–10 hrs', 'Medical patients with documented high tolerance, severe chronic inflammatory conditions, palliative relief'],
+            ['Extreme / Clinical', '50.0 – 100.0+ mg', 'Full Receptor Saturation (Maximal)', 'Extreme psychoactive load, intense sedation, marked tachycardia risk, potential transient dysphoria in unadapted users', 'Onset: 20–45 min; Peak: 3.0–5.0 hrs; Duration: 10–14 hrs', 'Strictly reserved for oncology, severe muscle spasticity, or patients with verified end-stage tolerance'],
+          ],
+        },
+        subsections: [
+          {
+            subtitle: 'The 1 – 2.5 mg Microdose: Sub-Perceptual Wellness',
+            paragraphs: [
+              'A microdose is intentionally calibrated beneath the threshold of noticeable intoxication. Consumers experience heightened composure, reduced situational social anxiety, and mild analgesia without cognitive fog or decreased reaction speed. This makes microdosing ideal for office professionals, creative workflows, or daytime botanical regimens.',
+            ],
+            bullets: [
+              'Zero functional impairment: Safe for demanding cognitive focus and social interaction.',
+              'Endocannabinoid tone modulation: Supplements Anandamide (AEA) signaling without inducing CB1 receptor downregulation or tolerance accumulation.',
+              'Ideal combination: Often paired with 10–20 mg of Cannabidiol (CBD) or 5 mg of Cannabigerol (CBG) for daytime cellular protection.',
+            ],
+          },
+          {
+            subtitle: 'The 2.5 – 5.0 mg Threshold: The Gold Standard for Beginners',
+            paragraphs: [
+              'If you are ingesting a laboratory-tested gummy for the first time, 2.5 mg to 5 mg is the scientifically verified safe baseline. This dose provides genuine relaxation and noticeable stress dissolution while remaining well below the threshold where tachycardia or panic can occur.',
+              'Always wait a full 120 minutes before deciding whether to consume an additional portion. The most frequent cause of adverse edible experiences is premature re-dosing during the latent digestive window.',
+            ],
+          },
+          {
+            subtitle: 'The 10 mg Standard Benchmark: The Dispensary Single-Serving Unit',
+            paragraphs: [
+              'Regulated cannabis jurisdictions across North America established 10 mg of Delta-9 THC as the legal maximum single-serving definition for retail edibles. For an individual with casual cannabis familiarity, 10 mg delivers a rich, multi-layered experience characterized by physical comfort, enhanced appreciation of music and food, and deep evening relaxation.',
+              'However, for a completely non-tolerant or cannabinoid-naive individual, a single 10 mg serving can feel surprisingly intense. If your edible comes packaged as a 10 mg cube, cutting it in half (5 mg) is strongly advised for initial bio-titration.',
+            ],
+          },
+          {
+            subtitle: 'The High-Dose Paradox: Why 50 mg to 100 mg Demands Caution',
+            paragraphs: [
+              'Edibles containing 50 mg to 100 mg THC (such as high-potency bulk chocolate bars, syrups, or multi-dose chewies) are engineered specifically for high-tolerance medical patients—such as individuals undergoing intensive chemotherapeutic protocols, battling severe neuropathy, or possessing atypical hepatic metabolisms.',
+              'For a consumer without substantial physiological adaptation, ingesting 50 mg or more oversaturates central CB1 receptors, triggering the biphasic side of cannabinoid pharmacodynamics: acute anxiety, postural hypotension, gastrointestinal distress, and profound sedation. These products should be treated as multi-serving packages and partitioned with precision.',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'modulating-biological-variables',
+        title: '3. Biological & Formulation Variables That Alter Perceived Potency',
+        paragraphs: [
+          'Two individuals of identical body weight ingesting identical 10 mg gummies can experience vastly divergent outcomes. The pharmacokinetics of ingested cannabinoids are subject to multiple biological and physicochemical variables.',
+        ],
+        subsections: [
+          {
+            subtitle: 'Dietary Lipids and Micellar Lymphatic Absorption',
+            paragraphs: [
+              'Delta-9 THC and minor cannabinoids are intensely lipophilic compounds with octanol-water partition coefficients (log P) exceeding 6.0. They are virtually insoluble in pure aqueous gastric juices.',
+              'When an edible is consumed on a completely empty stomach with only water, cannabinoid molecules aggregate into un-emulsified droplets, leading to poor mucosal bioavailability and erratic transit times. Conversely, when ingested alongside healthy dietary lipids—such as medium-chain triglycerides (MCT coconut oil), olive oil, or nut butters—gastric digestion stimulates the release of cholecystokinin (CCK) and bile salts.',
+              'These bile salts incorporate cannabinoids into mixed micelles, dramatically increasing intestinal absorption and routing a significant portion through mesenteric lymphatic vessels. This lymphatic route partially bypasses immediate destructive hepatic breakdown, delivering up to 300% higher systemic cannabinoid bioavailability.',
+            ],
+          },
+          {
+            subtitle: 'Genetic Polymorphisms of Cytochrome P450 (The "Edible Immunity" Phenomenon)',
+            paragraphs: [
+              'A small percentage of the human population reports that edibles "simply do not work," even at doses exceeding 50 mg or 100 mg. Conversely, others report intense intoxication from a mere 2.5 mg.',
+              'These anomalies are largely explained by genetic single-nucleotide polymorphisms (SNPs) in the CYP2C9 gene, which encodes the primary liver enzyme responsible for phase I THC metabolism:',
+            ],
+            bullets: [
+              'CYP2C9*1/*1 (Wild-Type Extensive Metabolizers): The normal human phenotype. Delta-9 THC is steadily oxidized into active 11-OH-THC at standard rates.',
+              'CYP2C9*2 and CYP2C9*3 (Reduced Function Alleles): Individuals carrying one or two copies of these alleles metabolize Delta-9 THC up to 70% slower. Parent THC accumulates and remains in the bloodstream longer, causing extreme potency and protracted intoxication even from modest milligram doses.',
+              'CYP2C9 Ultra-Rapid Metabolizers: Individuals with hyperactive enzymatic cascades convert Delta-9 THC into 11-OH-THC and subsequently into inactive THC-COOH so rapidly that central CB1 receptors never achieve sufficient threshold binding, creating the subjective illusion of "edible immunity."',
+            ],
+          },
+          {
+            subtitle: 'Pectin vs. Animal Gelatin Matrix Kinetics',
+            paragraphs: [
+              'The edible gummy confectionery matrix plays a pivotal role in gastric dissolution rate. Traditional cannabis gummies rely on porcine or bovine gelatin, which requires prolonged proteolytic digestion in the stomach (pH 1.5–2.0) before releasing encapsulated cannabinoid resins.',
+              'Modern botanical dispensaries like Global Herbs formulate predominantly with plant-derived citrus and apple pectins. Pectin polymers dissolve rapidly across both acidic gastric environments and slightly alkaline duodenal lumens (pH 6.5–7.5). Furthermore, pectin accommodates nano-emulsified water-dispersible cannabinoid droplets, narrowing the typical onset latency from 90 minutes down to 30–45 minutes.',
+            ],
+          },
+          {
+            subtitle: 'Phytochemical Entourage Modulation: Terpenes & Minor Cannabinoids',
+            paragraphs: [
+              'A distillate-based gummy containing purely isolated Delta-9 THC delivers a sharp, one-dimensional psychotropic spike. In contrast, full-spectrum and live resin gummies retain native cannabis terpenes (such as beta-myrcene, linalool, and beta-caryophyllene) and non-intoxicating minor phytocannabinoids:',
+            ],
+            bullets: [
+              'Cannabidiol (CBD): Acts as a negative allosteric modulator (NAM) at CB1 receptors, softening psychoactive edges, reducing heart rate spikes, and preventing cannabis-induced panic.',
+              'Cannabinol (CBN): A mildly psychoactive oxidation product that works synergistically with THC to deepen somatic sedation and promote restorative delta-wave sleep.',
+              'Beta-Caryophyllene: A dietary sesquiterpene that directly agonizes peripheral CB2 receptors, providing systemic anti-inflammatory signaling while tempering cerebral overstimulation.',
+            ],
+          },
+        ],
+        calloutBox: {
+          type: 'tip',
+          title: 'Dispensary Pharmacist Tip: The 15-Minute Dietary Lipid Strategy',
+          text: 'To avoid the erratic absorption of an empty stomach while preventing delayed digestion from a heavy meal, consume your Global Herbs fruit pectin gummy roughly 15 to 20 minutes after eating a light snack rich in healthy fats—such as half an avocado, a handful of almonds, or a tablespoon of organic peanut butter.',
+        },
+      },
+      {
+        id: 'global-herbs-analytical-standards',
+        title: '4. Dispensary Quality & Precision: How Global Herbs Guarantees Dose Uniformity',
+        paragraphs: [
+          'A fundamental danger in the unregulated hemp and cannabis marketplace is milligram disparity. When independent forensic testing laboratories audit low-grade convenience store gummies, they frequently uncover catastrophic batch variances: candies claiming 25 mg that contain less than 2 mg, or worse, candies containing over 80 mg alongside synthetic cannabinoid adulterants.',
+          'Even more treacherous is poor batch homogeneity. Unregulated producers manufacture conventional bulk gummy candies and merely spray diluted cannabinoid distillate across the exterior trays. The resulting candies possess extreme "hot spots"—one bite might contain negligible THC, while the adjacent piece contains a massive concentrated dose.',
+        ],
+        subsections: [
+          {
+            subtitle: 'Precision Ultrasonic Emulsification & Full Batch Infusion',
+            paragraphs: [
+              'At Global Herbs, all edible formulations adhere to strict botanical manufacturing standards. Cannabinoid extracts are never surface-sprayed. Instead, laboratory-extracted full-spectrum oils or solventless live resins are introduced into the liquefied fruit pectin slurry at controlled temperatures and subjected to high-shear ultrasonic emulsification.',
+              'This guarantees uniform molecular distribution throughout the entire batch matrix, ensuring that every individual gummy square contains the exact milligram calibration stated on the label, with less than 2% intra-batch analytical deviation.',
+            ],
+          },
+          {
+            subtitle: 'ISO/IEC 17025 Certificate of Analysis (COA) Auditing',
+            paragraphs: [
+              'Every production batch at Global Herbs is submitted to an independent, accredited ISO/IEC 17025 third-party analytical laboratory for comprehensive panel screening prior to dispensary release. Our public COAs verify:',
+            ],
+            bullets: [
+              'High-Performance Liquid Chromatography (HPLC) Cannabinoid Potency: Exact quantification of Delta-9 THC, THCa, CBD, CBG, CBN, and CBC down to parts-per-million (PPM) precision.',
+              'Farm Bill Federal Compliance: Verification that total Delta-9 THC remains at or below the legal 0.3% dry-weight ceiling for federally compliant hemp formulations.',
+              'Gas Chromatography-Mass Spectrometry (GC-MS) Residual Solvents: 100% clean verification confirming zero residual butane, propane, ethanol, or hexane traces.',
+              'Inductively Coupled Plasma Mass Spectrometry (ICP-MS) Heavy Metals: Non-detect (ND) verification for lead, cadmium, arsenic, and mercury.',
+              'Microbial and Mycotoxin Screenings: Complete absence of Aspergillus species, Salmonella, E. coli, and aflatoxins.',
+            ],
+          },
+        ],
+        calloutBox: {
+          type: 'warning',
+          title: 'Consumer Safety Notice: Always Verify the Third-Party COA',
+          text: 'Never purchase an edible that does not feature a scannable QR code directly linking to an independent ISO-17025 certified lab report. Verifying the batch number on the certificate guarantees that your gummy has been tested for uniform potency, zero residual chemicals, and clean purity.',
+        },
+      },
+      {
+        id: 'harm-reduction-green-out-rescue',
+        title: '5. The Clinical Harm-Reduction Protocol: How to Mitigate an Overwhelming Dose',
+        paragraphs: [
+          'Even seasoned cannabis consumers can occasionally miscalculate an edible dose or encounter a hyper-metabolic state where effects peak with unexpected intensity. In cannabis culture, this phenomenon is colloquially termed a "green-out." Symptoms typically manifest as sudden postural dizziness, cold perspiration, racing thoughts, mild nausea, and cardiac awareness (tachycardia).',
+          'While acutely uncomfortable, it is essential to understand the underlying physiology: an edible overdose is non-lethal. Human cannabinoid CB1 receptors are virtually absent in the brainstem cardiorespiratory centers (the solitary tract and the nucleus ambiguus) that control autonomic respiration. Unlike opioid overdoses, THC cannot induce fatal respiratory depression. The experience will pass as liver enzymes clear circulating 11-OH-THC.',
+          'To regain equilibrium swiftly, apply this four-step clinical harm-reduction protocol:',
+        ],
+        subsections: [
+          {
+            subtitle: 'Step 1: Administer High-Dose Sublingual Full-Spectrum CBD',
+            paragraphs: [
+              'The single most effective pharmacological antidote to excess THC is Cannabidiol (CBD). CBD functions as a negative allosteric modulator at the CB1 receptor site. When CBD molecules bind to this secondary allosteric domain, they alter the receptor protein conformation, reducing the binding affinity and efficacy of active Delta-9 THC and 11-OH-THC.',
+              'Administer 25 mg to 50 mg of pure sublingual CBD oil or water-soluble tincture beneath the tongue. Keep the liquid under your tongue for 60 to 90 seconds to ensure direct mucosal venous absorption, bypassing the slower digestive tract.',
+            ],
+          },
+          {
+            subtitle: 'Step 2: Utilize the Terpenoid Antidote (Black Pepper & Limonene)',
+            paragraphs: [
+              'In his landmark 2011 pharmacological review "Taming THC," neurologist Dr. Ethan Russo documented that specific aromatic plant terpenes modulate cannabinoid-induced dysphoria. Black peppercorns (Piper nigrum) are rich in beta-caryophyllene and alpha-pinene. Beta-caryophyllene selectively binds peripheral CB2 receptors and calms neural hyper-excitability, while pinene inhibits acetylcholinesterase, aiding short-term memory clarity.',
+              'Remedy: Take 3 to 4 whole black peppercorns and chew them gently before swallowing, or deeply inhale the aromatic vapor from freshly cracked black pepper. Similarly, smelling fresh lemon peels (d-limonene) stimulates anxiolytic neurotransmission.',
+            ],
+          },
+          {
+            subtitle: 'Step 3: Hydrate and Stabilize Blood Glucose Levels',
+            paragraphs: [
+              'Intense cannabinoid stimulation can induce transient peripheral vasodilation and orthostatic hypotension, which feels subjectively like lightheadedness or dizziness. Drinking 16 to 24 ounces of cold water enriched with electrolytes (sodium, potassium, magnesium) restores blood volume.',
+              'Consuming a modest source of natural carbohydrates—such as fruit juice, honey, or a banana—stabilizes blood sugar and encourages hepatic glycogen mobilization, helping ground physical sensations.',
+            ],
+          },
+          {
+            subtitle: 'Step 4: Engage the Parasympathetic Nervous System (Vagus Activation)',
+            paragraphs: [
+              'Lie down on your side in a quiet, dimly lit, temperature-controlled environment. Practice diaphragmatic box breathing: inhale through the nose for 4 seconds, hold for 4 seconds, exhale through the mouth for 6 seconds, and pause for 2 seconds. The prolonged exhalation mechanically stimulates the vagus nerve, reducing heart rate and shifting autonomic tone from sympathetic fight-or-flight back into parasympathetic calm.',
+            ],
+          },
+        ],
+        calloutBox: {
+          type: 'warning',
+          title: 'Clinical Golden Rule for Edible Consumption',
+          text: 'Always respect the latency window: "Start low, go slow, and wait the full 2 hours." If you do not feel noticeable effects after 60 minutes, resist the urge to take another gummy. Digestion, gastric motility, and hepatic conversion frequently take 90 to 120 minutes to reach systemic peak.',
+        },
+      },
+    ],
+    recommendedCategorySlug: 'edibles',
+    recommendedProductSearch: 'Gummies',
+    faqs: [
+      {
+        question: 'Why do THC edibles take so much longer to kick in than smoking or vaping?',
+        answer: 'When cannabis is inhaled, cannabinoids enter pulmonary capillaries and reach the brain within seconds. In contrast, edibles must pass through the stomach, break down in gastric juices, absorb through the intestinal lining, and travel via the hepatic portal vein to the liver for first-pass metabolism before reaching systemic circulation. This biological transit typically requires 45 to 90 minutes (and up to 2 hours with heavy meals).',
+      },
+      {
+        question: 'What is the standard recommended edible dose for a beginner?',
+        answer: 'For a cannabinoid-naive beginner or someone with low tolerance, the recommended starting dose is 2.5 mg to 5.0 mg of Delta-9 THC. Do not exceed 5 mg on your first session, and wait at least a full 120 minutes before evaluating whether to titrate upward in a future session.',
+      },
+      {
+        question: 'Can you fatally overdose on cannabis edibles?',
+        answer: 'No. While consuming an excessive milligram dose can cause acute psychological distress, tachycardia, nausea, and sedation ("green-out"), THC cannot cause fatal respiratory depression. Human CB1 cannabinoid receptors are virtually absent in the brainstem regions that control autonomic breathing, unlike opioid receptors.',
+      },
+      {
+        question: 'What should I do if an edible dose feels uncomfortably strong?',
+        answer: 'Administer 25–50 mg of sublingual Full-Spectrum CBD oil to allosterically block CB1 receptors, chew or sniff 3–4 whole black peppercorns (which release calming beta-caryophyllene), drink cool electrolyte water, and lie down in a quiet, dark room practicing slow diaphragmatic breathing.',
+      },
+      {
+        question: 'Why do edibles feel different when taken on an empty stomach vs. with food?',
+        answer: 'THC is a lipophilic (fat-soluble) compound. Taking an edible on an empty stomach often produces unpredictable absorption and sudden spikes. Consuming an edible roughly 15 minutes after a light snack containing healthy fats (such as avocado, yogurt, or nut butter) stimulates bile secretion and micellar absorption, boosting bioavailability by up to 300% and stabilizing onset.',
+      },
+      {
+        question: 'Why do some people report that edibles have no effect on them at all?',
+        answer: 'This "edible immunity" is primarily genetic. Individuals carrying specific hyper-metabolizing CYP2C9 enzyme variants break down Delta-9 THC into inactive metabolites before sufficient active 11-hydroxy-THC can bind central brain receptors. Others may experience poor digestive bile production or gastrointestinal malabsorption.',
+      },
+      {
+        question: 'How long do the effects of a THC edible typically last?',
+        answer: 'Depending on the milligram dose, metabolism, and stomach contents, an edible typically lasts between 4 and 8 hours, with mild residual physical relaxation lasting up to 10 to 12 hours for higher doses (25 mg+). In comparison, inhaled cannabis flower or vape effects generally subside after 2 to 3 hours.',
+      },
+      {
+        question: 'Are hemp-derived Delta-9 THC edibles legal and lab-tested at Global Herbs?',
+        answer: 'Yes. Under the 2018 US Farm Bill, hemp-derived cannabinoid products containing less than 0.3% Delta-9 THC by dry weight are federally compliant. A 5-gram artisan fruit pectin gummy can legally and safely contain 10 mg of pure, naturally derived Delta-9 THC. Every batch at Global Herbs is verified by independent ISO/IEC 17025 accredited laboratory testing.',
+      },
+    ],
+    scientificReferences: [
+      {
+        citation: 'Huestis, M. A. (2007). Human Cannabinoid Pharmacokinetics. Chemistry & Biodiversity, 4(8), 1770–1804.',
+        doiUrl: 'https://doi.org/10.1002/cbdv.200790152',
+        source: 'Chemistry & Biodiversity',
+      },
+      {
+        citation: 'Grotenhermen, F. (2003). Pharmacokinetics and Pharmacodynamics of Cannabinoids. Clinical Pharmacokinetics, 42(4), 327–360.',
+        doiUrl: 'https://doi.org/10.2165/00003088-200342040-00003',
+        source: 'Clinical Pharmacokinetics',
+      },
+      {
+        citation: 'Russo, E. B. (2011). Taming THC: potential cannabis synergy and phytocannabinoid-terpenoid entourage effects. British Journal of Pharmacology, 163(7), 1344–1364.',
+        doiUrl: 'https://doi.org/10.1111/j.1476-5381.2011.01238.x',
+        source: 'British Journal of Pharmacology',
+      },
+      {
+        citation: 'MacCallum, C. A., & Russo, E. B. (2018). Practical considerations in medical cannabis administration and dosing. European Journal of Internal Medicine, 49, 12–19.',
+        doiUrl: 'https://doi.org/10.1016/j.ejim.2018.01.004',
+        source: 'European Journal of Internal Medicine',
+      },
+    ],
+    botanicalDisclaimer: 'These educational statements have not been evaluated by the Food and Drug Administration. These products and guides are not intended to diagnose, treat, cure, or prevent any disease. Always consult a qualified healthcare professional before beginning any botanical or cannabinoid regimen, particularly if pregnant, nursing, taking prescription medications, or managing a chronic medical condition. Keep strictly out of reach of children and pets. 21+ only.',
+  },
+  {
     id: 'how-to-buy-hemp-herbal-products-online-guide',
     slug: 'how-to-buy-hemp-products-online-lab-tested-herbal-dispensary-guide',
     title: 'How to Buy Hemp & Natural Herbal Products Online: A Lab-Tested Dispensary Buyer’s Guide',
@@ -89,7 +399,7 @@ export const blogArticles: BlogArticle[] = [
     },
     publishedDate: 'September 27, 2026',
     readTime: '9 min read',
-    featuredImage: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=1200',
+    featuredImage: '/images/buy_hemp_online_guide.jpg',
     excerpt: 'Shopping for hemp products and natural herbal extracts online requires more than reading front-label milligram claims. Learn how to audit ISO-17025 Certificates of Analysis (COAs), compare full-spectrum cannabinoid ratios against botanical infusions like chamomile and turmeric, and select the right format for your wellness goals.',
     keyTakeaways: [
       'Always verify a batch-specific ISO/IEC 17025 Certificate of Analysis (COA) before buying hemp or herbal products online—confirming both cannabinoid potency and negative contaminant screenings (heavy metals, pesticides, residual solvents, and mycotoxins).',
@@ -549,7 +859,7 @@ export const blogArticles: BlogArticle[] = [
     },
     publishedDate: 'August 08, 2026',
     readTime: '5 min read',
-    featuredImage: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=1200',
+    featuredImage: '/images/cbd_sleep_tincture.jpg',
     excerpt: 'Finding your ideal CBD dosage doesn’t have to involve trial and error. Learn how to calculate milligram dosage based on body weight, sublingual delivery techniques, the entourage effect, and how combining CBD with CBN unlocks deep REM sleep.',
     keyTakeaways: [
       'Sublingual administration (holding oil under the tongue for 60-90 seconds) increases CBD absorption by up to 35% compared to swallowing immediately.',
@@ -653,7 +963,7 @@ export const blogArticles: BlogArticle[] = [
     },
     publishedDate: 'August 05, 2026',
     readTime: '7 min read',
-    featuredImage: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80&w=1200',
+    featuredImage: '/images/solventless_live_rosin.jpg',
     excerpt: 'Step into the world of connoisseur solventless extracts. Explore 90u ice water hash washing, pneumatic heat pressing, cold cure badder homogenization, and the science of low-temperature quartz dabbing.',
     keyTakeaways: [
       'Live Hash Rosin is 100% solventless, extracted using only ice, water, heat, and hydraulic pressure.',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Search, Clock, Calendar, ChevronRight, ShieldCheck, Sparkles, Filter } from 'lucide-react';
 import { blogArticles, BlogArticle } from '../data/blogArticles';
@@ -7,10 +7,24 @@ import SEOHead from './SEOHead';
 export default function BlogHubPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [articlesList, setArticlesList] = useState<BlogArticle[]>(blogArticles);
+
+  useEffect(() => {
+    fetch('/api/blog')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.articles) && data.articles.length > 0) {
+          setArticlesList(data.articles);
+        }
+      })
+      .catch(() => {
+        // Keep bundled articles as fallback
+      });
+  }, []);
 
   const categories = ['All', 'Announcements & Updates', 'THCa & Legality', 'Concentrates & Rosin', 'CBD & Wellness', 'Dosing & Guides'];
 
-  const filteredArticles = blogArticles.filter((article) => {
+  const filteredArticles = articlesList.filter((article) => {
     if (selectedCategory !== 'All' && article.category !== selectedCategory) {
       return false;
     }
@@ -24,7 +38,7 @@ export default function BlogHubPage() {
     return true;
   });
 
-  const featuredArticle = blogArticles[0];
+  const featuredArticle = articlesList[0] || blogArticles[0];
 
   return (
     <div className="w-full bg-gray-50/50 min-h-screen text-left pb-16">
@@ -77,11 +91,11 @@ export default function BlogHubPage() {
                 <img
                   src={featuredArticle.featuredImage}
                   alt={featuredArticle.title}
-                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                  className="w-full h-full object-cover object-center transform hover:scale-105 transition duration-700 ease-out"
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  onError={(e) => { e.currentTarget.src = '/images/indoor_flower_buds.jpg'; }}
+                  onError={(e) => { e.currentTarget.src = '/images/thc_edibles_gummies.jpg'; }}
                 />
                 <div className="absolute top-4 left-4 bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-xs">
                   Featured Educational Guide
@@ -179,7 +193,7 @@ export default function BlogHubPage() {
                       <img
                         src={article.featuredImage}
                         alt={article.title}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 ease-out"
                         loading="lazy"
                         decoding="async"
                         referrerPolicy="no-referrer"
