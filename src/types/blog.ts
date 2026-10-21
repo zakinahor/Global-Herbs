@@ -87,6 +87,10 @@ export interface ManagedBlogArticle {
   seoScore?: number;
   wordCount?: number;
   isAiGenerated?: boolean;
+  publishAttempts?: number;
+  lastAttemptAt?: string;
+  lockedAt?: string;
+  lockedBy?: string;
 }
 
 export interface PublishingScheduleConfig {

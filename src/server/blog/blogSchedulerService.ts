@@ -1,6 +1,7 @@
 import { blogStorage } from './blogStorage';
 import { PublishingScheduleConfig } from '../../types/blog';
 import { generateSitemapXML } from '../../utils/sitemap';
+import { claimAndPublishDueArticles } from './blogPublisher';
 import fs from 'fs';
 import path from 'path';
 
@@ -100,37 +101,16 @@ class BlogSchedulerService {
     const errors: string[] = [];
 
     try {
-      const allArticles = blogStorage.getAllArticles();
-      const now = Date.now();
+      const result = await claimAndPublishDueArticles(triggeredBy, 5);
+      published.push(...result.published);
+      failed.push(...result.failed);
+      errors.push(...result.errors);
 
-      // Find due scheduled articles
-      const dueArticles = allArticles.filter((art) => {
-        if (art.status !== 'scheduled' || !art.scheduledFor) return false;
-        const scheduledTime = new Date(art.scheduledFor).getTime();
-        return !isNaN(scheduledTime) && scheduledTime <= now;
-      });
-
-      for (const article of dueArticles) {
-        console.log(`[BlogScheduler] Publishing due article "${article.title}" (ID: ${article.id})`);
-        const result = blogStorage.publishArticle(article.id, triggeredBy);
-
-        if (result.success && result.article) {
-          published.push(result.article.slug);
-          console.log(`[BlogScheduler] Successfully published: /blog/${result.article.slug}`);
-        } else {
-          failed.push(article.slug);
-          errors.push(result.error || 'Validation error');
-          console.error(`[BlogScheduler] Failed to publish ${article.slug}:`, result.error);
-        }
-      }
-
-      // If articles changed, refresh sitemap
       if (published.length > 0) {
         this.updateSitemap();
       }
 
-      // Update schedule config lastRunAt
-      blogStorage.saveScheduleConfig({
+      await blogStorage.saveScheduleConfig({
         lastRunAt: new Date().toISOString(),
         nextScheduledSlot: this.calculateNextSlot(blogStorage.getScheduleConfig()),
       });

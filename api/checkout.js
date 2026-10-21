@@ -386,6 +386,50 @@ export default async function handler(req, res) {
         notificationSentAt: sentAt,
       });
 
+      // Dispatch Customer Confirmation Email to customer's inbox
+      if (validReplyTo && validReplyTo.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        const customerConfPayload = {
+          ...appsScriptPayload,
+          to: validReplyTo,
+          recipientEmail: validReplyTo,
+          recipient: validReplyTo,
+          adminEmail: validReplyTo,
+          status: `Order Confirmation — ${savedOrder.status}`,
+          subject: `Order Confirmation #${orderId} — Global Herbs Inc`,
+          notes: [
+            `Thank you for your order with Global Herbs Inc, ${savedOrder.customerName}!`,
+            ``,
+            `ORDER CONFIRMATION DETAILS:`,
+            `Order Reference: #${orderId}`,
+            `Order Date: ${orderDate}`,
+            `Payment Method: ${savedOrder.paymentMethod}`,
+            `Payment Status: ${savedOrder.paymentStatus}`,
+            `Order Total: $${resolvedTotal.toFixed(2)} ${resolvedCurrency}`,
+            ``,
+            `DELIVERY ADDRESS:`,
+            `${parsedShipping.name || savedOrder.customerName}`,
+            `${parsedShipping.address}`,
+            `${[parsedShipping.city, parsedShipping.state, parsedShipping.postalCode].filter(Boolean).join(', ')}`,
+            `${parsedShipping.country}`,
+            ``,
+            `NEXT STEPS:`,
+            `1. Double Vacuum-Sealed Stealth Packaging queue initiated.`,
+            `2. Tracking number will be activated within 12-24 business hours.`,
+            `3. Track status anytime at https://globalherbs.site/order-tracking using Order ID #${orderId}.`,
+            ``,
+            `Assistance: Reply to this email or contact globalherbsinc@gmail.com / +1 (213) 280-1161.`,
+          ].join('\n'),
+        };
+
+        fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(customerConfPayload),
+          redirect: 'manual',
+          signal: AbortSignal.timeout(15000),
+        }).catch((e) => console.warn('[Checkout] Customer confirmation dispatch error:', e?.message));
+      }
+
       return res.status(200).json({
         success: true,
         orderId,

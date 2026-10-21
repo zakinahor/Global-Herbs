@@ -1,6 +1,12 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "crons": [
+    {
+      "path": "/api/cron/publish",
+      "schedule": "0 17,18 * * 1,3,5"
+    }
+  ],
   "redirects": [
     {
       "source": "/shop",
@@ -197,6 +203,34 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/api/notification/status",
+      "destination": "/api/notification-status"
+    },
+    {
+      "source": "/api/cron/publish",
+      "destination": "/api/cron/publish"
+    },
+    {
+      "source": "/api/admin/blog/cron-publish",
+      "destination": "/api/cron/publish"
+    },
+    {
+      "source": "/api/admin/blog/:path*",
+      "destination": "/api/blog-handler"
+    },
+    {
+      "source": "/api/blog/:path*",
+      "destination": "/api/blog-handler"
+    },
+    {
+      "source": "/api/blog",
+      "destination": "/api/blog-handler"
+    },
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"

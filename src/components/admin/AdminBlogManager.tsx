@@ -30,6 +30,7 @@ import {
   Info,
   ChevronRight,
   BookOpen,
+  Download,
 } from 'lucide-react';
 import {
   ManagedBlogArticle,
@@ -1542,24 +1543,34 @@ export default function AdminBlogManager() {
                   </div>
                 </div>
 
-                {/* Google Cloud Scheduler Webhook Configuration */}
+                {/* Production Scheduler & Persistent Storage Architecture */}
                 <div className="bg-gray-900 p-5 rounded-xl border border-gray-800 space-y-3">
                   <h3 className="font-heading font-bold text-sm text-white flex items-center gap-2">
                     <Globe size={16} className="text-blue-400" />
-                    <span>Google Cloud Scheduler</span>
+                    <span>Production Vercel Cron & Cloud Scheduler</span>
                   </h3>
                   <p className="text-xs text-gray-400 leading-relaxed">
-                    For enterprise high-availability across serverless reboots, configure a Google Cloud Scheduler job targeting your backend webhook:
+                    Automatic publishing is executed by serverless cron jobs via atomic concurrency locks (<code className="text-emerald-400">SKIP LOCKED</code>) backed by PostgreSQL:
                   </p>
 
                   <div className="bg-gray-950 p-3 rounded-lg border border-gray-800 text-[11px] font-mono space-y-1 text-gray-300">
-                    <div><strong>Target:</strong> POST /api/admin/blog/cron-publish</div>
-                    <div><strong>Header:</strong> X-Scheduler-Secret: {scheduleConfig.schedulerSecret}</div>
-                    <div><strong>Cron:</strong> 0 10 * * 1,3,5</div>
+                    <div><strong>Target:</strong> POST /api/cron/publish</div>
+                    <div><strong>Auth:</strong> Authorization: Bearer &lt;CRON_SECRET&gt; (timing-safe)</div>
+                    <div><strong>Vercel Schedule:</strong> 0 17,18 * * 1,3,5 (Mon, Wed, Fri 10am PT)</div>
+                    <div><strong>Storage:</strong> PostgreSQL (ACID tables &amp; automatic migrations)</div>
                   </div>
 
-                  <div className="text-[10px] text-gray-500">
-                    The endpoint safely validates due posts, rejects duplicates, and updates sitemap.xml.
+                  <div className="pt-2 flex items-center justify-between">
+                    <span className="text-[10px] text-gray-500">Atomic claims prevent duplicate concurrent runs.</span>
+                    <a
+                      href="/api/admin/blog/backup"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300 font-semibold bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded"
+                    >
+                      <Download size={12} />
+                      <span>Export DB Backup</span>
+                    </a>
                   </div>
                 </div>
               </div>

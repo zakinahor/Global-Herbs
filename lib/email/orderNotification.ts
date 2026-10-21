@@ -117,6 +117,8 @@ export interface CleanAppsScriptPayload {
   status: string;
   subject: string;
   recipient: string;
+  to?: string;
+  recipientEmail?: string;
   adminEmail: string;
   emailFrom: string;
   currency: string;
@@ -1018,6 +1020,8 @@ export async function sendCustomerOrderConfirmation(
     status: `Order Confirmation — ${payload.status}`,
     subject: `Order Confirmation #${payload.orderNumber} — Global Herbs Inc`,
     recipient: customerEmail,
+    to: customerEmail,
+    recipientEmail: customerEmail,
     adminEmail: customerEmail,
     notes: [
       `Thank you for your order with Global Herbs Inc, ${payload.customer.name}!`,

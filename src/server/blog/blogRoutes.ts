@@ -6,39 +6,23 @@ import { generateBlogArticle } from './articleGeneratorService';
 import { validateArticle } from './blogValidator';
 import { SeoOverviewData } from '../../types/blog';
 import { generateSitemapXML } from '../../utils/sitemap';
+import { claimAndPublishDueArticles } from './blogPublisher';
+import { verifyCronAuthorization, verifyAdminSession } from './cronAuth';
 
 export const blogRouter = express.Router();
 
 /**
  * Middleware to verify dispensary administrator credentials
  */
-function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization || '';
-  const adminSecretHeader = req.headers['x-admin-secret'] || req.headers['x-admin-key'];
-  const userEmailHeader = (req.headers['x-user-email'] as string) || '';
-  const querySecret = req.query.adminSecret as string;
-
-  const validSecret = process.env.BLOG_ADMIN_SECRET || 'gh-dispensary-admin-2026';
-  const adminEmail = (process.env.ADMIN_EMAIL || 'zakinahor692@gmail.com').toLowerCase();
-
-  // Allow if admin secret matches
-  if (adminSecretHeader === validSecret || querySecret === validSecret) {
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (verifyAdminSession(req)) {
     return next();
   }
 
-  // Allow if user email is verified dispensary admin
-  if (userEmailHeader.toLowerCase() === adminEmail || userEmailHeader.toLowerCase() === 'globalherbsinc@gmail.com') {
-    return next();
-  }
-
-  // Allow if Bearer token is provided
-  if (authHeader.startsWith('Bearer ') && authHeader.length > 10) {
-    return next();
-  }
-
-  // For testing / demo environment, allow development applet origin if local
+  // Allow localhost / local testing origin if explicitly non-production
+  const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
   const origin = req.headers.origin || req.headers.referer || '';
-  if (origin.includes('localhost') || origin.includes('ais-dev')) {
+  if (!isProd && (origin.includes('localhost') || origin.includes('ais-dev'))) {
     return next();
   }
 
@@ -99,15 +83,18 @@ blogRouter.get('/api/blog/:slug', (req: Request, res: Response) => {
     });
   }
 
-  // If unpublished and not admin requesting preview
-  const isPreview = req.query.preview === 'true';
-  if (article.status !== 'published' && !isPreview) {
-    return res.status(404).json({
-      success: false,
-      error: 'This article is currently in draft or scheduled state.',
-    });
+  // Draft/scheduled articles require admin access or explicit preview query
+  if (article.status !== 'published') {
+    const isPreview = req.query.preview === 'true';
+    if (!isPreview && !verifyAdminSession(req)) {
+      return res.status(404).json({
+        success: false,
+        error: `Article with slug "${slug}" is not currently published.`,
+      });
+    }
   }
 
+  res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
   return res.json({
     success: true,
     article,
@@ -120,7 +107,7 @@ blogRouter.get('/api/blog/:slug', (req: Request, res: Response) => {
 
 /**
  * GET /api/admin/blog/articles
- * Returns all articles (drafts, scheduled, published, failed)
+ * Lists all articles (draft, scheduled, published, failed)
  */
 blogRouter.get('/api/admin/blog/articles', requireAdmin, (req: Request, res: Response) => {
   const statusFilter = req.query.status as string;
@@ -161,9 +148,9 @@ blogRouter.get('/api/admin/blog/articles/:id', requireAdmin, (req: Request, res:
  * POST /api/admin/blog/articles
  * Creates a new article (draft by default)
  */
-blogRouter.post('/api/admin/blog/articles', requireAdmin, (req: Request, res: Response) => {
+blogRouter.post('/api/admin/blog/articles', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
-  const result = blogStorage.createArticle(req.body, user);
+  const result = await blogStorage.createArticle(req.body, user);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -174,9 +161,9 @@ blogRouter.post('/api/admin/blog/articles', requireAdmin, (req: Request, res: Re
  * PUT /api/admin/blog/articles/:id
  * Updates an existing article
  */
-blogRouter.put('/api/admin/blog/articles/:id', requireAdmin, (req: Request, res: Response) => {
+blogRouter.put('/api/admin/blog/articles/:id', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
-  const result = blogStorage.updateArticle(req.params.id, req.body, user);
+  const result = await blogStorage.updateArticle(req.params.id, req.body, user);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -186,9 +173,9 @@ blogRouter.put('/api/admin/blog/articles/:id', requireAdmin, (req: Request, res:
 /**
  * DELETE /api/admin/blog/articles/:id
  */
-blogRouter.delete('/api/admin/blog/articles/:id', requireAdmin, (req: Request, res: Response) => {
+blogRouter.delete('/api/admin/blog/articles/:id', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
-  const result = blogStorage.deleteArticle(req.params.id, user);
+  const result = await blogStorage.deleteArticle(req.params.id, user);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -200,10 +187,10 @@ blogRouter.delete('/api/admin/blog/articles/:id', requireAdmin, (req: Request, r
  * POST /api/admin/blog/articles/:id/publish
  * Manually publishes an article immediately with validation
  */
-blogRouter.post('/api/admin/blog/articles/:id/publish', requireAdmin, (req: Request, res: Response) => {
+blogRouter.post('/api/admin/blog/articles/:id/publish', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
   const force = req.body?.force === true;
-  const result = blogStorage.publishArticle(req.params.id, user, force);
+  const result = await blogStorage.publishArticle(req.params.id, user, force);
 
   if (!result.success) {
     return res.status(422).json(result);
@@ -217,9 +204,9 @@ blogRouter.post('/api/admin/blog/articles/:id/publish', requireAdmin, (req: Requ
  * POST /api/admin/blog/articles/:id/unpublish
  * Reverts a published article back to draft state
  */
-blogRouter.post('/api/admin/blog/articles/:id/unpublish', requireAdmin, (req: Request, res: Response) => {
+blogRouter.post('/api/admin/blog/articles/:id/unpublish', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
-  const result = blogStorage.unpublishArticle(req.params.id, user);
+  const result = await blogStorage.unpublishArticle(req.params.id, user);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -231,14 +218,14 @@ blogRouter.post('/api/admin/blog/articles/:id/unpublish', requireAdmin, (req: Re
  * POST /api/admin/blog/articles/:id/schedule
  * Schedules an article for a specific date and time
  */
-blogRouter.post('/api/admin/blog/articles/:id/schedule', requireAdmin, (req: Request, res: Response) => {
+blogRouter.post('/api/admin/blog/articles/:id/schedule', requireAdmin, async (req: Request, res: Response) => {
   const user = (req.headers['x-user-email'] as string) || 'Dispensary Admin';
   const { scheduledFor } = req.body;
   if (!scheduledFor) {
     return res.status(400).json({ success: false, error: 'scheduledFor ISO date is required.' });
   }
 
-  const result = blogStorage.scheduleArticle(req.params.id, scheduledFor, user);
+  const result = await blogStorage.scheduleArticle(req.params.id, scheduledFor, user);
   if (!result.success) {
     return res.status(400).json(result);
   }
@@ -254,54 +241,69 @@ blogRouter.post('/api/admin/blog/articles/:id/validate', requireAdmin, (req: Req
   if (!article) {
     return res.status(404).json({ success: false, error: 'Article not found.' });
   }
-  const validation = validateArticle(article, blogStorage.getAllArticles());
-  return res.json({ success: true, validation });
+
+  const target = req.body && Object.keys(req.body).length > 0 ? { ...article, ...req.body } : article;
+  const validation = validateArticle(target, blogStorage.getAllArticles());
+
+  return res.json({
+    success: true,
+    validation,
+  });
 });
 
 /**
  * POST /api/admin/blog/generate
- * Server-side AI article generation
+ * Invokes Gemini AI to draft a full, structured botanical article
  */
 blogRouter.post('/api/admin/blog/generate', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const { primaryKeyword, secondaryKeywords, topicPrompt, categorySlug, preferredTone } = req.body;
-    if (!primaryKeyword || !primaryKeyword.trim()) {
-      return res.status(400).json({ success: false, error: 'Primary keyword is required for article generation.' });
+    const { primaryKeyword, targetAudience, desiredLength, preferredCategory, secondaryKeywords } = req.body;
+
+    if (!primaryKeyword || typeof primaryKeyword !== 'string' || !primaryKeyword.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'primaryKeyword is required to generate an article.',
+      });
     }
 
     const generated = await generateBlogArticle({
-      primaryKeyword,
-      secondaryKeywords: Array.isArray(secondaryKeywords) ? secondaryKeywords : [],
-      topicPrompt,
-      categorySlug,
-      preferredTone,
+      primaryKeyword: primaryKeyword.trim(),
+      secondaryKeywords,
+      topicPrompt: targetAudience || desiredLength,
+      categorySlug: preferredCategory,
     });
 
     return res.json({
       success: true,
-      ...generated,
+      article: generated,
     });
   } catch (err: any) {
-    console.error('[BlogRoutes] Article generation failed:', err);
-    return res.status(500).json({ success: false, error: err.message || 'Generation failed.' });
+    console.error('[BlogRoutes] Generation error:', err);
+    return res.status(500).json({
+      success: false,
+      error: `Article generation failed: ${err.message || 'Internal AI service error'}`,
+    });
   }
 });
 
 /**
  * POST /api/admin/blog/keywords/research
- * Keyword research and cluster discovery
+ * AI-assisted keyword discovery and cluster mapping
  */
 blogRouter.post('/api/admin/blog/keywords/research', requireAdmin, async (req: Request, res: Response) => {
   try {
-    const topic = (req.body?.topic || req.query?.topic || '') as string;
-    const result = await keywordResearchService.researchTopic(topic);
+    const { seedTopic } = req.body;
+    const result = await keywordResearchService.researchTopic(seedTopic || 'cannabis');
     return res.json({
       success: true,
       ...result,
     });
   } catch (err: any) {
-    console.error('[BlogRoutes] Keyword research failed:', err);
-    return res.status(500).json({ success: false, error: err.message || 'Keyword research failed.' });
+    console.error('[BlogRoutes] Keyword research error:', err);
+    return res.status(500).json({
+      success: false,
+      error: `Keyword research failed: ${err.message}`,
+    });
   }
 });
 
@@ -311,32 +313,34 @@ blogRouter.post('/api/admin/blog/keywords/research', requireAdmin, async (req: R
 blogRouter.get('/api/admin/blog/schedule-config', requireAdmin, (req: Request, res: Response) => {
   return res.json({
     success: true,
-    schedulerStatus: blogScheduler.getStatus(),
+    config: blogStorage.getScheduleConfig(),
+    status: blogScheduler.getStatus(),
   });
 });
 
 /**
  * PUT /api/admin/blog/schedule-config
  */
-blogRouter.put('/api/admin/blog/schedule-config', requireAdmin, (req: Request, res: Response) => {
-  const updated = blogStorage.saveScheduleConfig(req.body);
+blogRouter.put('/api/admin/blog/schedule-config', requireAdmin, async (req: Request, res: Response) => {
+  const updated = await blogStorage.saveScheduleConfig(req.body);
   return res.json({
     success: true,
     config: updated,
-    schedulerStatus: blogScheduler.getStatus(),
   });
 });
 
 /**
  * POST /api/admin/blog/trigger-scheduler
- * Manually executes the scheduler publishing check (for testing)
+ * On-demand manual test run by administrator from dashboard
  */
 blogRouter.post('/api/admin/blog/trigger-scheduler', requireAdmin, async (req: Request, res: Response) => {
-  const user = (req.headers['x-user-email'] as string) || 'Admin Manual Trigger';
-  const result = await blogScheduler.checkDueArticles(`Manual Admin Trigger by ${user}`);
+  console.log('[BlogRoutes] Administrator triggered manual publishing run.');
+  const result = await claimAndPublishDueArticles('Administrator Manual Run', 5);
+  blogScheduler.updateSitemap();
+
   return res.json({
     success: true,
-    message: `Scheduler check executed. Checked: ${result.checked}, Published: ${result.published.length}, Failed: ${result.failed.length}`,
+    triggeredAt: new Date().toISOString(),
     ...result,
   });
 });
@@ -349,6 +353,17 @@ blogRouter.get('/api/admin/blog/audit-logs', requireAdmin, (req: Request, res: R
     success: true,
     logs: blogStorage.getAuditLogs(),
   });
+});
+
+/**
+ * GET /api/admin/blog/backup
+ * Downloads complete JSON snapshot of all database records for disaster recovery
+ */
+blogRouter.get('/api/admin/blog/backup', requireAdmin, async (req: Request, res: Response) => {
+  const snapshot = await blogStorage.exportBackup();
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', `attachment; filename="globalherbs_blog_backup_${Date.now()}.json"`);
+  return res.send(JSON.stringify(snapshot, null, 2));
 });
 
 /**
@@ -376,7 +391,7 @@ blogRouter.get('/api/admin/blog/seo-overview', requireAdmin, (req: Request, res:
     draftCount: allArticles.filter((a) => a.status === 'draft').length,
     failedCount: allArticles.filter((a) => a.status === 'failed').length,
     sitemapLastUpdated: new Date().toISOString(),
-    sitemapUrlCount: allArticles.filter((a) => a.status === 'published').length + 25, // includes static pages
+    sitemapUrlCount: allArticles.filter((a) => a.status === 'published').length + 25,
     searchConsoleStatus: {
       connected: !!process.env.GOOGLE_SEARCH_CONSOLE_KEY,
       verificationMethod: 'HTML Meta Tag / DNS TXT',
@@ -394,41 +409,44 @@ blogRouter.get('/api/admin/blog/seo-overview', requireAdmin, (req: Request, res:
 });
 
 // ============================================================================
-// GOOGLE CLOUD SCHEDULER WEBHOOK ENDPOINT
+// VERCEL CRON & EXTERNAL SCHEDULER ENDPOINT
 // ============================================================================
 
 /**
- * POST /api/admin/blog/cron-publish
- * Secure endpoint callable by Google Cloud Scheduler or external cron services
+ * Shared handler for Vercel Cron and external scheduler webhooks
+ * Supports:
+ * - Authorization: Bearer <CRON_SECRET> (timing-safe comparison)
+ * - Administrator credentials
+ * - Both POST and GET methods (Vercel Cron invokes with GET or POST)
  */
-blogRouter.post('/api/admin/blog/cron-publish', async (req: Request, res: Response) => {
-  const incomingSecret =
-    req.headers['x-scheduler-secret'] ||
-    req.headers['authorization']?.replace('Bearer ', '') ||
-    req.query.secret;
+async function handleCronPublish(req: Request, res: Response) {
+  // 1. Check CRON_SECRET authorization
+  const cronAuth = verifyCronAuthorization(req);
+  const isAdmin = verifyAdminSession(req);
 
-  const config = blogStorage.getScheduleConfig();
-  const validSecrets = [
-    config.schedulerSecret,
-    process.env.BLOG_SCHEDULER_SECRET || 'gh-scheduler-sec-2026',
-    process.env.BLOG_ADMIN_SECRET || 'gh-dispensary-admin-2026',
-  ].filter(Boolean);
-
-  if (!incomingSecret || !validSecrets.includes(incomingSecret as string)) {
-    console.warn('[BlogScheduler] Unauthorized Cloud Scheduler invocation attempt.');
+  if (!cronAuth.authorized && !isAdmin) {
+    console.warn('[CronPublish] Unauthorized cron invocation attempt:', cronAuth.reason);
     return res.status(401).json({
       success: false,
-      error: 'Invalid scheduler secret. Supply matching X-Scheduler-Secret header.',
+      error: 'Unauthorized. Valid CRON_SECRET Bearer token or administrator authentication required.',
     });
   }
 
-  console.log('[BlogScheduler] Verified Cloud Scheduler webhook trigger received.');
-  const result = await blogScheduler.checkDueArticles('Google Cloud Scheduler Webhook');
+  const triggerSource = cronAuth.authorized ? 'Vercel Cron Worker' : 'Dispensary Admin Invocation';
+  console.log(`[CronPublish] Verified ${triggerSource} trigger received.`);
 
-  return res.json({
+  const result = await claimAndPublishDueArticles(triggerSource, 5);
+
+  return res.status(200).json({
     success: true,
-    source: 'Google Cloud Scheduler',
+    source: triggerSource,
     timestamp: new Date().toISOString(),
     ...result,
   });
-});
+}
+
+// Support both standard Vercel Cron path (/api/cron/publish) and legacy path (/api/admin/blog/cron-publish)
+blogRouter.get('/api/cron/publish', handleCronPublish);
+blogRouter.post('/api/cron/publish', handleCronPublish);
+blogRouter.get('/api/admin/blog/cron-publish', handleCronPublish);
+blogRouter.post('/api/admin/blog/cron-publish', handleCronPublish);

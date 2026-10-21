@@ -1236,12 +1236,16 @@ async function startServer() {
       savedOrder.notificationAttempts =
         (savedOrder.notificationAttempts || 0) + notifResult.notificationAttempts;
 
-      // 8. Customer confirmation is included in the Apps Script payload (`sendCustomerConfirmation: true`).
-      // If a dedicated separate customer confirmation webhook is configured, dispatch it separately.
+      // 8. Customer confirmation dispatch
       const adminEmailLower = getNotificationConfig().adminEmail.toLowerCase();
-      if (process.env.CUSTOMER_CONFIRMATION_WEBHOOK_URL && cleanEmail && cleanEmail !== adminEmailLower) {
-        const custConfResult = await sendCustomerOrderConfirmation(orderNotificationInput);
-        savedOrder.customerConfirmationStatus = custConfResult.notificationStatus;
+      if (cleanEmail && cleanEmail !== adminEmailLower) {
+        try {
+          const custConfResult = await sendCustomerOrderConfirmation(orderNotificationInput);
+          savedOrder.customerConfirmationStatus = custConfResult.notificationStatus;
+        } catch (e: any) {
+          console.warn(`[Checkout] Customer confirmation email error for #${orderId}:`, e?.message);
+          savedOrder.customerConfirmationStatus = 'failed';
+        }
       } else {
         savedOrder.customerConfirmationStatus = notifResult.notificationStatus;
       }

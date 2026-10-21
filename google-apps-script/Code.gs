@@ -23,7 +23,7 @@ function doPost(e) {
     }
 
     // Target recipient: defaults to ADMIN_RECIPIENT_EMAIL unless explicitly overridden (e.g., customer confirmation)
-    var recipientEmail = sanitizeEmail(data.to || data.recipientEmail || ADMIN_RECIPIENT_EMAIL);
+    var recipientEmail = sanitizeEmail(data.to || data.recipientEmail || data.recipient || ADMIN_RECIPIENT_EMAIL);
     if (!recipientEmail) {
       return createJsonResponse({ status: "error", message: "Invalid recipient email address" });
     }
