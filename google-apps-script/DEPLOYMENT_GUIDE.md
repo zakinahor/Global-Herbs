@@ -1,41 +1,42 @@
-# Google Apps Script Email Notification Web App Deployment Guide
+# Google Apps Script Email Notification Deployment & Update Guide
 
-This applet uses Google Apps Script (MailApp) to deliver email notifications directly to **globalherbsinc@gmail.com** for:
-1. **Customer Orders** (Checkout submissions with products, totals, customer details & shipping address)
-2. **Customer Contact Inquiries** (General contact form submissions with customer question, phone & direct Reply-To)
-3. **Account & Member Inquiries** (Portal registrations and inquiries)
-4. **Product Reviews** (Customer review submissions with star ratings and product feedback)
-5. **Newsletter & VIP Subscriptions** (New subscribers & waitlist leads)
+This service ensures all customer orders, contact requests, and inquiries are instantly emailed directly to **`globalherbsinc@gmail.com`**.
 
-When an email arrives in `globalherbsinc@gmail.com`, hitting **Reply** in Gmail responds directly to the customer's email address.
+When an admin email arrives in `globalherbsinc@gmail.com`, clicking **Reply** in Gmail responds directly to the customer's email address.
 
 ---
 
-## 1-Minute Deployment Steps
+## ⚡ How to Update the Live Deployment (Takes 1 Minute)
 
-1. Go to **[script.google.com](https://script.google.com/)** and sign in with the admin Google Account (`globalherbsinc@gmail.com` or your preferred account).
-2. Click **New Project** (top-left).
-3. Name the project: `Global Herbs Email Notifications`.
-4. In the code editor, delete any existing code in `Code.gs`.
-5. Copy all code from `/google-apps-script/Code.gs` in this repository and paste it into the editor.
-6. Click the **Save** icon (diskette).
-7. (Optional) Run the `testCustomerInquiryNotification()` or `testOrderNotification()` function directly in the editor to verify delivery to your inbox and authorize permissions.
-8. Click **Deploy** (top-right blue button) > **New deployment**.
-9. In the modal, click the **Gear icon (Select type)** and select **Web app**.
-10. Configure:
-    - **Description**: `Global Herbs Mail Dispatcher v2`
-    - **Execute as**: **Me (`your-email@gmail.com`)**
-    - **Who has access**: **Anyone** *(Crucial: This allows the backend server to POST payloads to the endpoint without OAuth)*
+> **Important**: In Google Apps Script, editing code alone does not update the active Web App URL until you publish a **New Version** of the deployment. Follow these steps:
+
+1. Go to **[script.google.com](https://script.google.com/)** and open your **Global Herbs Email Notifications** project (or sign in with `globalherbsinc@gmail.com`).
+2. Open `Code.gs` in the editor.
+3. Replace all code in `Code.gs` with the updated code from `/google-apps-script/Code.gs` in this repository.
+4. Click the **Save** icon (diskette).
+5. (Optional but recommended): In the function dropdown at the top, select **`testSendToGlobalHerbs`** and click **Run**. Check your `globalherbsinc@gmail.com` inbox to verify immediate delivery.
+6. Click **Deploy** (top-right blue button) > **Manage deployments**.
+7. In the left panel, select your active **Web app** deployment.
+8. Click the **Edit** (pencil) icon at the top right.
+9. In the **Version** dropdown, choose **New version**.
+10. Ensure:
+    - **Execute as**: **Me (`your-google-account`)**
+    - **Who has access**: **Anyone** *(Crucial: allows the backend to send notifications)*
 11. Click **Deploy**.
-12. Click **Authorize access**, select your Google account, click **Advanced**, and click **Go to Global Herbs Email Notifications (unsafe)** to grant Mail permissions.
-13. Copy the **Web App URL** (looks like `https://script.google.com/macros/s/AKfycb.../exec`).
-14. Paste this Web App URL into your environment variable:
-    - In AI Studio: Open **Settings** > Environment Variables > set `GOOGLE_APPS_SCRIPT_URL` to your Web App URL.
+12. Copy the **Web App URL** (e.g. `https://script.google.com/macros/s/AKfycb.../exec`).
+13. If your Web App URL changed, update the `GOOGLE_APPS_SCRIPT_URL` environment variable in Vercel and AI Studio Settings.
 
 ---
 
-## How It Works
+## Direct Test via Command Line or API
 
-- **Direct Reply-To**: Every notification sets the customer's submitted email as `replyTo`.
-- **Non-Blocking Reliability**: If Google Apps Script is momentarily unreachable or cold-starting, the customer's checkout, contact form, or review submission **never fails**.
-- **Self-Healing Templates**: Inquiries automatically use the Customer Support / Contact Desk layout, while orders use the Order Desk invoice layout.
+Once deployed, you can trigger a test email directly to `globalherbsinc@gmail.com`:
+
+```bash
+curl -X POST "https://globalherbs.site/api/test-email" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "globalherbsinc@gmail.com"}'
+```
+
+Or view status at:
+`https://globalherbs.site/api/notification-status`

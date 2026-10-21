@@ -232,6 +232,14 @@
       "destination": "/api/blog-handler"
     },
     {
+      "source": "/api/test-email",
+      "destination": "/api/test-email"
+    },
+    {
+      "source": "/api/contact",
+      "destination": "/api/contact"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },

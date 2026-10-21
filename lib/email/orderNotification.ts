@@ -113,6 +113,7 @@ export interface OrderNotificationInput {
 
 export interface CleanAppsScriptPayload {
   orderNumber: string;
+  orderId?: string;
   orderDate: string;
   status: string;
   subject: string;
@@ -120,12 +121,22 @@ export interface CleanAppsScriptPayload {
   to?: string;
   recipientEmail?: string;
   adminEmail: string;
+  email?: string;
+  targetEmail?: string;
   emailFrom: string;
   currency: string;
   paymentMethod: string;
   paymentStatus: string;
   transactionId: string;
   couponCode?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  total?: number | string;
+  subtotal?: number | string;
+  discount?: number | string;
+  shippingCost?: number | string;
+  tax?: number | string;
   customer: {
     name: string;
     email: string;
@@ -574,13 +585,26 @@ export function formatOrderPayload(
 
   return {
     orderNumber,
+    orderId: orderNumber,
     orderDate,
     status,
     subject,
     recipient: adminEmail,
+    to: adminEmail,
+    recipientEmail: adminEmail,
     adminEmail,
+    email: adminEmail,
+    targetEmail: adminEmail,
     emailFrom: getSenderEmail(),
     currency,
+    customerName,
+    customerEmail,
+    customerPhone: customerPhone || 'Not provided',
+    total,
+    subtotal,
+    discount,
+    shippingCost: shipping,
+    tax,
     paymentMethod,
     paymentStatus,
     transactionId,
@@ -1023,6 +1047,9 @@ export async function sendCustomerOrderConfirmation(
     to: customerEmail,
     recipientEmail: customerEmail,
     adminEmail: customerEmail,
+    email: customerEmail,
+    targetEmail: customerEmail,
+    customerEmail,
     notes: [
       `Thank you for your order with Global Herbs Inc, ${payload.customer.name}!`,
       ``,
