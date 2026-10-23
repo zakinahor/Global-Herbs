@@ -240,6 +240,14 @@
       "destination": "/api/contact"
     },
     {
+      "source": "/api/orders/:orderId",
+      "destination": "/api/orders?orderId=:orderId"
+    },
+    {
+      "source": "/api/orders",
+      "destination": "/api/orders"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },

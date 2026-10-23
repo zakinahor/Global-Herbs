@@ -11,6 +11,6 @@
   "publishMinute": 0,
   "schedulerSecret": "gh-scheduler-sec-2026",
   "autoGenerateTopicWeekly": false,
-  "lastRunAt": "2026-10-21T11:31:45.035Z",
-  "nextScheduledSlot": "2026-10-23T10:00:00.000Z"
+  "lastRunAt": "2026-10-23T14:17:03.269Z",
+  "nextScheduledSlot": "2026-10-26T10:00:00.000Z"
 }

@@ -1,5 +1,56 @@
 [
   {
+    "orderId": "GM-954724-HGE",
+    "date": "Wednesday, October 21, 2026 at 09:30 AM",
+    "status": "Out for Delivery",
+    "trackingNumber": "GH-TRK-954724-HGE",
+    "transactionId": "TXN-954724-HGE",
+    "carrier": "Priority Stealth Express Courier",
+    "estimatedDelivery": "Today — By End of Day (Courier In Transit)",
+    "customerName": "Verified Client",
+    "customerEmail": "globalherbsinc@gmail.com",
+    "customerPhone": "+1 (213) 280-1161",
+    "companyName": "Global Herbs Dispensary",
+    "shippingAddress": "Priority Stealth Dual Vacuum Delivery Address on file, Los Angeles, CA, United States",
+    "shippingDetails": {
+      "name": "Verified Client",
+      "address": "Priority Stealth Delivery Address on file",
+      "city": "Los Angeles",
+      "state": "CA",
+      "postalCode": "90028",
+      "country": "United States"
+    },
+    "billingAddress": "Priority Stealth Delivery Address on file",
+    "orderNotes": "Order dispatched via Priority Stealth Express Courier. Status: Out for Delivery.",
+    "items": [
+      {
+        "id": "GH-DISP-ITEM-1",
+        "productId": "GH-DISP-ITEM-1",
+        "name": "Dispensary Botanical Package (Double Vacuum Sealed)",
+        "variant": "Stealth Priority Pack",
+        "quantity": 1,
+        "price": 145.0,
+        "total": 145.0
+      }
+    ],
+    "subtotal": 145.0,
+    "discount": 0,
+    "shippingCost": 0,
+    "tax": 0,
+    "orderTotal": 145.0,
+    "currency": "USD",
+    "paymentMethod": "Dispensary Direct",
+    "paymentStatus": "Paid & Verified",
+    "notificationStatus": "sent",
+    "notificationMessageId": "gas-GM-954724-HGE",
+    "notificationSentAt": "2026-10-21T16:30:00.000Z",
+    "notificationError": null,
+    "notificationAttempts": 1,
+    "customerConfirmationStatus": "sent",
+    "createdAt": "2026-10-21T16:30:00.000Z",
+    "updatedAt": "2026-10-23T14:12:00.000Z"
+  },
+  {
     "orderId": "GH-ORDER-845561",
     "date": "Monday, September 28, 2026 at 06:09 AM",
     "status": "Received & Stealth Processing",

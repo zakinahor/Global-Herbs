@@ -460,7 +460,11 @@ async function startServer() {
     }
 
     const cleanOrderId = orderId.trim().toUpperCase();
-    const order = ordersStore.get(cleanOrderId);
+    let order = ordersStore.get(cleanOrderId);
+    if (!order) {
+      loadOrders();
+      order = ordersStore.get(cleanOrderId);
+    }
 
     if (!order) {
       return res.status(404).json({ success: false, error: 'Order reference not found in our dispatch records.' });

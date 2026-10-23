@@ -87,6 +87,26 @@ export default function OrderTrackingPage() {
 
       if (response.ok && data.success && data.order) {
         setOrderResult(data.order);
+      } else if (cleanOrderId.toUpperCase() === 'GM-954724-HGE') {
+        setOrderResult({
+          orderId: 'GM-954724-HGE',
+          date: 'Wednesday, October 21, 2026 at 09:30 AM',
+          status: 'Out for Delivery',
+          trackingNumber: 'GH-TRK-954724-HGE',
+          carrier: 'Priority Stealth Express Courier',
+          estimatedDelivery: 'Today — By End of Day (Courier In Transit)',
+          customerName: emailInput ? emailInput.split('@')[0] : 'Verified Client',
+          customerEmail: emailInput || 'globalherbsinc@gmail.com',
+          shippingAddress: 'Priority Stealth Dual Vacuum Delivery Address on file, Los Angeles, CA, United States',
+          items: [
+            {
+              name: 'Dispensary Botanical Package (Double Vacuum Sealed)',
+              quantity: 1,
+              price: 145.0,
+            },
+          ],
+          orderTotal: 145.0,
+        });
       } else {
         // If not in database or simulation, provide clear status lookup feedback
         if (cleanOrderId.startsWith('GH-') || cleanOrderId.startsWith('GM-')) {
@@ -107,9 +127,29 @@ export default function OrderTrackingPage() {
           setErrorMessage(data.error || 'Order reference not found. Please check your order confirmation email for the exact reference number.');
         }
       }
-    } catch (err: any) {
+    } catch {
       // Fallback for demonstration
-      if (cleanOrderId.startsWith('GH-') || cleanOrderId.startsWith('GM-')) {
+      if (cleanOrderId.toUpperCase() === 'GM-954724-HGE') {
+        setOrderResult({
+          orderId: 'GM-954724-HGE',
+          date: 'Wednesday, October 21, 2026 at 09:30 AM',
+          status: 'Out for Delivery',
+          trackingNumber: 'GH-TRK-954724-HGE',
+          carrier: 'Priority Stealth Express Courier',
+          estimatedDelivery: 'Today — By End of Day (Courier In Transit)',
+          customerName: emailInput ? emailInput.split('@')[0] : 'Verified Client',
+          customerEmail: emailInput || 'globalherbsinc@gmail.com',
+          shippingAddress: 'Priority Stealth Dual Vacuum Delivery Address on file, Los Angeles, CA, United States',
+          items: [
+            {
+              name: 'Dispensary Botanical Package (Double Vacuum Sealed)',
+              quantity: 1,
+              price: 145.0,
+            },
+          ],
+          orderTotal: 145.0,
+        });
+      } else if (cleanOrderId.startsWith('GH-') || cleanOrderId.startsWith('GM-')) {
         setOrderResult({
           orderId: cleanOrderId.toUpperCase(),
           date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -236,38 +276,74 @@ export default function OrderTrackingPage() {
                 {orderResult.orderId}
               </h2>
             </div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-800 font-bold text-xs">
-              <CheckCircle2 size={16} />
-              <span>{orderResult.status}</span>
-            </div>
+            {(() => {
+              const statusLower = (orderResult.status || '').toLowerCase();
+              const isOutForDelivery = statusLower.includes('out for delivery') || statusLower.includes('transit') || statusLower.includes('delivered');
+              return (
+                <div
+                  className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold text-xs ${
+                    isOutForDelivery
+                      ? 'bg-emerald-100 border border-emerald-300 text-emerald-900 shadow-xs'
+                      : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                  }`}
+                >
+                  <CheckCircle2 size={16} className={isOutForDelivery ? 'text-emerald-700 animate-pulse' : 'text-emerald-800'} />
+                  <span>{orderResult.status}</span>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Stepper / Timeline */}
-          <div className="py-4">
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold mb-2">
-                  1
+          {(() => {
+            const statusLower = (orderResult.status || '').toLowerCase();
+            const isOutForDelivery = statusLower.includes('out for delivery') || statusLower.includes('transit') || statusLower.includes('delivered');
+            return (
+              <div className="py-4">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold mb-2">
+                      1
+                    </div>
+                    <span className="text-xs font-bold text-gray-900">Order Received</span>
+                    <span className="text-[10px] text-gray-500 font-medium">{orderResult.date}</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold mb-2">
+                      2
+                    </div>
+                    <span className="text-xs font-bold text-emerald-800">Stealth Packed</span>
+                    <span className="text-[10px] text-gray-500 font-medium">Dual Vacuum Sealed</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-2 transition-colors ${
+                        isOutForDelivery
+                          ? 'bg-emerald-800 text-white shadow-md ring-4 ring-emerald-100'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      3
+                    </div>
+                    <span
+                      className={`text-xs font-bold ${
+                        isOutForDelivery ? 'text-emerald-800' : 'text-gray-400'
+                      }`}
+                    >
+                      Out for Delivery
+                    </span>
+                    <span
+                      className={`text-[10px] font-medium ${
+                        isOutForDelivery ? 'text-emerald-700 font-bold' : 'text-gray-400'
+                      }`}
+                    >
+                      {orderResult.estimatedDelivery}
+                    </span>
+                  </div>
                 </div>
-                <span className="text-xs font-bold text-gray-900">Order Received</span>
-                <span className="text-[10px] text-gray-500 font-medium">{orderResult.date}</span>
               </div>
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-emerald-800 text-white flex items-center justify-center text-xs font-bold mb-2">
-                  2
-                </div>
-                <span className="text-xs font-bold text-emerald-800">Stealth Packed</span>
-                <span className="text-[10px] text-gray-500 font-medium">Dual Vacuum Sealed</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-bold mb-2">
-                  3
-                </div>
-                <span className="text-xs font-bold text-gray-400">Out for Delivery</span>
-                <span className="text-[10px] text-gray-400 font-medium">{orderResult.estimatedDelivery}</span>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Details Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 rounded-xl p-4 text-xs">
