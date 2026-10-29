@@ -318,6 +318,41 @@ export function getPage(pathname: string): SeoPage | null {
           availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
           url: productCanonical,
           seller: { '@type': 'Organization', name: 'Global Herbs' },
+          shippingDetails: {
+            '@type': 'OfferShippingDetails',
+            shippingRate: {
+              '@type': 'MonetaryAmount',
+              value: '19.99',
+              currency: 'USD',
+            },
+            shippingDestination: {
+              '@type': 'DefinedRegion',
+              addressCountry: 'US',
+            },
+            deliveryTime: {
+              '@type': 'ShippingDeliveryTime',
+              handlingTime: {
+                '@type': 'QuantitativeValue',
+                minValue: 0,
+                maxValue: 1,
+                unitCode: 'd',
+              },
+              transitTime: {
+                '@type': 'QuantitativeValue',
+                minValue: 2,
+                maxValue: 4,
+                unitCode: 'd',
+              },
+            },
+          },
+          hasMerchantReturnPolicy: {
+            '@type': 'MerchantReturnPolicy',
+            applicableCountry: 'US',
+            returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            merchantReturnDays: 14,
+            returnMethod: 'https://schema.org/ReturnByMail',
+            returnFees: 'https://schema.org/FreeReturn',
+          },
         },
       });
     }
@@ -600,43 +635,137 @@ export function getPage(pathname: string): SeoPage | null {
       description:
         'Learn about Global Herbs - your trusted source for premium lab-tested products, discreet shipping, and top customer satisfaction.',
       h1: 'About Our Shop — The Global Herbs Dispensary Legacy',
-      content: `<p>Founded in Cave Junction, Oregon in 2023, Global Herbs has grown from a local organic collective into a premier online mail-order dispensary. We source strictly from licensed craft cultivators and verify every batch via third-party ISO-accredited laboratory analysis.</p>
-      <h2>Our Pure Sourcing &amp; Discreet Fulfillment</h2>
-      <p>Every flower block, concentrate jar, vape cartridge, and edible package undergoes dual-tier laboratory testing and double medical-grade vacuum sealing for 100% odor-proof transit.</p>`,
+      content: `<section>
+        <h2>The Global Herbs Dispensary Legacy of Excellence Since 2023</h2>
+        <p>Founded in Cave Junction, Oregon in 2023, Global Herbs has grown from a local organic advocate collective into the premier online mail-order dispensary nationwide and globally. We strictly source from licensed craft cultivators who avoid chemical growth enhancers, heavy pesticides, or sub-par curing.</p>
+        <h3>Our Pure Sourcing Philosophy</h3>
+        <p>Every flower block, cartridge, wellness formulation, and concentrate package is hand-selected and undergoes dual-tier third-party laboratory verification. If our premium products do not meet your exact standards, we stand by our robust refunds and guarantee structure to ensure perfect client satisfaction.</p>
+        <h3>Guaranteed Quality &amp; Delivery</h3>
+        <p>All items undergo rigorous laboratory testing for potency, terpene retention, residual solvents, microbials, and heavy metals. We partner exclusively with certified analytical facilities to ensure clean, compliant botanicals.</p>
+        <h2>Who We Serve</h2>
+        <p>At Global Herbs Dispensary, we serve medical patients seeking consistent therapeutic dosing, wellness enthusiasts focusing on natural alternative healing modalities, and adult recreational connoisseurs seeking top-shelf quality. We offer convenient home delivery pathways for individuals living in areas without physical access to high-standard dispensaries.</p>
+        <h2>Absolute Privacy &amp; Absolute Integrity</h2>
+        <p>We know that privacy is paramount when shopping for alternative therapeutics. That's why every transaction on our platform is fully encrypted and all delivery parcels are vacuum-sealed in generic containers. We never maintain commercial tracking history beyond your immediate delivery window to ensure total peace of mind.</p>
+        <h2>Corporate Standards &amp; Dispatch Operation</h2>
+        <p>Our warehouse dispatch centers operate continuous shifts from Cave Junction, OR to make sure order routing remains constant and tracking information is issued within 24 business hours of successful validation. Our professional support and dispatch lines remain at your complete disposal for custom or bulk wholesale requests.</p>
+        <h2>Official Dispensary Details</h2>
+        <p><strong>Physical Address:</strong> 238 Cedar Brook Ln, Cave Junction, OR 97523 United States</p>
+        <p><strong>Phone:</strong> <a href="tel:+12132801161">+1 (213) 280-1161</a> | <strong>Email:</strong> <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a></p>
+      </section>`,
     },
     '/shipping': {
       title: 'Shipping Policy & Delivery - Global Herbs',
       description:
         'Global Herbs shipping policy: Fast, stealthy, and discreet delivery options. Free shipping on qualifying orders.',
       h1: 'Secure Shipping Policy — Double Vacuum Sealed Stealth Delivery',
-      content: `<p>All orders are processed within 24 hours from Cave Junction, Oregon using our Double Vacuum Seal Protocol inside unmarked generic parcels. Standard express transit takes 2 to 4 business days ($19.99 flat rate, or free on orders over $249.99).</p>`,
+      content: `<section>
+        <h2>Industry-Leading Double Vacuum Sealed Odourless Stealth Shipping</h2>
+        <p>Global Herbs sets the standard for secure, discreet mail-order dispensary fulfillment. Every order shipped from our Cave Junction, Oregon facility adheres to strict packaging protocols to protect your privacy and ensure product freshness upon arrival.</p>
+        <div>
+          <h3>Shipping Options &amp; Flat Rate Dispatch</h3>
+          <ul>
+            <li><strong>Standard Discreet Express Dispatch:</strong> $19.99 Flat Rate worldwide. Delivered within 2 to 4 business days with full end-to-end tracking.</li>
+            <li><strong>Automatic Free Shipping Upgrade:</strong> Every order exceeding $249.99 automatically qualifies for 100% Free Express Stealth Shipping at checkout.</li>
+            <li><strong>Fulfillment &amp; Handling Time:</strong> Orders are processed and packed within 0 to 1 business day (24 hours) Monday through Saturday.</li>
+          </ul>
+        </div>
+        <h2>The Double Vacuum Seal Protocol</h2>
+        <p>All flower products, hashes, extracts, and gummies are meticulously sealed inside clinical-grade, moisture-proof barrier bags using high-performance chamber vacuum sealers. Following validation, the primary bag is sanitized and passed into a secondary, thick medical-grade protective seal. This prevents any scent molecular emissions and safeguards your package against unexpected temperature shifts during dispatch.</p>
+        <h2>Discreet Stealth Packaging</h2>
+        <p>We use completely unmarked, generic cardboard boxes or heavy poly-mailers. Senders' coordinates refer to our generalized distribution corporations with no mention of "Global Herbs", "dispensary", "cannabis", or alternative botanicals. Your parcel will appear identical to everyday commerce shipments (e.g., electronic accessories or generic apparel).</p>
+        <h2>Tracking &amp; Dispatch Validation</h2>
+        <p>Once your package is accepted by the carrier (USPS, FedEx, Canada Post, or specialized discreet couriers), an automated email tracking key will be sent to the email provided during checkout. Tracking systems might require up to 12 hours after physical collection to reflect update coordinates.</p>
+        <h2>Delays, Seizures &amp; Delivery Insurance</h2>
+        <p>While 99.8% of our orders clear transit without friction, occasional delays can happen due to adverse weather or carrier logistics. We offer free, prompt reshipping or a full refund if a parcel becomes stuck in transit for over 14 business days.</p>
+      </section>`,
     },
     '/returns': {
       title: 'Refund & Returns Policy - Global Herbs',
       description: 'Global Herbs refund and return policy. Customer satisfaction is our top priority.',
       h1: 'Refund & Returns Guarantee — 100% Delivery Insurance',
-      content: `<p>Global Herbs provides 100% delivery protection. If your package shows no tracking update for more than 14 business days or arrives damaged, contact globalherbsinc@gmail.com for an immediate 100% free reshipment or full refund.</p>`,
+      content: `<section>
+        <h2>100% Secure Delivery Insurance &amp; Money-Back Protection</h2>
+        <p>We understand purchasing botanicals online requires absolute confidence. Global Herbs offers 100% protection guarantees. If your package does not arrive as confirmed by logistics, or if any product arrives damaged or defective, we refund or reship with no extra charges.</p>
+        <h2>Package Lost or Stalled in Transit</h2>
+        <p>If your tracking coordinates show no active scanning update for more than 14 business days, or if the package is flagged by logistics, please contact our dispatch lines immediately. We will initiate an inquiry and, if confirmed missing, issue a 100% free stealth reshipment or refund your full payment.</p>
+        <h2>Defective, Damaged, or Incorrect Items</h2>
+        <p>In the rare event that you receive a defective item (such as a leaky cartridge coil) or if we mistakenly packed the wrong product tier, please capture a clear photograph or video showing the defect or item label and submit it to <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a> within 48 hours of delivery. We will dispatch replacements immediately at our expense.</p>
+        <h2>Address Errors &amp; Customer Responsibility</h2>
+        <p>Please double-check your shipping coordinates when filling out checkout details. We cannot issue refunds or reshipments if a parcel is delivered to the wrong address because of an incorrect address input. If you realize an error has occurred, please contact us immediately so we can update the shipping label before dispatch.</p>
+        <h2>How to Initiate a Claim</h2>
+        <p>To initiate a claim, contact our Support Dispatch team through our integrated <a href="/contact">Inquiry Form</a> or directly via email at <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a>. Please specify your Order ID, name, email address, and a detailed description of the issue. Claims are processed within 1 to 2 hours during normal dispatch hours.</p>
+      </section>`,
     },
     '/privacy': {
       title: 'Privacy Policy - Global Herbs',
       description:
         'How Global Herbs protects your data and privacy with secure checkout and encrypted customer information.',
       h1: 'Privacy Policy Terms — 256-Bit SSL Encryption & Zero-Log Security',
-      content: `<p>Global Herbs employs end-to-end 256-bit SSL encryption, neutral billing descriptors, and a strict Zero-Permanent Log Policy that automatically purges delivery coordinates 14 business days after delivery confirmation.</p>`,
+      content: `<section>
+        <h2>Absolute Confidentiality, 256-Bit SSL Encryption, &amp; Purged Dispatch History</h2>
+        <p>Global Herbs operates under a strict Zero-Permanent Log Policy. We believe your wellness choices and personal therapeutic decisions are your business alone. We treat customer information with extreme diligence and enterprise-grade confidentiality.</p>
+        <h2>Zero-Permanent Log Policy</h2>
+        <p>Global Herbs never logs details of what you order or your physical delivery coordinates permanently. All order histories, customer addresses, and transactional notes are completely and automatically purged from our databases 14 business days following confirmed carrier delivery.</p>
+        <h2>256-Bit SSL Data Security Encryption</h2>
+        <p>Our web infrastructure and checkout systems employ end-to-end 256-bit Secure Socket Layer (SSL) encryption protocols. All validation keys and transaction parameters are completely tokenized and never stored on public-facing servers.</p>
+        <h2>Information We Collect &amp; Why</h2>
+        <p>We only collect the minimum information strictly necessary to fulfill your orders and keep you updated on progress:</p>
+        <ul>
+          <li><strong>Email Address:</strong> Used for checkout receipts, courier tracking keys, and optional secret sales coupons.</li>
+          <li><strong>Shipping Coordinates:</strong> Required solely for physical carrier routing. Permanently purged 14 business days after delivery confirmation.</li>
+          <li><strong>Contact Phone:</strong> Used solely in case our dispatchers require urgent verification prior to shipping.</li>
+        </ul>
+        <h2>Third-Party Disclosures &amp; Non-Sharing Pledge</h2>
+        <p>Global Herbs never shares, sells, rents, or discloses any personal customer data to third-party commercial databases, marketing agencies, data brokers, or advertising networks. Your privacy remains 100% confidential.</p>
+        <h2>Transient Cookies</h2>
+        <p>We employ small functional browser cookies to remember items in your cart, category selections, and currency preferences. These cookies are completely transient and expire when your browsing session terminates.</p>
+      </section>`,
     },
     '/terms': {
       title: 'Terms & Discreet Shipping Conditions - Global Herbs',
       description:
         'Dispensary terms of service, legal age 21+ eligibility, stealth double-seal odourless packaging, and guaranteed delivery policies.',
       h1: 'Terms & Discreet Shipping Conditions',
-      content: `<p>By accessing Global Herbs Dispensary, you confirm you are at least 21 years of age. All hemp-derived cannabinoid products comply with the 2018 US Farm Bill (&lt;0.3% Delta-9 THC by dry weight) and ship under our Stealth Double-Seal Packaging Protocol.</p>`,
+      content: `<section>
+        <h2>Official Dispensary Ordering Terms, Age Verification &amp; Delivery Conditions</h2>
+        <p>Please review these binding Terms and Conditions before placing an order on Global Herbs Dispensary. By accessing our website, browsing products, or completing an order, you agree to comply with and be bound by the following operational conditions.</p>
+        <h2>1. Agreement to Terms &amp; Legal Age Eligibility (21+)</h2>
+        <p>By accessing Global Herbs Dispensary, placing an order, or checking the terms agreement box during checkout, you legally acknowledge, represent, and warrant that you are at least twenty-one (21) years of age (or the legal age of majority in your jurisdiction) and possess full legal capacity to enter into these binding terms. All botanical goods, lab-tested herbal formulations, therapeutic mushrooms, THCa flower, concentrates, and wellness tinctures offered on this platform are intended strictly for lawful adult personal use or therapeutic alternative medicine regimens. Global Herbs reserves the right to cancel any transaction suspected of underage solicitation.</p>
+        <h2>2. Discreet Stealth Packaging &amp; Odourless Dispatch Conditions</h2>
+        <p>We hold your discretion and peace of mind as our highest operational priority. All orders processed through Global Herbs are fulfilled under our strict Stealth Double-Seal Packaging Protocol:</p>
+        <ul>
+          <li><strong>Dual-Tier Clinical Vacuum Sealing:</strong> Products are first sealed inside an airtight, moisture-barrier mylar pouch, thoroughly sanitized, and then encased within a secondary heavy-gauge commercial vacuum seal. This blocks 100% of aromatic terpenes and volatile scents.</li>
+          <li><strong>Completely Generic Outer Packaging:</strong> Orders are dispatched in standard, unmarked cardboard mailers or heavy poly-envelopes. There is zero external branding, logos, or botanical references.</li>
+          <li><strong>Neutral Return Address:</strong> The shipping label features an authorized neutral corporate logistics identifier with no mention of "Global Herbs", "Dispensary", "Cannabis", or botanical terms.</li>
+          <li><strong>Damage &amp; Tamper-Evident Enclosures:</strong> Inner boxes are reinforced with shock-absorbing fill to ensure fragile cartridges, tinctures, and glass jars remain pristine throughout carrier sorting.</li>
+        </ul>
+        <h2>3. Shipping Options, Tracking &amp; Delivery Windows</h2>
+        <p>Global Herbs processes and ships orders Monday through Saturday from our secure fulfillment center in Cave Junction, Oregon. Standard Discreet Express Dispatch takes 2 to 4 business days ($19.99 flat rate). Orders exceeding $249.99 automatically qualify for Free Express Stealth Shipping. Live carrier tracking numbers are generated and emailed within 12 to 24 hours of payment validation.</p>
+        <h2>4. Guaranteed Delivery Insurance &amp; Reshipment Policy</h2>
+        <p>We maintain an industry-leading 99.8% successful delivery clearance rate. If a package shows no active scanning update for 14 consecutive business days, Global Herbs will provide a 100% free stealth reshipment or a full refund without hassle. In the case of damaged or missing items, notify our support desk at <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a> within 48 hours of confirmed delivery with photo documentation for immediate priority replacement.</p>
+        <h2>5. Payment Gateways, Discrete Billing &amp; Privacy Protections</h2>
+        <p>To maintain utmost client confidentiality, Global Herbs supports verified discrete payment methods including Cryptocurrency (Bitcoin, Ethereum, USDT with 5% checkout savings), P2P transfers (Zelle, Cash App, Venmo), Interac e-Transfer / Bank Wire, and Express Wallets (Apple Pay / Google Pay). Bank statements reflect generic neutral descriptors. Shipping addresses and customer data are purged from active systems 14 business days after delivery confirmation.</p>
+      </section>`,
     },
     '/contact': {
       title: 'Contact Us - Global Herbs | Customer Support & Inquiries',
       description:
         'Contact Global Herbs for product inquiries, custom orders, or account assistance. Fast responses within 1-2 hours.',
       h1: 'Contact Us & Wholesale Support Desk',
-      content: `<p>Reach our 24/6 Cave Junction, Oregon dispatch desk by phone at <a href="tel:+12132801161">+1 (213) 280-1161</a> or email <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a> for product inquiries, order support, and wholesale pricing.</p>`,
+      content: `<section>
+        <h2>24/6 Direct Dispensary Dispatch Desk — Cave Junction, Oregon</h2>
+        <p>Our customer service representatives and fulfillment dispatchers are on duty 6 days a week to assist with order tracking, custom orders, bulk wholesale pricing, and product guidance.</p>
+        <h2>Contact Information</h2>
+        <ul>
+          <li><strong>Dispensary Headquarters:</strong> 238 Cedar Brook Ln, Cave Junction, OR 97523 United States</li>
+          <li><strong>Direct Phone:</strong> <a href="tel:+12132801161">+1 (213) 280-1161</a></li>
+          <li><strong>Support &amp; Order Email:</strong> <a href="mailto:globalherbsinc@gmail.com">globalherbsinc@gmail.com</a></li>
+          <li><strong>Operating Hours:</strong> Monday – Saturday: 8:00 AM – 8:00 PM PST (Closed Sundays)</li>
+          <li><strong>Typical Response Time:</strong> Within 1 to 2 business hours for email and form inquiries</li>
+        </ul>
+        <h2>Dispensary Inquiries &amp; Customer Support</h2>
+        <p>Whether you need advice choosing the right THCa strain profile, have a question about our double-vacuum stealth shipping, or want to track an active shipment, our Cave Junction dispatch team is ready to help. You can also reach us directly through our online inquiry form or official social channels.</p>
+      </section>`,
     },
     '/blog': {
       title: "Cannabis Education & Buyer's Guides | Global Herbs Knowledge Hub",
@@ -664,17 +793,64 @@ export function getPage(pathname: string): SeoPage | null {
     '/contact': 'Contact Us',
     '/blog': 'Knowledge Hub',
   };
+
+  const staticSchemas: Record<string, unknown>[] = [
+    breadcrumbSchema([
+      { name: 'Home', url: `${BASE_URL}/` },
+      { name: pageName[pathname], url: canonical },
+    ]),
+  ];
+
+  if (pathname === '/about') {
+    staticSchemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'Store',
+      name: 'Global Herbs Dispensary',
+      url: `${BASE_URL}/`,
+      logo: `${BASE_URL}/images/global-herbs-logo.jpg`,
+      image: `${BASE_URL}/images/global-herbs-logo.jpg`,
+      description: 'Global Herbs is a licensed craft botanical and legal cannabinoid dispensary founded in Cave Junction, Oregon in 2023.',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '238 Cedar Brook Ln',
+        addressLocality: 'Cave Junction',
+        addressRegion: 'OR',
+        postalCode: '97523',
+        addressCountry: 'US',
+      },
+      telephone: '+1-213-280-1161',
+      email: 'globalherbsinc@gmail.com',
+      priceRange: '$$',
+    });
+  } else if (pathname === '/contact') {
+    staticSchemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'ContactPage',
+      name: 'Contact Global Herbs Dispensary',
+      url: `${BASE_URL}/contact`,
+      mainEntity: {
+        '@type': 'Store',
+        name: 'Global Herbs Dispensary',
+        telephone: '+1-213-280-1161',
+        email: 'globalherbsinc@gmail.com',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '238 Cedar Brook Ln',
+          addressLocality: 'Cave Junction',
+          addressRegion: 'OR',
+          postalCode: '97523',
+          addressCountry: 'US',
+        },
+      },
+    });
+  }
+
   return {
     title: staticPage.title,
     description: staticPage.description,
     canonical,
     kind: 'website',
-    schema: [
-      breadcrumbSchema([
-        { name: 'Home', url: `${BASE_URL}/` },
-        { name: pageName[pathname], url: canonical },
-      ]),
-    ],
+    schema: staticSchemas,
     bodyHtml: renderSharedShell(`
       <nav aria-label="Breadcrumb"><a href="/">Home</a> &rsaquo; <span>${escapeHtml(pageName[pathname])}</span></nav>
       <article>
@@ -799,7 +975,7 @@ function prerenderSeoPages() {
     writeRouteFiles(template, pathname, page);
   }
 
-  // 4. Write noindex utility pages (/checkout, /order-tracking) and 404.html
+  // 4. Write noindex utility pages (/checkout, /order-tracking, /forms, /admin, /admin/blog) and 404.html
   const utilityNoIndexPages: Array<{ pathname: string; title: string; h1: string; desc: string }> = [
     {
       pathname: '/checkout',
@@ -812,6 +988,24 @@ function prerenderSeoPages() {
       title: 'Track Your Order Status | Global Herbs',
       h1: 'Real-Time Order Tracking',
       desc: 'Look up the real-time shipping and fulfillment status of your Global Herbs order.',
+    },
+    {
+      pathname: '/forms',
+      title: 'Dispensary Customer Forms | Global Herbs',
+      h1: 'Dispensary Inquiry & Custom Request Forms',
+      desc: 'Submit inquiries and feedback to Global Herbs.',
+    },
+    {
+      pathname: '/admin',
+      title: 'Dispensary Admin Portal | Global Herbs',
+      h1: 'Dispensary Administration',
+      desc: 'Dispensary editorial and administration portal.',
+    },
+    {
+      pathname: '/admin/blog',
+      title: 'Content Administration | Global Herbs',
+      h1: 'Content Administration Portal',
+      desc: 'Dispensary editorial and content administration portal.',
     },
   ];
 

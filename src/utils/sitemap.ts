@@ -3,9 +3,25 @@ import { blogArticles } from '../data/blogArticles';
 
 export interface SitemapEntry {
   loc: string;
+  lastmod?: string;
 }
 
 const BASE_URL = 'https://globalherbs.site';
+const STATIC_PAGE_LASTMOD = '2026-10-29';
+const CATALOG_LASTMOD = '2026-10-27';
+
+function parseIsoDate(dateStr?: string): string | undefined {
+  if (!dateStr) return undefined;
+  try {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      return d.toISOString().split('T')[0];
+    }
+  } catch {
+    // fallback
+  }
+  return undefined;
+}
 
 // Non-indexable category slugs (controlled substances, pharmaceuticals, research chemicals, illicit products)
 export const NON_INDEXABLE_CATEGORY_SLUGS = new Set([
@@ -33,18 +49,18 @@ export const NON_INDEXABLE_PRODUCT_IDS = new Set([
  * Ensures clean canonical, non-redirected URLs for search engine compliance.
  * Excludes non-indexable / controlled substances and utility pages.
  */
-export function generateSitemapEntries(customArticles?: { slug: string }[]): SitemapEntry[] {
+export function generateSitemapEntries(customArticles?: Array<{ slug: string; updatedAt?: string; publishedDate?: string }>): SitemapEntry[] {
   const entries: SitemapEntry[] = [
     // Canonical public pages. /shop and /terms-conditions are aliases and stay out.
-    { loc: `${BASE_URL}/` },
-    { loc: `${BASE_URL}/products` },
-    { loc: `${BASE_URL}/about` },
-    { loc: `${BASE_URL}/shipping` },
-    { loc: `${BASE_URL}/returns` },
-    { loc: `${BASE_URL}/contact` },
-    { loc: `${BASE_URL}/privacy` },
-    { loc: `${BASE_URL}/terms` },
-    { loc: `${BASE_URL}/blog` },
+    { loc: `${BASE_URL}/`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/products`, lastmod: CATALOG_LASTMOD },
+    { loc: `${BASE_URL}/about`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/shipping`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/returns`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/contact`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/privacy`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/terms`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/blog`, lastmod: STATIC_PAGE_LASTMOD },
   ];
 
   // Exclude categories marked noindex by SEOHead.
@@ -53,14 +69,21 @@ export function generateSitemapEntries(customArticles?: { slug: string }[]): Sit
     .forEach((cat) => {
       entries.push({
         loc: `${BASE_URL}/category/${encodeURIComponent(cat.slug)}`,
+        lastmod: CATALOG_LASTMOD,
       });
     });
 
   // Blog article URLs (published only).
   const articlesToInclude = customArticles || blogArticles;
   articlesToInclude.forEach((article) => {
+    const lastmod =
+      parseIsoDate((article as any).updatedAt) ||
+      parseIsoDate((article as any).publishedDate) ||
+      STATIC_PAGE_LASTMOD;
+
     entries.push({
       loc: `${BASE_URL}/blog/${encodeURIComponent(article.slug)}`,
+      lastmod,
     });
   });
 
@@ -79,6 +102,7 @@ export function generateSitemapEntries(customArticles?: { slug: string }[]): Sit
         seenProductUrls.add(loc);
         entries.push({
           loc,
+          lastmod: CATALOG_LASTMOD,
         });
       }
     });
@@ -89,15 +113,15 @@ export function generateSitemapEntries(customArticles?: { slug: string }[]): Sit
 /**
  * Generates complete XML string for sitemap.xml
  */
-export function generateSitemapXML(customArticles?: { slug: string }[]): string {
+export function generateSitemapXML(customArticles?: Array<{ slug: string; updatedAt?: string; publishedDate?: string }>): string {
   const entries = generateSitemapEntries(customArticles);
 
   const urlNodes = entries
-    .map(
-      (entry) => `  <url>
-    <loc>${escapeXml(entry.loc)}</loc>
-  </url>`
-    )
+    .map((entry) => {
+      const locTag = `    <loc>${escapeXml(entry.loc)}</loc>`;
+      const lastmodTag = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : '';
+      return `  <url>\n${locTag}${lastmodTag}\n  </url>`;
+    })
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>

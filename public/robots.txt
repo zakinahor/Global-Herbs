@@ -8,27 +8,63 @@ Disallow: /order-confirmation
 Disallow: /*?*q=
 Disallow: /*?*filter=
 
-# Search Engines Allowed Explicitly
+# Search Engines - Explicitly allowed with crawl boundary protection
 User-agent: Googlebot
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 User-agent: Slurp
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 User-agent: DuckDuckBot
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 User-agent: Baiduspider
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 User-agent: YandexBot
 Allow: /
+Disallow: /checkout
+Disallow: /api/
+Disallow: /admin
+Disallow: /order-confirmation
+Disallow: /*?*q=
+Disallow: /*?*filter=
 
 # Social Crawlers Allowed for Rich Share Cards
 User-agent: Twitterbot
@@ -49,5 +85,6 @@ Allow: /
 User-agent: Applebot
 Allow: /
 
-# XML Sitemap Index
+# XML Sitemap
 Sitemap: https://globalherbs.site/sitemap.xml
+

@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "trailingSlash": false,
   "crons": [
     {
       "path": "/api/cron/publish",
@@ -8,6 +9,16 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/products/1",
+      "destination": "/products/thca-zkittlez-pie-indoor-flower",
+      "permanent": true
+    },
+    {
+      "source": "/products/2",
+      "destination": "/products/thca-gelato-indoor-flower",
+      "permanent": true
+    },
     {
       "source": "/shop",
       "destination": "/products",
@@ -250,10 +261,6 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ]
 }

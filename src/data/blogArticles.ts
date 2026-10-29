@@ -1129,7 +1129,7 @@ export const blogArticles: BlogArticle[] = [
           {
             subtitle: 'The 87.7% Mathematical Formula: Reading Laboratory COAs Accurately',
             paragraphs: [
-              'When examining a third-party Certificate of Analysis (COA) for [THCA Zkittlez Pie Indoor Flower](/products/1) or artisanal concentrates, shoppers frequently notice that the total potential THC is slightly lower than the raw percentage of THCA printed on the lab report.',
+              'When examining a third-party Certificate of Analysis (COA) for [THCA Zkittlez Pie Indoor Flower](/products/thca-zkittlez-pie-indoor-flower) or artisanal concentrates, shoppers frequently notice that the total potential THC is slightly lower than the raw percentage of THCA printed on the lab report.',
               'This is not a measurement error or dispensary dilution; it is a mathematical consequence of molecular mass loss. During decarboxylation, the released carbon dioxide (CO2) molecule carries away 44.01 g/mol of mass. By dividing the molecular weight of Delta-9 THC (314.46 g/mol) by the molecular weight of THCA (358.47 g/mol), analytical chemists establish the universal stoichiometric conversion factor:',
             ],
             bullets: [
@@ -1277,7 +1277,7 @@ export const blogArticles: BlogArticle[] = [
           {
             subtitle: 'Step 2: Prioritize Organic Living Soil & Cold-Cured Cultivars',
             paragraphs: [
-              'Top-tier cultivars like [THCA Zkittlez Pie Indoor Flower](/products/1) (28% THCA) and [THCA Gelato Indoor Flower](/products/2) are cultivated in climate-controlled indoor cleanrooms using organic living soil amendments. Living soil allows roots to uptake complex micronutrients naturally, generating dense trichome blankets and rich terpene concentrations exceeding 2.5% to 4.0% by weight.',
+              'Top-tier cultivars like [THCA Zkittlez Pie Indoor Flower](/products/thca-zkittlez-pie-indoor-flower) (28% THCA) and [THCA Gelato Indoor Flower](/products/thca-gelato-indoor-flower) are cultivated in climate-controlled indoor cleanrooms using organic living soil amendments. Living soil allows roots to uptake complex micronutrients naturally, generating dense trichome blankets and rich terpene concentrations exceeding 2.5% to 4.0% by weight.',
               'Equally vital is the post-harvest cure. Premium growers employ cold-cure drying protocols (60°F / 60% relative humidity for 14–21 days). This slow cure locks in fragile monoterpenes like myrcene, caryophyllene, and linalool while preventing premature thermal decarboxylation before the flower reaches your doorstep.',
             ],
           },

@@ -634,6 +634,8 @@ function AnimatedRoutes({
         <Route path="/categories" element={<Navigate to="/products" replace />} />
         <Route path="/category/:categorySlug" element={<ShopPage {...shopProps} />} />
         <Route path="/product/:slug" element={<LegacyProductRedirect />} />
+        <Route path="/products/1" element={<Navigate to="/products/thca-zkittlez-pie-indoor-flower" replace />} />
+        <Route path="/products/2" element={<Navigate to="/products/thca-gelato-indoor-flower" replace />} />
 
         <Route
           path="/products/:slug"
