@@ -12,7 +12,8 @@ import { validateArticle } from './blogValidator';
 import { getPool, initDatabase, mapRowToArticle } from './db';
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-const DATA_DIR = path.join(process.cwd(), 'data');
+const isVercel = process.env.VERCEL === '1';
+const DATA_DIR = isVercel ? path.join('/tmp', 'data') : path.join(process.cwd(), 'data');
 const ARTICLES_FILE = path.join(DATA_DIR, 'blog_articles.json');
 const SCHEDULE_CONFIG_FILE = path.join(DATA_DIR, 'blog_schedule_config.json');
 const AUDIT_LOGS_FILE = path.join(DATA_DIR, 'blog_audit_logs.json');
@@ -29,8 +30,12 @@ const DEFAULT_SCHEDULE_CONFIG: PublishingScheduleConfig = {
 };
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+  } catch {
+    // Read-only filesystem in Vercel serverless environment
   }
 }
 
@@ -58,13 +63,22 @@ class BlogStorageService {
   private initializedFromDb: boolean = false;
 
   constructor() {
-    this.initLocal();
-    // Fire background DB hydration
-    this.refreshFromDatabase().catch((err) => {
-      if (isProduction) {
-        console.error('[BlogStorage] Initial database hydration error:', err);
-      }
-    });
+    try {
+      this.initLocal();
+    } catch (e) {
+      console.warn('[BlogStorage] Initial local storage warning:', e);
+      const seeded = seedInitialArticles();
+      this.articles.clear();
+      seeded.forEach((art) => this.articles.set(art.id, art));
+    }
+    // Fire background DB hydration safely
+    try {
+      this.refreshFromDatabase().catch((err) => {
+        if (isProduction) {
+          console.warn('[BlogStorage] Initial database hydration warning:', err?.message || err);
+        }
+      });
+    } catch {}
   }
 
   private initLocal() {
@@ -76,8 +90,11 @@ class BlogStorageService {
 
   private loadLocalArticles() {
     try {
-      if (fs.existsSync(ARTICLES_FILE)) {
-        const raw = fs.readFileSync(ARTICLES_FILE, 'utf-8');
+      const targetFile = fs.existsSync(ARTICLES_FILE)
+        ? ARTICLES_FILE
+        : path.join(process.cwd(), 'data', 'blog_articles.json');
+      if (fs.existsSync(targetFile)) {
+        const raw = fs.readFileSync(targetFile, 'utf-8');
         const list: ManagedBlogArticle[] = JSON.parse(raw);
         this.articles.clear();
         list.forEach((art) => this.articles.set(art.id, art));

@@ -314,11 +314,11 @@
     },
     {
       "source": "/api/cron/publish",
-      "destination": "/api/cron/publish"
+      "destination": "/api/cron-publish"
     },
     {
       "source": "/api/admin/blog/cron-publish",
-      "destination": "/api/cron/publish"
+      "destination": "/api/cron-publish"
     },
     {
       "source": "/api/admin/blog/:path*",
@@ -333,24 +333,8 @@
       "destination": "/api/blog-handler"
     },
     {
-      "source": "/api/test-email",
-      "destination": "/api/test-email"
-    },
-    {
-      "source": "/api/contact",
-      "destination": "/api/contact"
-    },
-    {
       "source": "/api/orders/:orderId",
       "destination": "/api/orders?orderId=:orderId"
-    },
-    {
-      "source": "/api/orders",
-      "destination": "/api/orders"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
     }
   ]
 }
