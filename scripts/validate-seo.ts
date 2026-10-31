@@ -223,8 +223,18 @@ async function runValidation() {
           if (pathname.startsWith('/products/')) {
             validProductsTested++;
             if (parsedSchema['@type'] === 'Product') {
-              if (!parsedSchema.offers || !parsedSchema.offers.price || !parsedSchema.offers.shippingDetails || !parsedSchema.offers.hasMerchantReturnPolicy) {
-                record('StructuredData', `Product schema full offer details for ${pathname}`, 'WARN', 'Missing shippingDetails or hasMerchantReturnPolicy');
+              const offers = parsedSchema.offers;
+              if (!offers || !offers.price || !offers.shippingDetails || !offers.hasMerchantReturnPolicy) {
+                record('StructuredData', `Product schema full offer details for ${pathname}`, 'FAIL', 'Missing shippingDetails or hasMerchantReturnPolicy');
+              } else {
+                const s = offers.shippingDetails;
+                const r = offers.hasMerchantReturnPolicy;
+                if (!s.shippingRate || !s.deliveryTime || s.deliveryTime.transitTime?.maxValue !== 3) {
+                  record('StructuredData', `Accurate transit time (2-3d) on ${pathname}`, 'FAIL', 'Transit time does not match 2-3 days');
+                }
+                if (r.returnPolicyCategory !== 'https://schema.org/MerchantReturnNotPermitted') {
+                  record('StructuredData', `Accurate return policy category on ${pathname}`, 'FAIL', `Expected MerchantReturnNotPermitted, got ${r.returnPolicyCategory}`);
+                }
               }
             }
           }

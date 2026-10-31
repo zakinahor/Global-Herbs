@@ -322,7 +322,7 @@ export function getPage(pathname: string): SeoPage | null {
             '@type': 'OfferShippingDetails',
             shippingRate: {
               '@type': 'MonetaryAmount',
-              value: '19.99',
+              value: product.price >= 249.99 ? '0.00' : '19.99',
               currency: 'USD',
             },
             shippingDestination: {
@@ -340,18 +340,26 @@ export function getPage(pathname: string): SeoPage | null {
               transitTime: {
                 '@type': 'QuantitativeValue',
                 minValue: 2,
-                maxValue: 4,
+                maxValue: 3,
                 unitCode: 'd',
               },
             },
+            ...(product.price < 249.99
+              ? {
+                  freeShippingThreshold: {
+                    '@type': 'DeliveryChargeSpecification',
+                    appliesToDeliveryChargeMethod: 'https://schema.org/StandardShipping',
+                    price: '249.99',
+                    priceCurrency: 'USD',
+                  },
+                }
+              : {}),
           },
           hasMerchantReturnPolicy: {
             '@type': 'MerchantReturnPolicy',
             applicableCountry: 'US',
-            returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-            merchantReturnDays: 14,
-            returnMethod: 'https://schema.org/ReturnByMail',
-            returnFees: 'https://schema.org/FreeReturn',
+            returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+            merchantReturnLink: `${BASE_URL}/returns`,
           },
         },
       });
