@@ -7,7 +7,6 @@ import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
 import { NON_INDEXABLE_CATEGORY_SLUGS } from '../utils/sitemap';
 import AccountModal from './AccountModal';
 import LanguageSwitcher from './LanguageSwitcher';
-import CurrencySwitcher from './CurrencySwitcher';
 import SearchModal from './SearchModal';
 import { useCurrency } from '../context/CurrencyContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -147,9 +146,8 @@ export default function Header({
               {t('nav.refunds', 'Refunds')} <HelpCircle size={11} />
             </Link>
 
-            {/* Currency & Language Switchers */}
+            {/* Language Switcher */}
             <div className="border-l border-gray-200 pl-3 py-0.5 flex items-center gap-2">
-              <CurrencySwitcher />
               <LanguageSwitcher />
             </div>
           </div>
