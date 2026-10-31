@@ -601,6 +601,32 @@ export function getPage(pathname: string): SeoPage | null {
       .map((f) => `<div><h3>${escapeHtml(f.question)}</h3><p>${escapeHtml(f.answer)}</p></div>`)
       .join('');
 
+    // Matching featured products for crawlable internal linking
+    const matchingProducts = indexableProducts
+      .filter((p) => {
+        const catMatch = p.categorySlug === article.recommendedCategorySlug;
+        const searchMatch = article.recommendedProductSearch
+          ? p.name.toLowerCase().includes(article.recommendedProductSearch.toLowerCase()) ||
+            p.description.toLowerCase().includes(article.recommendedProductSearch.toLowerCase())
+          : true;
+        return catMatch && searchMatch;
+      })
+      .slice(0, 4);
+
+    const featuredGuideProducts = matchingProducts.length > 0
+      ? matchingProducts
+      : indexableProducts.filter((p) => p.categorySlug === article.recommendedCategorySlug).slice(0, 4);
+
+    const featuredProductsHtml = featuredGuideProducts
+      .map(
+        (p) =>
+          `<li>
+            <a href="/products/${escapeHtml(p.slug || String(p.id))}"><strong>${escapeHtml(p.name)}</strong></a> — $${p.price.toFixed(2)} (${escapeHtml(p.category)})
+            <p>${escapeHtml(p.description || '')}</p>
+          </li>`
+      )
+      .join('');
+
     return {
       title: article.metaTitle || `${article.title} | Global Herbs Guide`,
       description: article.metaDescription || article.excerpt,
@@ -623,7 +649,16 @@ export function getPage(pathname: string): SeoPage | null {
             <h2>Frequently Asked Questions</h2>
             ${faqsHtml}
           </section>
-          <p><a href="/category/${escapeHtml(article.recommendedCategorySlug)}">Explore Recommended ${escapeHtml(article.recommendedCategorySlug)} Products</a></p>
+          ${
+            featuredGuideProducts.length > 0
+              ? `<section>
+                  <h2>Featured Lab-Tested Products in This Guide</h2>
+                  <p>Discover authentic, batch-tested products matching this educational guide:</p>
+                  <ul>${featuredProductsHtml}</ul>
+                </section>`
+              : ''
+          }
+          <p><a href="/category/${escapeHtml(article.recommendedCategorySlug)}">Browse All ${escapeHtml(article.recommendedCategorySlug)} Products</a> | <a href="/products">View Full Catalog</a></p>
         </article>
       `),
     };

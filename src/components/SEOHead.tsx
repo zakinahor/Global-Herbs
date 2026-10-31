@@ -105,12 +105,12 @@ export default function SEOHead({
     let robotsDirectives = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
     if (isNonIndexableItem) {
-      robotsDirectives = 'noindex, follow';
+      robotsDirectives = 'noindex, nofollow';
     } else if (searchQuery && searchQuery.trim().length > 0) {
       title = `Search results for "${searchQuery}" | Global Herbs`;
       description = `Browse product search results for "${searchQuery}" at Global Herbs.`;
       canonicalUrl = `${BASE_DOMAIN}/products`;
-      robotsDirectives = 'noindex, follow';
+      robotsDirectives = 'noindex, nofollow';
       breadcrumbItems = [
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: 'Products', url: `${BASE_DOMAIN}/products` },
@@ -120,7 +120,7 @@ export default function SEOHead({
       title = 'Secure Checkout | Global Herbs';
       description = 'Complete your order securely at Global Herbs.';
       canonicalUrl = `${BASE_DOMAIN}/checkout`;
-      robotsDirectives = 'noindex, follow';
+      robotsDirectives = 'noindex, nofollow';
       breadcrumbItems = [
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: 'Checkout', url: canonicalUrl },
@@ -185,7 +185,7 @@ export default function SEOHead({
       title = 'Track Your Order Status | Global Herbs';
       description = 'Look up the real-time shipping and fulfillment status of your Global Herbs order.';
       canonicalUrl = `${BASE_DOMAIN}/order-tracking`;
-      robotsDirectives = 'noindex, follow';
+      robotsDirectives = 'noindex, nofollow';
       breadcrumbItems = [
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: 'Order Tracking', url: canonicalUrl },
@@ -194,7 +194,7 @@ export default function SEOHead({
       title = 'Page Not Found | Global Herbs';
       description = 'The page you requested could not be found.';
       canonicalUrl = `${BASE_DOMAIN}${window.location.pathname}`;
-      robotsDirectives = 'noindex, follow';
+      robotsDirectives = 'noindex, nofollow';
       breadcrumbItems = [{ name: 'Home', url: `${BASE_DOMAIN}/` }];
     }
 

@@ -7,8 +7,8 @@ export interface SitemapEntry {
 }
 
 const BASE_URL = 'https://globalherbs.site';
-const STATIC_PAGE_LASTMOD = '2026-10-29';
-const CATALOG_LASTMOD = '2026-10-27';
+const CURRENT_RELEASE_LASTMOD = '2026-10-31';
+const POLICY_LASTMOD = '2026-10-29';
 
 function parseIsoDate(dateStr?: string): string | undefined {
   if (!dateStr) return undefined;
@@ -52,15 +52,15 @@ export const NON_INDEXABLE_PRODUCT_IDS = new Set([
 export function generateSitemapEntries(customArticles?: Array<{ slug: string; updatedAt?: string; publishedDate?: string }>): SitemapEntry[] {
   const entries: SitemapEntry[] = [
     // Canonical public pages. /shop and /terms-conditions are aliases and stay out.
-    { loc: `${BASE_URL}/`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/products`, lastmod: CATALOG_LASTMOD },
-    { loc: `${BASE_URL}/about`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/shipping`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/returns`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/contact`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/privacy`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/terms`, lastmod: STATIC_PAGE_LASTMOD },
-    { loc: `${BASE_URL}/blog`, lastmod: STATIC_PAGE_LASTMOD },
+    { loc: `${BASE_URL}/`, lastmod: CURRENT_RELEASE_LASTMOD },
+    { loc: `${BASE_URL}/products`, lastmod: CURRENT_RELEASE_LASTMOD },
+    { loc: `${BASE_URL}/about`, lastmod: CURRENT_RELEASE_LASTMOD },
+    { loc: `${BASE_URL}/shipping`, lastmod: POLICY_LASTMOD },
+    { loc: `${BASE_URL}/returns`, lastmod: POLICY_LASTMOD },
+    { loc: `${BASE_URL}/contact`, lastmod: CURRENT_RELEASE_LASTMOD },
+    { loc: `${BASE_URL}/privacy`, lastmod: POLICY_LASTMOD },
+    { loc: `${BASE_URL}/terms`, lastmod: POLICY_LASTMOD },
+    { loc: `${BASE_URL}/blog`, lastmod: CURRENT_RELEASE_LASTMOD },
   ];
 
   // Exclude categories marked noindex by SEOHead.
@@ -69,7 +69,7 @@ export function generateSitemapEntries(customArticles?: Array<{ slug: string; up
     .forEach((cat) => {
       entries.push({
         loc: `${BASE_URL}/category/${encodeURIComponent(cat.slug)}`,
-        lastmod: CATALOG_LASTMOD,
+        lastmod: CURRENT_RELEASE_LASTMOD,
       });
     });
 
@@ -79,7 +79,7 @@ export function generateSitemapEntries(customArticles?: Array<{ slug: string; up
     const lastmod =
       parseIsoDate((article as any).updatedAt) ||
       parseIsoDate((article as any).publishedDate) ||
-      STATIC_PAGE_LASTMOD;
+      CURRENT_RELEASE_LASTMOD;
 
     entries.push({
       loc: `${BASE_URL}/blog/${encodeURIComponent(article.slug)}`,
@@ -102,7 +102,7 @@ export function generateSitemapEntries(customArticles?: Array<{ slug: string; up
         seenProductUrls.add(loc);
         entries.push({
           loc,
-          lastmod: CATALOG_LASTMOD,
+          lastmod: CURRENT_RELEASE_LASTMOD,
         });
       }
     });
