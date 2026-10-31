@@ -172,7 +172,6 @@ export default function Header({
           </Link>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <CurrencySwitcher compact />
           <LanguageSwitcher compact />
         </div>
       </div>
