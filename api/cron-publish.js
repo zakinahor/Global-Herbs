@@ -1,6 +1,6 @@
-// api/cron.js
+// api/cron-publish.js
 // Vercel Serverless Function: Invoked by Vercel Cron at "0 17 * * *" (once daily at 17:00 UTC)
-// Top-level serverless function adhering to identical runtime contract as api/locale-info.js
+// Clean, self-contained serverless function using standard Vercel response contract
 
 export default async function handler(req, res) {
   if (res.setHeader) {
