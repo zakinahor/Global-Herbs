@@ -1,16 +1,16 @@
 // api/cron-publish.js
 // Vercel Serverless Function: Invoked by Vercel Cron at "0 17 * * *" (once daily at 17:00 UTC)
-// Clean, self-contained serverless function using standard Vercel response contract
+// Follows identical native Node ServerResponse contract as api/orders.ts
 
 export default async function handler(req, res) {
-  if (res.setHeader) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Admin-Secret');
-  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Admin-Secret');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.statusCode = 200;
+    res.end();
+    return;
   }
 
   const secret = process.env.CRON_SECRET || 'gh-scheduler-sec-2026';
@@ -23,21 +23,30 @@ export default async function handler(req, res) {
     (adminSecret && (adminSecret === secret || adminSecret === 'gh-scheduler-sec-2026'));
 
   if (!isAuthorized) {
-    return res.status(401).json({
-      success: false,
-      error: 'Unauthorized. Supply valid CRON_SECRET Bearer token or administrator credentials.',
-    });
+    res.statusCode = 401;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(
+      JSON.stringify({
+        success: false,
+        error: 'Unauthorized. Supply valid CRON_SECRET Bearer token or administrator credentials.',
+      })
+    );
+    return;
   }
 
-  return res.status(200).json({
-    success: true,
-    source: 'Vercel Cron Worker',
-    timestamp: new Date().toISOString(),
-    schedule: '0 17 * * *',
-    checked: 7,
-    claimed: 0,
-    published: [],
-    failed: [],
-    errors: [],
-  });
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(
+    JSON.stringify({
+      success: true,
+      source: 'Vercel Cron Worker',
+      timestamp: new Date().toISOString(),
+      schedule: '0 17 * * *',
+      checked: 7,
+      claimed: 0,
+      published: [],
+      failed: [],
+      errors: [],
+    })
+  );
 }
