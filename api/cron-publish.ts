@@ -1,8 +1,11 @@
-// api/cron-publish.js
-// Vercel Serverless Function: Invoked by Vercel Cron at "0 17 * * *" (once daily at 17:00 UTC)
-// Follows identical native Node ServerResponse contract as api/orders.ts
+import type { IncomingMessage, ServerResponse } from 'http';
 
-export default async function handler(req, res) {
+/**
+ * Vercel Serverless Function: /api/cron-publish
+ * Invoked by Vercel Cron at "0 17 * * *" (once daily at 17:00 UTC)
+ * Follows identical contract as api/orders.ts
+ */
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Admin-Secret');
