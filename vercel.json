@@ -313,12 +313,8 @@
       "destination": "/api/notification-status"
     },
     {
-      "source": "/api/cron/publish",
-      "destination": "/api/cron-publish"
-    },
-    {
       "source": "/api/admin/blog/cron-publish",
-      "destination": "/api/cron-publish"
+      "destination": "/api/cron/publish"
     },
     {
       "source": "/api/admin/blog/:path*",
