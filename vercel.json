@@ -4,7 +4,7 @@
   "trailingSlash": false,
   "crons": [
     {
-      "path": "/api/cron/publish",
+      "path": "/api/cron",
       "schedule": "0 17 * * *"
     }
   ],
@@ -313,8 +313,12 @@
       "destination": "/api/notification-status"
     },
     {
+      "source": "/api/cron/publish",
+      "destination": "/api/cron"
+    },
+    {
       "source": "/api/admin/blog/cron-publish",
-      "destination": "/api/cron/publish"
+      "destination": "/api/cron"
     },
     {
       "source": "/api/admin/blog/:path*",

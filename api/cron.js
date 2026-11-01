@@ -1,11 +1,13 @@
-// api/cron/publish.js
+// api/cron.js
 // Vercel Serverless Function: Invoked by Vercel Cron at "0 17 * * *" (once daily at 17:00 UTC)
-// Follows identical Vercel handler contract as api/notification-status.js and api/checkout.js
+// Top-level serverless function adhering to identical runtime contract as api/locale-info.js
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Admin-Secret');
+  if (res.setHeader) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, X-Admin-Secret');
+  }
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -31,6 +33,7 @@ export default async function handler(req, res) {
     success: true,
     source: 'Vercel Cron Worker',
     timestamp: new Date().toISOString(),
+    schedule: '0 17 * * *',
     checked: 7,
     claimed: 0,
     published: [],
