@@ -8,6 +8,8 @@ import { analytics } from '../utils/analytics';
 import { useCurrency } from '../context/CurrencyContext';
 import { useLanguage } from '../context/LanguageContext';
 
+import { calculateVariantPrice } from '../utils/weightVariants';
+
 interface ProductCardProps {
   key?: number;
   product: Product;
@@ -27,20 +29,22 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
     e.stopPropagation();
     setLoading(true);
 
-    const defaultWeight = product.weight || product.weights?.[0] || 'Default';
+    const defaultVariant = product.weightVariants && product.weightVariants.length > 0 ? product.weightVariants[0] : null;
+    const defaultWeight = defaultVariant ? defaultVariant.shortLabel || defaultVariant.label : (product.weight || product.weights?.[0] || 'Default');
+    const defaultPrice = defaultVariant ? calculateVariantPrice(product.price, defaultVariant) : product.price;
 
     analytics.addToCart(
       {
         id: product.id,
         name: product.name,
         category: product.category,
-        price: product.price,
+        price: defaultPrice,
       },
       1,
       defaultWeight
     );
 
-    await onAddToCart(product.id, defaultWeight, 1, product.price);
+    await onAddToCart(product.id, defaultWeight, 1, defaultPrice);
     setLoading(false);
   };
 
