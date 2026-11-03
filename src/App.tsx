@@ -42,6 +42,7 @@ import OrderTrackingPage from './components/OrderTrackingPage';
 import AgeVerificationModal from './components/AgeVerificationModal';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import SupportWidget from './components/SupportWidget';
+import WhatsAppChatButton from './components/WhatsAppChatButton';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
 import AdminBlogManager from './components/admin/AdminBlogManager';
@@ -1079,6 +1080,7 @@ export default function App() {
             <BackToTopButton />
             <CookieConsentBanner />
             <SupportWidget />
+            <WhatsAppChatButton />
 
             <AnimatePresence>
               {cartOpen && (

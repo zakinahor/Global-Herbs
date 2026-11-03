@@ -1,50 +1,36 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { blogStorage } from '../src/server/blog/blogStorage';
-import { generateSitemapXML } from '../src/utils/sitemap';
 import fs from 'fs';
 import path from 'path';
 
 /**
- * Dynamic sitemap generator for Vercel
- * Dynamically queries published articles without requiring a writable production disk.
+ * Dynamic / Static sitemap generator for Vercel
+ * Serves canonical sitemap without requiring database connections or runtime compilations.
  */
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
-    // 1. Get live published articles from persistent database
-    let publishedArticles = blogStorage.getPublishedArticles();
+    const candidatePaths = [
+      path.join(process.cwd(), 'dist/sitemap.xml'),
+      path.join(process.cwd(), 'public/sitemap.xml'),
+      path.join(process.cwd(), 'sitemap.xml'),
+    ];
 
-    // If cache not yet hydrated, attempt refresh
-    if (publishedArticles.length === 0) {
-      await blogStorage.refreshFromDatabase();
-      publishedArticles = blogStorage.getPublishedArticles();
-    }
-
-    const xml = generateSitemapXML(publishedArticles);
-
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=600');
-    res.end(xml);
-  } catch (err: any) {
-    console.error('[Sitemap Handler] Error generating dynamic sitemap:', err);
-
-    // Fallback to static build-time sitemap if available
-    try {
-      const staticPath = path.join(process.cwd(), 'dist/sitemap.xml');
-      if (fs.existsSync(staticPath)) {
-        const staticXml = fs.readFileSync(staticPath, 'utf-8');
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        const xml = fs.readFileSync(p, 'utf-8');
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-        res.setHeader('Cache-Control', 'public, max-age=3600');
-        res.end(staticXml);
+        res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+        res.end(xml);
         return;
       }
-    } catch {}
+    }
 
-    // Final emergency fallback using baseline
-    const fallbackXml = generateSitemapXML();
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    res.end(fallbackXml);
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.end('Sitemap file not found.');
+  } catch (err: any) {
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.end(`Error retrieving sitemap: ${err?.message || 'Unknown error'}`);
   }
 }

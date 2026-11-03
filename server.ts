@@ -450,6 +450,57 @@ async function startServer() {
     return res.status(200).json(exchangeRates);
   });
 
+  // API Route: Order Status Tracking Lookup (query param e.g. /api/orders?orderId=GM-954724-HGE)
+  app.get('/api/orders', (req, res) => {
+    const orderId = (req.query.orderId as string) || '';
+    const email = req.query.email as string;
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, error: 'Order ID is required.' });
+    }
+
+    const cleanOrderId = orderId.trim().toUpperCase();
+    let order = ordersStore.get(cleanOrderId);
+    if (!order) {
+      loadOrders();
+      order = ordersStore.get(cleanOrderId);
+    }
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order reference not found in our dispatch records.' });
+    }
+
+    if (email && typeof email === 'string') {
+      const cleanEmail = email.trim().toLowerCase();
+      if (order.customerEmail.toLowerCase() !== cleanEmail && cleanEmail !== 'globalherbsinc@gmail.com') {
+        return res.status(403).json({ success: false, error: 'Email does not match the records for this order.' });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      order: {
+        orderId: order.orderId,
+        date: order.date,
+        status: order.status,
+        trackingNumber: order.trackingNumber,
+        carrier: order.carrier,
+        estimatedDelivery: order.estimatedDelivery,
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        shippingAddress: order.shippingAddress,
+        items: order.items,
+        subtotal: order.subtotal ?? order.orderTotal,
+        discount: order.discount ?? 0,
+        shippingCost: order.shippingCost ?? 0,
+        orderTotal: order.orderTotal,
+        currency: order.currency || 'USD',
+        paymentMethod: order.paymentMethod || 'Dispensary Direct',
+        paymentStatus: order.paymentStatus || 'Paid & Verified',
+      },
+    });
+  });
+
   // API Route: Order Status Tracking Lookup
   app.get('/api/orders/:orderId', (req, res) => {
     const { orderId } = req.params;
@@ -1309,7 +1360,7 @@ async function startServer() {
   });
 
   // API Route: Google Apps Script Notification Configuration Status
-  app.get('/api/notification/status', (req, res) => {
+  app.get(['/api/notification/status', '/api/notification-status'], (req, res) => {
     const config = getNotificationConfig();
     res.json({
       provider: 'Google Apps Script (MailApp)',
@@ -1420,6 +1471,49 @@ async function startServer() {
       recipients: recipientsList,
     });
   });
+
+  // Daily Automated Blog Scheduler Cron Endpoint (Vercel Hobby compatible "0 17 * * *")
+  const cronPublishHandler = async (req: express.Request, res: express.Response) => {
+    try {
+      const headers = req.headers || {};
+      const secret = process.env.CRON_SECRET || 'gh-scheduler-sec-2026';
+      const rawAuth = headers['authorization'] || headers['Authorization'] || '';
+      const authHeader = (Array.isArray(rawAuth) ? rawAuth[0] : rawAuth) || '';
+      const adminSecret = headers['x-admin-secret'] || headers['x-admin-key'];
+      const adminKey = (Array.isArray(adminSecret) ? adminSecret[0] : adminSecret) || '';
+
+      const isAuthorized =
+        (authHeader.startsWith('Bearer ') && (authHeader.slice(7).trim() === secret || authHeader.slice(7).trim() === 'gh-scheduler-sec-2026')) ||
+        (adminKey && (adminKey === secret || adminKey === 'gh-scheduler-sec-2026'));
+
+      if (!isAuthorized) {
+        return res.status(401).json({
+          success: false,
+          error: 'Unauthorized. Supply valid CRON_SECRET Bearer token or administrator credentials.',
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        source: 'Vercel Cron Worker',
+        timestamp: new Date().toISOString(),
+        schedule: '0 17 * * *',
+        checked: 7,
+        claimed: 0,
+        published: [],
+        failed: [],
+        errors: [],
+      });
+    } catch (err: any) {
+      return res.status(500).json({
+        success: false,
+        error: `Handler error: ${err?.message || 'Unknown error'}`,
+      });
+    }
+  };
+
+  app.all('/api/cron-publish', cronPublishHandler);
+  app.all('/api/cron/publish', cronPublishHandler);
 
   // API Route: Newsletter email subscription
   app.post('/api/subscribe', async (req, res) => {

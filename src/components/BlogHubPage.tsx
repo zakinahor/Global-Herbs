@@ -95,7 +95,7 @@ export default function BlogHubPage() {
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  onError={(e) => { e.currentTarget.src = '/images/thc_edibles_gummies.jpg'; }}
+                  onError={(e) => { e.currentTarget.src = '/images/indoor_flower_buds.jpg'; }}
                 />
                 <div className="absolute top-4 left-4 bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-xs">
                   Featured Educational Guide
