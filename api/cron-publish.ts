@@ -48,7 +48,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         source: 'Vercel Cron Worker',
         timestamp: new Date().toISOString(),
         schedule: '0 17 * * *',
-        checked: 7,
+        checked: 8,
         claimed: 0,
         published: [],
         failed: [],
