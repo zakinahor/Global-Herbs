@@ -122,7 +122,7 @@ interface CheckoutPageProps {
 export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: CheckoutPageProps) {
   const { formatPrice, formatBaseUsd, isBaseCurrency, currency } = useCurrency();
   const { t } = useLanguage();
-  const { user, isLoggedIn, openAccountModal } = useAuth();
+  const { user, isLoggedIn, openAccountModal, saveOrderToAccount } = useAuth();
   // Coupon state
   const [showCouponInput, setShowCouponInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
@@ -155,7 +155,15 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
         }
       }
       if (!phone && user.phone) setPhone(user.phone);
-      if (!streetAddress1 && user.deliveryAddress) setStreetAddress1(user.deliveryAddress);
+      if (!streetAddress1 && user.defaultShippingAddress) {
+        setStreetAddress1(user.defaultShippingAddress.street1 || '');
+        if (user.defaultShippingAddress.street2) setStreetAddress2(user.defaultShippingAddress.street2);
+        if (user.defaultShippingAddress.city) setCity(user.defaultShippingAddress.city);
+        if (user.defaultShippingAddress.state) setState(user.defaultShippingAddress.state);
+        if (user.defaultShippingAddress.zipCode) setZipCode(user.defaultShippingAddress.zipCode);
+      } else if (!streetAddress1 && user.deliveryAddress) {
+        setStreetAddress1(user.deliveryAddress);
+      }
     }
   }, [user]);
 
@@ -320,6 +328,10 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
     }
     if (serverResult.emailNotification) {
       orderData.emailNotification = serverResult.emailNotification;
+    }
+
+    if (isLoggedIn && saveOrderToAccount) {
+      saveOrderToAccount(orderData);
     }
 
     setIsSubmitting(false);

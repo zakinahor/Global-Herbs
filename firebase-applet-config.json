@@ -3,6 +3,7 @@
   "appId": "1:1034737664204:web:43d5bcfd4c6963eb55c269",
   "apiKey": "AIzaSyDEgo2mWrAsExcUKzjyseRxojHwwl938Iw",
   "authDomain": "charismatic-highlander-mt3g1.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-globalherbs-b64abcda-c94b-4490-870c-891731ee2121",
   "storageBucket": "charismatic-highlander-mt3g1.firebasestorage.app",
   "messagingSenderId": "1034737664204",
   "measurementId": "",

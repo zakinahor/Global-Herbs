@@ -1864,6 +1864,28 @@ async function startServer() {
       return { status: 200, robotsHeader: 'noindex, nofollow', html };
     }
 
+    const authAndAccountRoutes: Record<string, { title: string; description: string; h1: string }> = {
+      '/login': { title: 'Customer Sign In | Global Herbs', description: 'Log in to your Global Herbs customer account to manage orders, addresses, and tracking.', h1: 'Customer Sign In' },
+      '/signin': { title: 'Customer Sign In | Global Herbs', description: 'Log in to your Global Herbs customer account to manage orders, addresses, and tracking.', h1: 'Customer Sign In' },
+      '/register': { title: 'Create Account | Global Herbs', description: 'Register for a Global Herbs customer account for faster checkout and order history tracking.', h1: 'Create Customer Account' },
+      '/forgot-password': { title: 'Reset Password | Global Herbs', description: 'Reset your Global Herbs account password securely.', h1: 'Reset Password' },
+      '/account': { title: 'Customer Account | Global Herbs', description: 'Manage your Global Herbs orders, profile details, and delivery addresses.', h1: 'Customer Account Dashboard' },
+      '/dashboard': { title: 'Customer Dashboard | Global Herbs', description: 'Manage your Global Herbs orders, profile details, and delivery addresses.', h1: 'Customer Account Dashboard' },
+    };
+
+    if (authAndAccountRoutes[pathname]) {
+      const routeInfo = authAndAccountRoutes[pathname];
+      const html = renderPageHtml(localizedTemplate, {
+        title: routeInfo.title,
+        description: routeInfo.description,
+        canonical: `https://globalherbs.site${pathname}`,
+        robots: 'noindex, nofollow',
+        kind: 'website',
+        bodyHtml: `<main><h1>${routeInfo.h1}</h1></main>`,
+      });
+      return { status: 200, robotsHeader: 'noindex, nofollow', html };
+    }
+
     const seoPage = getPage(pathname);
     if (seoPage) {
       const isNoIndex = Boolean(seoPage.robots && seoPage.robots.includes('noindex')) || hasSearchQuery;

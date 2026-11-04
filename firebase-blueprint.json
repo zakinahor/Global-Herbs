@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Registered Global Herbs customer profile and shipping preferences",
+      "type": "object",
+      "properties": {
+        "customerId": {
+          "type": "string",
+          "description": "Firebase Authentication UID of the customer"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full name of the customer",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified email address of the customer"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number for delivery coordination",
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last profile update"
+        },
+        "emailVerified": {
+          "type": "boolean",
+          "description": "Whether customer email has been verified"
+        },
+        "savedAddresses": {
+          "type": "array",
+          "description": "Array of saved delivery addresses for expedited checkout"
+        },
+        "defaultShippingAddress": {
+          "type": "object",
+          "description": "Primary stealth delivery address"
+        }
+      },
+      "required": ["customerId", "email", "createdAt"]
+    },
+    "CustomerOrder": {
+      "title": "CustomerOrder",
+      "description": "Itemized order record securely attached to the customer account",
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Unique dispensary order identifier (e.g. GH-178...)"
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Customer UID who placed or claimed the order"
+        },
+        "customerEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Customer email associated with this order"
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer name on shipping invoice"
+        },
+        "date": {
+          "type": "string",
+          "description": "Formatted date of order placement"
+        },
+        "status": {
+          "type": "string",
+          "description": "Fulfillment status (Received, Processing, Shipped, Out for Delivery, Delivered)",
+          "enum": [
+            "Received & Stealth Processing",
+            "Processing",
+            "Shipped",
+            "Out for Delivery",
+            "Delivered"
+          ]
+        },
+        "trackingNumber": {
+          "type": "string",
+          "description": "Stealth Priority Courier tracking number"
+        },
+        "carrier": {
+          "type": "string",
+          "description": "Shipping carrier name"
+        },
+        "estimatedDelivery": {
+          "type": "string",
+          "description": "Estimated delivery window"
+        },
+        "shippingAddress": {
+          "type": "string",
+          "description": "Formatted stealth delivery address"
+        },
+        "items": {
+          "type": "array",
+          "description": "List of ordered botanical items, weights, and quantities"
+        },
+        "subtotal": {
+          "type": "number",
+          "description": "Subtotal before discounts and shipping"
+        },
+        "discount": {
+          "type": "number",
+          "description": "Discount applied"
+        },
+        "shippingCost": {
+          "type": "number",
+          "description": "Shipping cost"
+        },
+        "orderTotal": {
+          "type": "number",
+          "description": "Total order amount"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Order currency code (USD)"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Selected payment method (btc, zelle, wire, card)"
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "Payment verification status"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of order placement"
+        }
+      },
+      "required": ["orderId", "customerId", "customerEmail", "orderTotal", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer account document accessible strictly by the authenticated customer owner"
+    },
+    "/customers/{customerId}/orders/{orderId}": {
+      "schema": "CustomerOrder",
+      "description": "Customer order history collection readable and verifiable strictly by the account owner"
+    }
+  }
+}

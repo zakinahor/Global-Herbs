@@ -46,6 +46,10 @@ import WhatsAppChatButton from './components/WhatsAppChatButton';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
 import AdminBlogManager from './components/admin/AdminBlogManager';
+import RegisterPage from './components/auth/RegisterPage';
+import LoginPage from './components/auth/LoginPage';
+import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
+import CustomerDashboard from './components/auth/CustomerDashboard';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -860,6 +864,70 @@ function AnimatedRoutes({
         />
         <Route path="/admin/seo-blog" element={<Navigate to="/admin/blog" replace />} />
         <Route path="/admin" element={<Navigate to="/admin/blog" replace />} />
+
+        {/* Customer Authentication & Account Management Routes */}
+        <Route
+          path="/register"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <RegisterPage />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <LoginPage />
+            </motion.div>
+          }
+        />
+        <Route path="/signin" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/forgot-password"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <ForgotPasswordPage />
+            </motion.div>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <motion.div
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="w-full flex-grow"
+            >
+              <CustomerDashboard />
+            </motion.div>
+          }
+        />
+        <Route path="/dashboard" element={<Navigate to="/account" replace />} />
 
         {/* Official Social Media Direct Redirection Routes */}
         <Route

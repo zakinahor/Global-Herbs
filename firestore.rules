@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny all unmapped paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Customer profile validation helper
+    function isValidCustomer(data, userId) {
+      return data.keys().hasAll(['customerId', 'email', 'createdAt']) &&
+             data.keys().hasOnly(['customerId', 'fullName', 'email', 'phone', 'createdAt', 'updatedAt', 'emailVerified', 'savedAddresses', 'defaultShippingAddress', 'accountType']) &&
+             data.customerId is string &&
+             data.customerId == userId &&
+             data.email is string &&
+             data.email.size() <= 120 &&
+             data.createdAt is string &&
+             (!('fullName' in data) || (data.fullName is string && data.fullName.size() <= 100)) &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
+             (!('emailVerified' in data) || data.emailVerified is bool) &&
+             (!('savedAddresses' in data) || (data.savedAddresses is list && data.savedAddresses.size() <= 20));
+    }
+
+    // Customer order validation helper
+    function isValidCustomerOrder(data, userId) {
+      return data.keys().hasAll(['orderId', 'customerId', 'customerEmail', 'orderTotal', 'createdAt']) &&
+             data.customerId is string &&
+             data.customerId == userId &&
+             data.orderId is string &&
+             data.orderId.size() <= 64 &&
+             data.customerEmail is string &&
+             data.customerEmail.size() <= 120 &&
+             data.orderTotal is number &&
+             data.orderTotal >= 0 &&
+             data.createdAt is string;
+    }
+
+    // Customers collection: Isolated to authenticated owner
+    match /customers/{customerId} {
+      allow get: if isOwner(customerId) && isValidId(customerId);
+      allow list: if isSignedIn() && resource.data.customerId == request.auth.uid;
+      allow create: if isOwner(customerId) && isValidId(customerId) && isValidCustomer(incoming(), customerId);
+      allow update: if isOwner(customerId) &&
+                       isValidId(customerId) &&
+                       isValidCustomer(incoming(), customerId) &&
+                       incoming().customerId == existing().customerId &&
+                       incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+
+      // Customer Orders subcollection: Private to customer
+      match /orders/{orderId} {
+        allow get: if isOwner(customerId) && isValidId(customerId) && isValidId(orderId);
+        allow list: if isOwner(customerId) && isValidId(customerId);
+        allow create: if isOwner(customerId) &&
+                         isValidId(customerId) &&
+                         isValidId(orderId) &&
+                         isValidCustomerOrder(incoming(), customerId);
+        // Customers are strictly forbidden from changing order fulfillment or payment status
+        allow update, delete: if false;
+      }
+    }
+
+    // Connection test document
+    match /test/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

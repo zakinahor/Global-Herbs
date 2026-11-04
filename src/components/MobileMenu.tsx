@@ -103,7 +103,11 @@ export default function MobileMenu({
           <button
             onClick={() => {
               onClose();
-              openAccountModal(isLoggedIn ? 'profile' : 'login');
+              if (isLoggedIn) {
+                navigate('/account');
+              } else {
+                openAccountModal('login');
+              }
             }}
             className={`w-full p-3 rounded-xl border flex items-center justify-between text-left transition cursor-pointer shadow-xs ${
               isLoggedIn

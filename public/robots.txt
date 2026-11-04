@@ -2,6 +2,8 @@
 User-agent: *
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -12,6 +14,8 @@ Disallow: /*?*filter=
 User-agent: Googlebot
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -24,6 +28,8 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -33,6 +39,8 @@ Disallow: /*?*filter=
 User-agent: Slurp
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -42,6 +50,8 @@ Disallow: /*?*filter=
 User-agent: DuckDuckBot
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -51,6 +61,8 @@ Disallow: /*?*filter=
 User-agent: Baiduspider
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -60,6 +72,8 @@ Disallow: /*?*filter=
 User-agent: YandexBot
 Allow: /
 Disallow: /checkout
+Disallow: /account
+Disallow: /dashboard
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation

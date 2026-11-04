@@ -693,7 +693,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                 <div className="mt-4 pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px] text-emerald-100">
                   <div>
                     <span className="text-emerald-300 block">Member ID:</span>
-                    <span className="font-mono font-bold text-white">{user.id}</span>
+                    <span className="font-mono font-bold text-white">{user.id.substring(0, 10)}...</span>
                   </div>
                   <div>
                     <span className="text-emerald-300 block">Stealth Packaging:</span>
@@ -704,6 +704,18 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                     <span className="font-mono font-bold text-emerald-200">HERBS15OFF</span>
                   </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigate('/account');
+                    onClose();
+                  }}
+                  className="w-full py-2.5 px-3 bg-white/15 hover:bg-white/25 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-1.5 cursor-pointer mt-3 border border-white/20"
+                >
+                  <ExternalLink size={13} />
+                  <span>Open Full Customer Dashboard</span>
+                </button>
               </div>
 
               {/* Saved Delivery Address & Profile Quick Update */}

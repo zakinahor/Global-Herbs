@@ -1,6 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, User, Search, Phone, Menu, X, ChevronDown, HelpCircle, FileText, Command } from 'lucide-react';
+import {
+  ShoppingBag,
+  User,
+  Search,
+  Phone,
+  Menu,
+  X,
+  ChevronDown,
+  ChevronRight,
+  HelpCircle,
+  FileText,
+  Command,
+  LogOut,
+  Package,
+  Truck,
+  LogIn,
+  UserPlus,
+} from 'lucide-react';
 import { Category } from '../types';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
 import { DEFAULT_FALLBACK_IMAGE } from '../utils/imageUtils';
@@ -43,7 +60,20 @@ export default function Header({
 }: HeaderProps) {
   const { formatPrice } = useCurrency();
   const { t } = useLanguage();
-  const { user, isLoggedIn, isModalOpen, openAccountModal, closeAccountModal } = useAuth();
+  const { user, isLoggedIn, isModalOpen, openAccountModal, closeAccountModal, logout } = useAuth();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close account menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const [searchInput, setSearchInput] = useState(searchQuery);
   const [searchCat, setSearchCat] = useState('');
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -248,38 +278,158 @@ export default function Header({
             <span>+1 (213) 280-1161</span>
           </a>
 
-          {/* User Account */}
-          <button
-            id="header-member-account-btn"
-            onClick={() => openAccountModal(isLoggedIn ? 'profile' : 'login')}
-            className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2 ${
-              isLoggedIn
-                ? 'bg-emerald-800 hover:bg-emerald-900 border-emerald-700 text-white'
-                : 'bg-emerald-50/90 hover:bg-emerald-100/90 border-emerald-700/25 text-emerald-950'
-            }`}
-            aria-label={isLoggedIn ? `Dispensary account profile for ${user?.name}` : 'Dispensary member sign in and registration'}
-          >
-            {isLoggedIn ? (
-              <>
-                <div className="relative w-6 h-6 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-black text-xs">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'M'}
-                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-emerald-800 animate-pulse" />
-                </div>
-                <span className="text-xs font-bold text-white leading-tight truncate max-w-[100px]">
-                  {user?.name ? user.name.split(' ')[0] : 'My Account'}
-                </span>
-              </>
-            ) : (
-              <>
-                <div className="w-6 h-6 rounded-lg bg-emerald-800 text-white flex items-center justify-center">
-                  <User size={14} />
-                </div>
-                <span className="text-xs font-bold text-emerald-950 leading-tight tracking-tight">
-                  {t('nav.account', 'Sign In / Join')}
-                </span>
-              </>
+          {/* User Account with Dropdown */}
+          <div className="relative hidden sm:block" ref={accountMenuRef}>
+            <button
+              id="header-member-account-btn"
+              onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2 ${
+                isLoggedIn
+                  ? 'bg-emerald-800 hover:bg-emerald-900 border-emerald-700 text-white'
+                  : 'bg-emerald-50/90 hover:bg-emerald-100/90 border-emerald-700/25 text-emerald-950'
+              }`}
+              aria-label={isLoggedIn ? `Dispensary account profile for ${user?.name}` : 'Dispensary member sign in and registration'}
+            >
+              {isLoggedIn ? (
+                <>
+                  <div className="relative w-6 h-6 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-black text-xs">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : 'M'}
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-emerald-800 animate-pulse" />
+                  </div>
+                  <span className="text-xs font-bold text-white leading-tight truncate max-w-[100px]">
+                    {user?.name ? user.name.split(' ')[0] : 'My Account'}
+                  </span>
+                  <ChevronDown size={13} className={`text-emerald-200 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`} />
+                </>
+              ) : (
+                <>
+                  <div className="w-6 h-6 rounded-lg bg-emerald-800 text-white flex items-center justify-center">
+                    <User size={14} />
+                  </div>
+                  <span className="text-xs font-bold text-emerald-950 leading-tight tracking-tight">
+                    {t('nav.account', 'Sign In / Join')}
+                  </span>
+                  <ChevronDown size={13} className={`text-emerald-700 transition-transform ${accountMenuOpen ? 'rotate-180' : ''}`} />
+                </>
+              )}
+            </button>
+
+            {/* Account Dropdown Card */}
+            {accountMenuOpen && (
+              <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50 text-left animate-fade-in">
+                {isLoggedIn ? (
+                  <>
+                    <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
+                      <span className="text-[10px] uppercase font-extrabold text-emerald-800 tracking-wider block">
+                        Verified Member
+                      </span>
+                      <strong className="text-xs text-gray-900 block truncate">
+                        {user?.name}
+                      </strong>
+                      <span className="text-[11px] text-gray-500 block truncate">
+                        {user?.email}
+                      </span>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/account"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+                      >
+                        <User size={14} className="text-emerald-700" />
+                        <span>My Account Dashboard</span>
+                      </Link>
+
+                      <Link
+                        to="/account"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+                      >
+                        <Package size={14} className="text-emerald-700" />
+                        <span>My Orders</span>
+                      </Link>
+
+                      <Link
+                        to="/track-order"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-emerald-50 hover:text-emerald-800 transition"
+                      >
+                        <Truck size={14} className="text-emerald-700" />
+                        <span>Track an Order</span>
+                      </Link>
+                    </div>
+
+                    <div className="pt-1 border-t border-gray-100">
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 transition cursor-pointer text-left"
+                      >
+                        <LogOut size={14} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
+                      <span className="text-[10px] uppercase font-extrabold text-emerald-800 tracking-wider block">
+                        Customer Portal
+                      </span>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Access orders &amp; express checkout
+                      </p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/login"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-emerald-900 hover:bg-emerald-50 transition"
+                      >
+                        <LogIn size={14} className="text-emerald-700" />
+                        <span>Customer Login</span>
+                      </Link>
+
+                      <Link
+                        to="/register"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-emerald-900 hover:bg-emerald-50 transition"
+                      >
+                        <UserPlus size={14} className="text-emerald-700" />
+                        <span>Create Account</span>
+                      </Link>
+
+                      <Link
+                        to="/track-order"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        <Truck size={14} className="text-gray-500" />
+                        <span>Track Order (Guest)</span>
+                      </Link>
+                    </div>
+
+                    <div className="pt-1 border-t border-gray-100">
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          openAccountModal('login');
+                        }}
+                        className="w-full flex items-center justify-between px-4 py-2 text-[11px] text-gray-500 hover:text-emerald-800 hover:bg-gray-50 transition cursor-pointer"
+                      >
+                        <span>Open Quick Modal</span>
+                        <ChevronRight size={12} />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Search Button (Mobile & Tablet) */}
           <button
