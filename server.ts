@@ -29,6 +29,8 @@ import {
 } from './lib/locale/localeService';
 import { blogRouter } from './src/server/blog/blogRoutes';
 import { blogScheduler } from './src/server/blog/blogSchedulerService';
+import { reviewRouter } from './src/server/reviewRoutes';
+import { initReviewStore, submitReview } from './src/server/reviewService';
 
 // Persistent storage for orders, form submissions, and newsletter subscribers
 const contactSubmissions: any[] = [];
@@ -299,6 +301,10 @@ async function startServer() {
 
   // Mount Automated SEO Blog & Publishing Management Router
   app.use(blogRouter);
+
+  // Mount Customer Reviews, Ratings, and Moderation Router
+  app.use(reviewRouter);
+  initReviewStore();
 
   // Social Media Direct Redirect Endpoints
   const OFFICIAL_YOUTUBE_URL = 'https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A';
@@ -1637,6 +1643,18 @@ async function startServer() {
     };
     contactSubmissions.push(reviewRecord);
     persistSubmissions();
+
+    // Synchronize into persistent review storage
+    if (productId) {
+      submitReview({
+        productId: Number(productId),
+        productName: cleanProduct,
+        author: cleanAuthor,
+        email: cleanEmail,
+        rating: numRating,
+        comment: cleanComment,
+      });
+    }
 
     // Dispatch email notification to admin with reviewer details and Reply-To
     const notificationResult = await sendCustomerInquiryNotification({

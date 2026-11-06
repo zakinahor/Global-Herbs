@@ -9,6 +9,8 @@ import {
   extractLocaleFromPathname,
 } from '../context/LanguageContext';
 
+import { ProductRatingSummary, ProductReview } from '../types/review';
+
 export interface SEOHeadProps {
   activePage?: string;
   activeCategory?: string | null;
@@ -18,6 +20,8 @@ export interface SEOHeadProps {
   searchQuery?: string;
   customTitle?: string;
   customDescription?: string;
+  ratingSummary?: ProductRatingSummary;
+  approvedReviews?: ProductReview[];
 }
 
 export default function SEOHead({
@@ -29,6 +33,8 @@ export default function SEOHead({
   searchQuery,
   customTitle,
   customDescription,
+  ratingSummary,
+  approvedReviews,
 }: SEOHeadProps) {
   const { currentLanguage } = useLanguage();
 
@@ -336,6 +342,16 @@ export default function SEOHead({
 
     // B. Product Schema (Only for legitimate indexable cannabis/hemp/CBD/herbal products)
     if (selectedProduct && !isNonIndexableItem) {
+      let effectiveSummary = ratingSummary;
+      if (!effectiveSummary) {
+        try {
+          const raw = localStorage.getItem(`gh_rating_summary_${selectedProduct.id}`);
+          if (raw) effectiveSummary = JSON.parse(raw);
+        } catch {
+          // ignore
+        }
+      }
+
       schemas.push({
         '@context': 'https://schema.org/',
         '@type': 'Product',
@@ -349,6 +365,33 @@ export default function SEOHead({
             '@type': 'Brand',
             name: selectedProduct.brand,
           },
+        } : {}),
+        ...(effectiveSummary && effectiveSummary.ratingCount > 0 && effectiveSummary.averageRating > 0 ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: effectiveSummary.averageRating,
+            reviewCount: effectiveSummary.reviewCount || effectiveSummary.ratingCount,
+            ratingCount: effectiveSummary.ratingCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          ...(approvedReviews && approvedReviews.length > 0 ? {
+            review: approvedReviews.slice(0, 5).map((r) => ({
+              '@type': 'Review',
+              author: {
+                '@type': 'Person',
+                name: r.author,
+              },
+              datePublished: r.createdAt ? r.createdAt.split('T')[0] : '2026-10-01',
+              reviewBody: r.comment,
+              reviewRating: {
+                '@type': 'Rating',
+                ratingValue: Math.min(5, Math.max(1, Math.round(r.rating || 5))),
+                bestRating: 5,
+                worstRating: 1,
+              },
+            })),
+          } : {}),
         } : {}),
         offers: {
           '@type': 'Offer',

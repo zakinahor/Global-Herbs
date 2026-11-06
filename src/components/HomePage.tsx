@@ -32,6 +32,7 @@ import { useLanguage } from '../context/LanguageContext';
 import ProductCard from './ProductCard';
 import SEOHead from './SEOHead';
 import COAModal from './COAModal';
+import CustomerTestimonials from './CustomerTestimonials';
 import { Product } from '../types';
 
 interface HomePageProps {
@@ -933,6 +934,11 @@ export default function HomePage({ onAddToCart, onOpenSearch }: HomePageProps) {
           </div>
         </div>
       </section>
+
+      {/* ================================================================ */}
+      {/* 6.5. GENUINE CUSTOMER TESTIMONIALS & REVIEWS */}
+      {/* ================================================================ */}
+      <CustomerTestimonials />
 
       {/* ================================================================ */}
       {/* 7. FREQUENTLY ASKED QUESTIONS (FAQ ACCORDION) */}

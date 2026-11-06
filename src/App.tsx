@@ -863,6 +863,7 @@ function AnimatedRoutes({
           }
         />
         <Route path="/admin/seo-blog" element={<Navigate to="/admin/blog" replace />} />
+        <Route path="/admin/reviews" element={<AdminBlogManager initialTab="reviews" />} />
         <Route path="/admin" element={<Navigate to="/admin/blog" replace />} />
 
         {/* Customer Authentication & Account Management Routes */}

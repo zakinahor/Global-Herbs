@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Star, ShoppingCart, ArrowLeft, Shield, Sparkles, CheckCircle2, Truck, HelpCircle, MessageSquare, AlertTriangle, Users, ShieldCheck, FileText, Download, Package, Flame, Zap, ThumbsUp, MapPin } from 'lucide-react';
+import { Star, ShoppingCart, ArrowLeft, Shield, Sparkles, CheckCircle2, Truck, HelpCircle, MessageSquare, AlertTriangle, Users, ShieldCheck, FileText, Download, Package, Flame, Zap, ThumbsUp, MapPin, Camera, UploadCloud, X, ChevronDown, Check, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Product, WeightVariant } from '../types';
 import { handleImageError } from '../utils/imageUtils';
 import { products as allProducts } from '../data/products';
 import { getProductWeightVariants, calculateVariantPrice, findVariantByLabel } from '../utils/weightVariants';
-import { getProductReviews, saveProductReview, ProductReview } from '../utils/productReviews';
+import {
+  getProductReviews,
+  saveProductReview,
+  fetchProductReviews,
+  submitProductReview,
+  voteReviewHelpful,
+  ProductReview,
+  ProductRatingSummary,
+  getFallbackRatingSummary,
+} from '../utils/productReviews';
 import NotFoundPage from './NotFoundPage';
 import COAModal from './COAModal';
 import SEOHead from './SEOHead';
@@ -54,14 +63,25 @@ export default function ProductDetailPage({
     ? calculateVariantPrice(activeProduct.originalPrice, selectedVariant)
     : undefined;
   
-  // Customer reviews submitted in this browser.
+  // Customer reviews & ratings
   const [localReviews, setLocalReviews] = useState<ProductReview[]>(() => getProductReviews(activeProduct));
+  const [ratingSummary, setRatingSummary] = useState<ProductRatingSummary>(() =>
+    getFallbackRatingSummary(activeProduct.id, getProductReviews(activeProduct))
+  );
+  const [isLoadingReviews, setIsLoadingReviews] = useState<boolean>(false);
+  const [isWritingReview, setIsWritingReview] = useState<boolean>(false);
   const [newReviewAuthor, setNewReviewAuthor] = useState('');
   const [newReviewEmail, setNewReviewEmail] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
+  const [newReviewTitle, setNewReviewTitle] = useState('');
   const [newReviewComment, setNewReviewComment] = useState('');
+  const [newReviewImage, setNewReviewImage] = useState<string | null>(null);
+  const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [helpfulVoted, setHelpfulVoted] = useState<Record<string, boolean>>({});
+  const [visibleReviewCount, setVisibleReviewCount] = useState<number>(5);
+  const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
 
   // Scroll to top when product changes & synchronize distinct reviews
   useEffect(() => {
@@ -70,7 +90,25 @@ export default function ProductDetailPage({
       const vars = getProductWeightVariants(activeProduct);
       setSelectedWeight(activeProduct.weight || vars[0]?.shortLabel || 'Default');
       setLocalReviews(getProductReviews(activeProduct));
+      setRatingSummary(getFallbackRatingSummary(activeProduct.id, getProductReviews(activeProduct)));
       setReviewSubmitted(false);
+      setReviewError(null);
+      setIsWritingReview(false);
+      setVisibleReviewCount(5);
+
+      // Asynchronously fetch remote approved reviews and dynamic summary from backend
+      setIsLoadingReviews(true);
+      fetchProductReviews(activeProduct.id)
+        .then((res) => {
+          if (res) {
+            setLocalReviews(res.reviews);
+            setRatingSummary(res.summary);
+          }
+        })
+        .finally(() => {
+          setIsLoadingReviews(false);
+        });
+
       analytics.viewItem({
         id: activeProduct.id,
         name: activeProduct.name,
@@ -109,43 +147,75 @@ export default function ProductDetailPage({
     const commentClean = newReviewComment.trim();
     const emailClean = newReviewEmail.trim();
 
-    const newRev: ProductReview = {
-      id: `rev-${activeProduct.id}-${Date.now()}`,
-      author: authorClean,
-      rating: newReviewRating,
-      date: 'Just now',
-      title: `Review of ${activeProduct.name}`,
-      comment: commentClean,
-      verified: false,
-      helpfulCount: 1,
-    };
-
-    const updated = saveProductReview(activeProduct.id, newRev);
-    setLocalReviews(updated);
-
-    setNewReviewAuthor('');
-    setNewReviewEmail('');
-    setNewReviewRating(5);
-    setNewReviewComment('');
-    setReviewSubmitted(true);
-    setTimeout(() => setReviewSubmitted(false), 4000);
-
-    try {
-      await fetch('/api/review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: activeProduct.id,
-          productName: activeProduct.name,
-          author: authorClean,
-          email: emailClean || undefined,
-          rating: newReviewRating,
-          comment: commentClean,
-        }),
-      });
-    } catch (err: any) {
-      console.warn('[Review Notification Notice]', err?.message);
+    if (authorClean.length < 2) {
+      setReviewError('Customer display name must be at least 2 characters.');
+      return;
     }
+    if (commentClean.length < 10) {
+      setReviewError('Review comment must be at least 10 characters.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewError(null);
+
+    const result = await submitProductReview({
+      productId: activeProduct.id,
+      productName: activeProduct.name,
+      productSlug: activeProduct.slug,
+      author: authorClean,
+      email: emailClean || undefined,
+      rating: newReviewRating,
+      title: newReviewTitle.trim() || undefined,
+      comment: commentClean,
+      imageUrl: newReviewImage || undefined,
+    });
+
+    setIsSubmittingReview(false);
+
+    if (result.success) {
+      setNewReviewAuthor('');
+      setNewReviewEmail('');
+      setNewReviewRating(5);
+      setNewReviewTitle('');
+      setNewReviewComment('');
+      setNewReviewImage(null);
+      setReviewSubmitted(true);
+      setIsWritingReview(false);
+      setTimeout(() => setReviewSubmitted(false), 8000);
+    } else {
+      setReviewError(result.error || 'Failed to submit review.');
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload a valid image file (JPEG, PNG, WEBP).');
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      alert('Image file size must be less than 3MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setNewReviewImage(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleVoteHelpful = async (revId: string) => {
+    if (helpfulVoted[revId]) return;
+    setHelpfulVoted((prev) => ({ ...prev, [revId]: true }));
+    setLocalReviews((prev) =>
+      prev.map((r) => (r.id === revId ? { ...r, helpfulCount: (r.helpfulCount || 0) + 1 } : r))
+    );
+    await voteReviewHelpful(revId);
   };
 
   const handleRequestB2BSample = async () => {
@@ -168,14 +238,6 @@ export default function ProductDetailPage({
       console.warn('[B2B Sample Notification Notice]', err?.message);
     }
     setTimeout(() => setSampleRequested(false), 5000);
-  };
-
-  const handleVoteHelpful = (revId: string) => {
-    if (helpfulVoted[revId]) return;
-    setHelpfulVoted((prev) => ({ ...prev, [revId]: true }));
-    setLocalReviews((prev) =>
-      prev.map((r) => (r.id === revId ? { ...r, helpfulCount: r.helpfulCount + 1 } : r))
-    );
   };
 
   // Get related products using circular ring selection so all products in a category receive equal internal links
@@ -204,8 +266,12 @@ export default function ProductDetailPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 pb-28 md:pb-8 text-left w-full">
-      {/* Dynamic SEO Metadata & Product Schema */}
-      <SEOHead selectedProduct={activeProduct} />
+      {/* Dynamic SEO Metadata & Product Schema with AggregateRating */}
+      <SEOHead
+        selectedProduct={activeProduct}
+        ratingSummary={ratingSummary}
+        approvedReviews={localReviews}
+      />
 
       {/* Breadcrumb navigation */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -326,6 +392,47 @@ export default function ProductDetailPage({
             <h1 className="notranslate font-heading font-bold text-2xl sm:text-3xl text-gray-900 uppercase tracking-tight leading-tight" translate="no">
               {activeProduct.name}
             </h1>
+
+            {/* Star Rating Overview near Title */}
+            <div className="flex items-center gap-2 pt-1 pb-1">
+              <div className="flex text-amber-400">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    fill={i < Math.round(ratingSummary.averageRating) ? 'currentColor' : 'none'}
+                    className={i < Math.round(ratingSummary.averageRating) ? 'text-amber-400' : 'text-gray-200'}
+                  />
+                ))}
+              </div>
+              {ratingSummary.ratingCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('reviews');
+                    document.getElementById('product-tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-xs font-bold text-gray-700 hover:text-emerald-800 transition cursor-pointer flex items-center gap-1.5"
+                >
+                  <span className="font-extrabold text-gray-900">{ratingSummary.averageRating.toFixed(1)}</span>
+                  <span className="text-gray-500 font-medium">
+                    ({ratingSummary.ratingCount} {ratingSummary.ratingCount === 1 ? 'customer review' : 'customer reviews'})
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab('reviews');
+                    setIsWritingReview(true);
+                    document.getElementById('product-tabs-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-xs text-emerald-800 hover:underline font-semibold cursor-pointer"
+                >
+                  No reviews yet • Be the first to review
+                </button>
+              )}
+            </div>
 
             {activeProduct.potency && (
               <div className="bg-emerald-50/60 border border-emerald-100 rounded-lg p-2.5 text-xs text-emerald-900 font-semibold flex items-center gap-2">
@@ -590,7 +697,7 @@ export default function ProductDetailPage({
       </div>
 
       {/* Tabs navigation: Detailed info, Shipping, Reviews */}
-      <div className="border-b border-gray-200 mb-8">
+      <div id="product-tabs-section" className="border-b border-gray-200 mb-8">
         <div className="flex gap-8">
           <button
             onClick={() => setActiveTab('desc')}
@@ -620,7 +727,7 @@ export default function ProductDetailPage({
                 : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
           >
-            Reviews ({localReviews.length})
+            Reviews ({ratingSummary.ratingCount > 0 ? ratingSummary.ratingCount : localReviews.length})
           </button>
         </div>
       </div>
@@ -738,174 +845,498 @@ export default function ProductDetailPage({
         )}
 
         {activeTab === 'reviews' && (
-          <div className="grid md:grid-cols-12 gap-8 items-start">
-            {/* Reviews list */}
-            <div className="md:col-span-7 space-y-6">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <div className="flex items-center gap-2">
-                  <span className="font-heading font-bold text-base text-gray-900">
-                    Customer Reviews
+          <div className="space-y-8 text-left">
+            {/* Rating Breakdown & Overview Header */}
+            <div className="bg-gradient-to-br from-emerald-50/50 via-white to-gray-50 border border-emerald-100/80 rounded-2xl p-6 sm:p-8 shadow-xs">
+              <div className="grid md:grid-cols-12 gap-8 items-center">
+                {/* Left: Overall Score */}
+                <div className="md:col-span-4 text-center md:text-left space-y-2 border-b md:border-b-0 md:border-r border-emerald-100/70 pb-6 md:pb-0 md:pr-8">
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block">
+                    Overall Customer Rating
                   </span>
+                  <div className="flex items-baseline justify-center md:justify-start gap-2">
+                    <span className="text-4xl sm:text-5xl font-black font-heading text-gray-900 tracking-tight">
+                      {ratingSummary.ratingValue > 0 ? ratingSummary.ratingValue.toFixed(1) : '—'}
+                    </span>
+                    <span className="text-sm font-bold text-gray-400">/ 5.0</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-start gap-1 text-amber-400">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        fill={i < Math.round(ratingSummary.ratingValue || 0) ? 'currentColor' : 'none'}
+                        className={i < Math.round(ratingSummary.ratingValue || 0) ? 'text-amber-400' : 'text-gray-200'}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium pt-1">
+                    {ratingSummary.ratingCount > 0 ? (
+                      <>
+                        Based on{' '}
+                        <span className="font-bold text-gray-800">{ratingSummary.ratingCount}</span> verified{' '}
+                        {ratingSummary.ratingCount === 1 ? 'customer review' : 'customer reviews'}
+                      </>
+                    ) : (
+                      'No published reviews yet. Be the first to share your experience!'
+                    )}
+                  </p>
+
+                  <div className="pt-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsWritingReview((prev) => !prev)}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition active:scale-98 shadow-sm cursor-pointer"
+                    >
+                      <MessageSquare size={14} />
+                      <span>{isWritingReview ? 'Close Review Form' : 'Write a Review'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right: Rating Distribution Bars (5★ to 1★) */}
+                <div className="md:col-span-8 space-y-2">
+                  <div className="flex items-center justify-between pb-1 text-xs">
+                    <span className="font-bold text-gray-700">Rating Breakdown</span>
+                    <span className="text-[11px] text-emerald-800 font-bold flex items-center gap-1">
+                      <ShieldCheck size={13} className="text-emerald-700" />
+                      100% Authentic Customer Feedback
+                    </span>
+                  </div>
+
+                  {[5, 4, 3, 2, 1].map((stars) => {
+                    const count = ratingSummary.ratingDistribution[stars as 1 | 2 | 3 | 4 | 5] || 0;
+                    const percent =
+                      ratingSummary.ratingCount > 0
+                        ? Math.round((count / ratingSummary.ratingCount) * 100)
+                        : 0;
+                    return (
+                      <div key={stars} className="flex items-center gap-3 text-xs">
+                        <span className="w-12 text-gray-600 font-bold flex items-center gap-1">
+                          <span>{stars}</span>
+                          <Star size={11} className="text-amber-400 fill-amber-400" />
+                        </span>
+                        <div className="flex-1 bg-gray-200/80 rounded-full h-2.5 overflow-hidden">
+                          <div
+                            className="bg-amber-400 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                        <span className="w-12 text-right font-mono text-[11px] text-gray-500 font-semibold">
+                          {count}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Expandable Review Submission Form */}
+            {isWritingReview && (
+              <div className="bg-white border-2 border-emerald-800/20 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div className="flex items-start justify-between border-b border-gray-100 pb-4">
+                  <div>
+                    <h3 className="font-heading font-black text-gray-900 text-base uppercase tracking-tight flex items-center gap-2">
+                      <MessageSquare className="text-emerald-700" size={18} />
+                      Write a Customer Review
+                    </h3>
+                    <p className="text-xs text-gray-500 font-medium mt-1">
+                      Share your genuine feedback on {activeProduct.name}. Reviews are screened to ensure authentic dispensary experiences.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsWritingReview(false)}
+                    className="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition"
+                    title="Close review form"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {reviewSubmitted ? (
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-6 text-center space-y-2">
+                    <CheckCircle2 className="text-emerald-700 mx-auto" size={32} />
+                    <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-emerald-900">
+                      Thank You! Review Received
+                    </h4>
+                    <p className="text-xs text-emerald-800 font-medium max-w-md mx-auto">
+                      Thank you for sharing your experience with Global Herbs. Your review has been submitted for moderation and will appear after verification.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleAddReview} className="space-y-5">
+                    {reviewError && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg p-3 flex items-center gap-2">
+                        <AlertTriangle size={15} className="shrink-0 text-red-600" />
+                        <span>{reviewError}</span>
+                      </div>
+                    )}
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block">
+                          Your Display Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newReviewAuthor}
+                          onChange={(e) => setNewReviewAuthor(e.target.value)}
+                          placeholder="e.g. David T."
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-emerald-800 focus:border-emerald-800 transition"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block">
+                          Order Email <span className="text-[10px] text-gray-400 font-normal lowercase">(for verified buyer badge)</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={newReviewEmail}
+                          onChange={(e) => setNewReviewEmail(e.target.value)}
+                          placeholder="e.g. david@example.com"
+                          className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-emerald-800 focus:border-emerald-800 transition"
+                        />
+                        <span className="text-[10px] text-gray-400 block">
+                          Never published or displayed publicly. Used solely to match your order.
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Star Rating Picker */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block">
+                        Rating <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <div className="flex gap-1.5 text-gray-200">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setNewReviewRating(star)}
+                              className="p-1 hover:scale-115 transition cursor-pointer text-amber-400 focus:outline-none"
+                              title={`${star} Star${star > 1 ? 's' : ''}`}
+                            >
+                              <Star
+                                size={24}
+                                fill={star <= newReviewRating ? 'currentColor' : 'none'}
+                                className={star <= newReviewRating ? 'text-amber-400' : 'text-gray-300'}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                        <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md">
+                          {newReviewRating === 5 && '5 - Excellent, highly recommended'}
+                          {newReviewRating === 4 && '4 - Very Good, satisfied'}
+                          {newReviewRating === 3 && '3 - Good, average'}
+                          {newReviewRating === 2 && '2 - Fair, could be improved'}
+                          {newReviewRating === 1 && '1 - Poor, unsatisfied'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block">
+                        Review Title <span className="text-[10px] text-gray-400 font-normal lowercase">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={newReviewTitle}
+                        onChange={(e) => setNewReviewTitle(e.target.value)}
+                        placeholder="e.g. Exceptional terpene profile and flawless packaging"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-emerald-800 focus:border-emerald-800 transition"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center">
+                        <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block">
+                          Review Comments <span className="text-red-500">*</span>
+                        </label>
+                        <span className="text-[10px] text-gray-400 font-mono">
+                          {newReviewComment.length} / 1000
+                        </span>
+                      </div>
+                      <textarea
+                        required
+                        rows={4}
+                        maxLength={1000}
+                        value={newReviewComment}
+                        onChange={(e) => setNewReviewComment(e.target.value)}
+                        placeholder="Describe your experience with the aroma, potency, flavour, effects, and delivery..."
+                        className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-emerald-800 focus:border-emerald-800 transition"
+                      />
+                    </div>
+
+                    {/* Optional Photo Upload */}
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider block flex items-center gap-1.5">
+                        <Camera size={13} className="text-gray-500" />
+                        <span>Product Photograph (Optional)</span>
+                      </label>
+
+                      {newReviewImage ? (
+                        <div className="relative inline-block border-2 border-emerald-600 rounded-xl overflow-hidden p-1 bg-white">
+                          <img
+                            src={newReviewImage}
+                            alt="Uploaded preview"
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setNewReviewImage(null)}
+                            className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 transition shadow"
+                            title="Remove photo"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="border-2 border-dashed border-gray-300 hover:border-emerald-600 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-gray-50/60 hover:bg-emerald-50/30 transition text-center">
+                          <UploadCloud size={20} className="text-gray-400" />
+                          <span className="text-xs font-bold text-gray-700">Click or drag a photo here</span>
+                          <span className="text-[10px] text-gray-400">JPEG, PNG or WEBP (Max 3MB)</span>
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+
+                    <div className="pt-2 flex items-center gap-3">
+                      <button
+                        type="submit"
+                        disabled={isSubmittingReview}
+                        className="flex-1 sm:flex-none sm:min-w-[200px] h-11 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition active:scale-98 shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {isSubmittingReview ? (
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Submitting Review...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Check size={14} />
+                            <span>Submit Review</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsWritingReview(false)}
+                        className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-gray-800 transition"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+
+            {/* Approved Reviews List */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-heading font-black text-gray-900 text-sm uppercase tracking-wider">
+                    Published Reviews
+                  </h3>
                   <span className="bg-emerald-100 text-emerald-850 text-xs font-black px-2 py-0.5 rounded-full">
                     {localReviews.length}
                   </span>
                 </div>
+                {isLoadingReviews && (
+                  <span className="text-xs text-gray-400 flex items-center gap-1.5">
+                    <span className="w-3 h-3 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin" />
+                    Syncing...
+                  </span>
+                )}
               </div>
 
-              {localReviews.length === 0 && (
-                <p className="text-sm text-gray-500 py-4">No customer reviews yet.</p>
-              )}
-
-              {localReviews.map((rev) => (
-                <div key={rev.id} className="border-b border-gray-100 pb-6 last:border-0 space-y-2">
-                  <div className="flex justify-between items-start gap-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900 text-sm">{rev.author}</span>
-                        {rev.location && (
-                          <span className="text-[10px] text-gray-400 font-medium flex items-center gap-0.5">
-                            <MapPin size={10} />
-                            {rev.location}
-                          </span>
-                        )}
-                        {rev.verified && (
-                          <span className="bg-emerald-50 text-emerald-800 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider border border-emerald-100">
-                            Verified Buyer
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[10px] text-gray-400 font-bold block mt-0.5">{rev.date}</span>
-                    </div>
-
-                    <div className="flex text-amber-400">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          size={13}
-                          fill={i < rev.rating ? "currentColor" : "none"}
-                          className={i < rev.rating ? "text-amber-400" : "text-gray-200"}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {rev.title && (
-                    <h5 className="font-bold text-xs text-gray-900">
-                      "{rev.title}"
-                    </h5>
-                  )}
-
-                  <p className="text-xs text-gray-600 font-medium leading-relaxed">
-                    {rev.comment}
+              {localReviews.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 space-y-3">
+                  <MessageSquare className="mx-auto text-gray-300" size={32} />
+                  <p className="text-xs font-bold text-gray-700">No published reviews yet.</p>
+                  <p className="text-[11px] text-gray-400 max-w-sm mx-auto">
+                    Be the first customer to share your thoughts on {activeProduct.name}.
                   </p>
-
-                  <div className="pt-1 flex items-center justify-between text-[11px] text-gray-400">
-                    {!rev.verified && <span className="text-[10px]">Customer-submitted review</span>}
+                  {!isWritingReview && (
                     <button
-                      onClick={() => handleVoteHelpful(rev.id)}
-                      disabled={helpfulVoted[rev.id]}
-                      className={`flex items-center gap-1.5 text-[10px] font-bold px-2 py-1 rounded transition cursor-pointer ${
-                        helpfulVoted[rev.id]
-                          ? 'bg-emerald-50 text-emerald-800 cursor-default'
-                          : 'hover:bg-gray-100 text-gray-500'
-                      }`}
+                      type="button"
+                      onClick={() => setIsWritingReview(true)}
+                      className="px-4 py-2 bg-emerald-800 text-white rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-emerald-900 transition"
                     >
-                      <ThumbsUp size={11} />
-                      <span>{helpfulVoted[rev.id] ? 'Helpful ✓' : 'Helpful'} ({rev.helpfulCount})</span>
+                      Write First Review
                     </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Write a review form */}
-            <div className="md:col-span-5 bg-gray-50 border border-gray-100 rounded-2xl p-6">
-              <h4 className="font-heading font-bold text-gray-900 text-sm uppercase tracking-wider mb-4">
-                Write a customer review
-              </h4>
-
-              {reviewSubmitted ? (
-                <div className="bg-emerald-50 border border-emerald-100 text-emerald-900 rounded-xl p-4 text-center space-y-1">
-                  <CheckCircle2 className="text-emerald-700 mx-auto" size={24} />
-                  <h5 className="font-bold text-xs uppercase">Review Submitted!</h5>
-                  <p className="text-[10px] font-semibold text-gray-500">
-                    Thank you! Your feedback helps other dispensary patients make safe informed choices.
-                  </p>
+                  )}
                 </div>
               ) : (
-                <form onSubmit={handleAddReview} className="space-y-4 text-left">
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                      Your Full Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={newReviewAuthor}
-                      onChange={(e) => setNewReviewAuthor(e.target.value)}
-                      placeholder="e.g. David Thompson"
-                      className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-800 focus:outline-emerald-800"
-                    />
-                  </div>
+                <div className="space-y-4">
+                  {localReviews.slice(0, visibleReviewCount).map((rev) => (
+                    <div
+                      key={rev.id}
+                      className="bg-white border border-gray-200/90 rounded-2xl p-5 sm:p-6 space-y-3 shadow-xs hover:border-emerald-200 transition"
+                    >
+                      {/* Top Header: Author, Verified Badge, Rating, Date */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center flex-wrap gap-2">
+                          <span className="font-heading font-bold text-sm text-gray-900">
+                            {rev.author}
+                          </span>
+                          {rev.verified ? (
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-850 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200 uppercase tracking-wider">
+                              <ShieldCheck size={11} className="text-emerald-700" />
+                              Verified Buyer
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                              Community Review
+                            </span>
+                          )}
+                          {rev.location && (
+                            <span className="text-[11px] text-gray-400 font-medium flex items-center gap-0.5">
+                              <MapPin size={11} />
+                              {rev.location}
+                            </span>
+                          )}
+                        </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                      Your Email (Optional, for admin follow-up)
-                    </label>
-                    <input
-                      type="email"
-                      value={newReviewEmail}
-                      onChange={(e) => setNewReviewEmail(e.target.value)}
-                      placeholder="e.g. david@example.com"
-                      className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-800 focus:outline-emerald-800"
-                    />
-                  </div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex text-amber-400">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                size={14}
+                                fill={i < rev.rating ? 'currentColor' : 'none'}
+                                className={i < rev.rating ? 'text-amber-400' : 'text-gray-200'}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-[11px] text-gray-400 font-medium">
+                            {rev.date}
+                          </span>
+                        </div>
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                      Product Rating
-                    </label>
-                    <div className="flex gap-1 text-gray-200">
-                      {Array.from({ length: 5 }).map((_, i) => (
+                      {/* Title if present */}
+                      {rev.title && (
+                        <h4 className="font-heading font-bold text-xs sm:text-sm text-gray-900">
+                          "{rev.title}"
+                        </h4>
+                      )}
+
+                      {/* Comment body */}
+                      <p className="text-xs text-gray-700 font-medium leading-relaxed">
+                        {rev.comment}
+                      </p>
+
+                      {/* Customer uploaded photo thumbnail */}
+                      {rev.imageUrl && (
+                        <div className="pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewPhoto(rev.imageUrl || null)}
+                            className="group relative inline-block rounded-xl overflow-hidden border border-gray-200 hover:border-emerald-600 transition shadow-xs cursor-pointer"
+                          >
+                            <img
+                              src={rev.imageUrl}
+                              alt={`Customer photo from ${rev.author}`}
+                              className="w-20 h-20 object-cover group-hover:scale-105 transition"
+                            />
+                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                              <ImageIcon size={16} />
+                            </div>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Official Admin Response Card */}
+                      {rev.adminResponse && (
+                        <div className="bg-emerald-50/70 border-l-4 border-emerald-800 rounded-r-xl p-4 mt-3 space-y-1.5">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-bold text-emerald-900 flex items-center gap-1.5">
+                              <Shield size={12} className="text-emerald-700" />
+                              Official Global Herbs Response ({rev.adminResponse.author || 'Dispensary Dispatch'})
+                            </span>
+                            <span className="text-gray-400 text-[10px]">{rev.adminResponse.date}</span>
+                          </div>
+                          <p className="text-xs text-emerald-950 font-medium leading-relaxed italic">
+                            "{rev.adminResponse.message}"
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Footer: Helpful voting */}
+                      <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+                        <span className="text-[10px]">
+                          Was this review helpful to you?
+                        </span>
                         <button
-                          key={i}
                           type="button"
-                          onClick={() => setNewReviewRating(i + 1)}
-                          className="hover:scale-110 transition cursor-pointer text-amber-400"
+                          onClick={() => handleVoteHelpful(rev.id)}
+                          disabled={helpfulVoted[rev.id]}
+                          className={`flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                            helpfulVoted[rev.id]
+                              ? 'bg-emerald-50 text-emerald-800 cursor-default'
+                              : 'hover:bg-gray-100 text-gray-600'
+                          }`}
                         >
-                          <Star
-                            size={18}
-                            fill={i < newReviewRating ? "currentColor" : "none"}
-                            className={i < newReviewRating ? "text-amber-400" : "text-gray-200"}
-                          />
+                          <ThumbsUp size={12} />
+                          <span>{helpfulVoted[rev.id] ? 'Helpful ✓' : 'Helpful'}</span>
+                          <span className="font-mono text-gray-400">({rev.helpfulCount || 0})</span>
                         </button>
-                      ))}
+                      </div>
                     </div>
-                  </div>
+                  ))}
 
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                      Detailed Feedback Comment
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={newReviewComment}
-                      onChange={(e) => setNewReviewComment(e.target.value)}
-                      placeholder="Describe your therapeutic or recreational experience with this product..."
-                      className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs font-semibold text-gray-800 focus:outline-emerald-800"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full h-10 bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition active:scale-95 duration-100 cursor-pointer"
-                  >
-                    Submit Clinical Review
-                  </button>
-                </form>
+                  {/* Load more reviews button */}
+                  {localReviews.length > visibleReviewCount && (
+                    <div className="text-center pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setVisibleReviewCount((prev) => prev + 5)}
+                        className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold uppercase tracking-wider rounded-xl transition"
+                      >
+                        Load More Reviews ({localReviews.length - visibleReviewCount} remaining)
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
+
+            {/* Photo Lightbox Modal */}
+            {previewPhoto && (
+              <div
+                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4"
+                onClick={() => setPreviewPhoto(null)}
+              >
+                <div
+                  className="relative max-w-2xl max-h-[85vh] bg-white rounded-2xl overflow-hidden shadow-2xl p-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setPreviewPhoto(null)}
+                    className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/90 text-white rounded-full p-2 transition cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
+                  <img
+                    src={previewPhoto}
+                    alt="Customer review photograph enlarged"
+                    className="max-h-[80vh] w-auto object-contain rounded-xl"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

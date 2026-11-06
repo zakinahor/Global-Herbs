@@ -258,6 +258,50 @@ export function getPage(pathname: string): SeoPage | null {
     };
   }
 
+interface PrerenderReview {
+  id: string;
+  productId: number;
+  rating: number;
+  author: string;
+  comment: string;
+  title?: string;
+  status: string;
+  createdAt: string;
+}
+
+function getApprovedProductReviews(productId: number): {
+  reviews: PrerenderReview[];
+  averageRating: number;
+  ratingCount: number;
+  reviewCount: number;
+} {
+  try {
+    const reviewsPath = path.resolve(process.cwd(), 'data/reviews.json');
+    if (fs.existsSync(reviewsPath)) {
+      const raw = fs.readFileSync(reviewsPath, 'utf-8');
+      if (raw.trim()) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list)) {
+          const approved = list.filter((r) => r && r.status === 'approved' && Number(r.productId) === productId);
+          if (approved.length > 0) {
+            const sum = approved.reduce((acc, r) => acc + Math.min(5, Math.max(1, Math.round(r.rating || 5))), 0);
+            const written = approved.filter((r) => r.comment && r.comment.trim()).length;
+            return {
+              reviews: approved,
+              averageRating: Number((sum / approved.length).toFixed(1)),
+              ratingCount: approved.length,
+              reviewCount: written,
+            };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('[Prerender SEO] Error reading reviews.json for product', productId, err);
+  }
+  return { reviews: [], averageRating: 0, ratingCount: 0, reviewCount: 0 };
+}
+
   const productMatch = pathname.match(/^\/products\/([^/]+)$/);
   if (productMatch) {
     const slug = decodeURIComponent(productMatch[1]);
@@ -292,6 +336,7 @@ export function getPage(pathname: string): SeoPage | null {
       )
       .join('');
 
+    const reviewData = getApprovedProductReviews(product.id);
     const schemas: Record<string, unknown>[] = [];
     if (!isNonIndexable) {
       schemas.push(
@@ -310,6 +355,34 @@ export function getPage(pathname: string): SeoPage | null {
         category: product.category,
         sku: product.sku || `GH-${product.id}`,
         brand: { '@type': 'Brand', name: product.brand || 'Global Herbs' },
+        ...(reviewData.ratingCount > 0 && reviewData.averageRating > 0
+          ? {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: reviewData.averageRating,
+                reviewCount: reviewData.reviewCount || reviewData.ratingCount,
+                ratingCount: reviewData.ratingCount,
+                bestRating: 5,
+                worstRating: 1,
+              },
+              ...(reviewData.reviews.length > 0
+                ? {
+                    review: reviewData.reviews.slice(0, 5).map((r) => ({
+                      '@type': 'Review',
+                      author: { '@type': 'Person', name: r.author },
+                      datePublished: r.createdAt ? r.createdAt.split('T')[0] : '2026-10-01',
+                      reviewBody: r.comment,
+                      reviewRating: {
+                        '@type': 'Rating',
+                        ratingValue: Math.min(5, Math.max(1, Math.round(r.rating || 5))),
+                        bestRating: 5,
+                        worstRating: 1,
+                      },
+                    })),
+                  }
+                : {}),
+            }
+          : {}),
         offers: {
           '@type': 'Offer',
           priceCurrency: 'USD',
@@ -410,6 +483,25 @@ export function getPage(pathname: string): SeoPage | null {
               : ''
           }
           <p>Every batch of ${escapeHtml(product.name)} is third-party laboratory tested for potency and purity, double vacuum-sealed for 100% odor control, and shipped discreetly with tracking and full delivery insurance.</p>
+          ${
+            reviewData.ratingCount > 0
+              ? `<section class="customer-reviews-section">
+                  <h2>Customer Reviews &amp; Ratings (${reviewData.averageRating}/5 based on ${reviewData.ratingCount} ${reviewData.ratingCount === 1 ? 'review' : 'reviews'})</h2>
+                  <ul>
+                    ${reviewData.reviews
+                      .slice(0, 5)
+                      .map(
+                        (r) =>
+                          `<li><strong>${escapeHtml(r.author)}</strong> (${r.rating}/5★): &ldquo;${escapeHtml(r.comment)}&rdquo;</li>`
+                      )
+                      .join('')}
+                  </ul>
+                </section>`
+              : `<section class="customer-reviews-section">
+                  <h2>Customer Reviews &amp; Ratings</h2>
+                  <p>No customer reviews yet. Be the first verified buyer to review ${escapeHtml(product.name)}.</p>
+                </section>`
+          }
           ${
             related.length
               ? `<section>

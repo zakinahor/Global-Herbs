@@ -31,6 +31,7 @@ import {
   ChevronRight,
   BookOpen,
   Download,
+  Star,
 } from 'lucide-react';
 import {
   ManagedBlogArticle,
@@ -44,12 +45,17 @@ import {
 } from '../../types/blog';
 import { useAuth } from '../../context/AuthContext';
 import SEOHead from '../SEOHead';
+import AdminReviewManager from './AdminReviewManager';
 
-export default function AdminBlogManager() {
+interface AdminBlogManagerProps {
+  initialTab?: 'articles' | 'writer' | 'keywords' | 'schedule' | 'seo' | 'reviews';
+}
+
+export default function AdminBlogManager({ initialTab = 'articles' }: AdminBlogManagerProps) {
   const { user, isLoggedIn } = useAuth();
 
   // Active Navigation Tab
-  const [activeTab, setActiveTab] = useState<'articles' | 'writer' | 'keywords' | 'schedule' | 'seo'>('articles');
+  const [activeTab, setActiveTab] = useState<'articles' | 'writer' | 'keywords' | 'schedule' | 'seo' | 'reviews'>(initialTab);
 
   // Articles List State
   const [articles, setArticles] = useState<ManagedBlogArticle[]>([]);
@@ -577,6 +583,18 @@ export default function AdminBlogManager() {
           >
             <BarChart3 size={15} />
             <span>SEO Monitoring &amp; Search Console</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
+              activeTab === 'reviews'
+                ? 'border-emerald-500 text-emerald-400 bg-gray-850/50'
+                : 'border-transparent text-gray-400 hover:text-gray-200'
+            }`}
+          >
+            <Star size={15} className="text-amber-400" />
+            <span>Customer Reviews &amp; Ratings</span>
           </button>
         </div>
       </header>
@@ -1743,6 +1761,11 @@ export default function AdminBlogManager() {
             </div>
           </div>
         )}
+
+        {/* ================================================================= */}
+        {/* TAB 6: CUSTOMER REVIEWS & MODERATION */}
+        {/* ================================================================= */}
+        {activeTab === 'reviews' && <AdminReviewManager />}
       </main>
 
       {/* ================================================================= */}
