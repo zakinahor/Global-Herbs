@@ -156,14 +156,9 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
                   </span>
                 )}
                 <span className="notranslate text-[10px] font-semibold text-gray-400">
-                  {currency.code}
+                  USD
                 </span>
               </div>
-              {!isBaseCurrency && (
-                <span className="notranslate text-[10px] text-gray-400 tabular-nums">
-                  {formatBaseUsd(product.price)} USD
-                </span>
-              )}
             </div>
 
             <button

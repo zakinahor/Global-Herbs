@@ -90,10 +90,7 @@ const SUPPORTED_LANG_SET = new Set(['en', 'es', 'fr', 'de', 'it', 'nl', 'pt', 'j
 let cachedExchangeRates = null;
 const EXCHANGE_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
-function mapCountryToCurrency(countryCode) {
-  const upper = (countryCode || '').toUpperCase();
-  if (COUNTRY_TO_CURRENCY[upper]) return COUNTRY_TO_CURRENCY[upper];
-  if (EUROZONE_COUNTRIES.has(upper)) return 'EUR';
+function mapCountryToCurrency(_countryCode) {
   return 'USD';
 }
 

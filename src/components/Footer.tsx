@@ -370,10 +370,7 @@ export default function Footer({ onSelectPage }: FooterProps) {
         <div className="max-w-7xl mx-auto px-4 space-y-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 pb-4 border-b border-zinc-900">
             <p className="text-[10px] text-gray-400 normal-case font-normal text-center md:text-left max-w-2xl">
-              {t(
-                'locale.privacyNotice',
-                `Coarse country-level region & live exchange rates provided via ${rateProvider}. No precise device location is requested or stored.`
-              )}
+              All product prices, catalog listings, and checkout transactions are displayed and processed exclusively in US Dollars (USD).
             </p>
             <div className="flex items-center gap-2">
               <CurrencySwitcher compact />

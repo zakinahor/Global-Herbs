@@ -301,14 +301,7 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
       total,
       currency: 'USD',
       paymentMethod,
-      orderNotes: [
-        orderNotes.trim(),
-        !isBaseCurrency
-          ? `[Display Currency Estimate shown to customer: ${formatPrice(total, { showCode: true })} @ 1 USD = ${currency.rate} ${currency.code}; Authoritative Charge: $${total.toFixed(2)} USD]`
-          : '',
-      ]
-        .filter(Boolean)
-        .join('\n'),
+      orderNotes: orderNotes.trim(),
     };
 
     const serverResult = await submitOrder(orderData);
@@ -1355,43 +1348,15 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
                   <div>
                     <span>{t('checkout.total', 'Total Amount')}:</span>
                     <span className="block text-[10px] text-gray-400 font-normal">
-                      {isBaseCurrency
-                        ? 'Charged in USD (Includes stealth packing)'
-                        : `Charged in USD: ${formatBaseUsd(total)}`}
+                      Charged in USD (Includes stealth packing)
                     </span>
                   </div>
                   <div className="text-right" translate="no">
                     <span className="notranslate text-xl font-extrabold text-emerald-800 block tabular-nums">
-                      {isBaseCurrency
-                        ? `${formatBaseUsd(total)} USD`
-                        : `≈ ${formatPrice(total, { showCode: true })}`}
+                      ${total.toFixed(2)} USD
                     </span>
-                    {!isBaseCurrency && (
-                      <span className="notranslate text-xs font-bold text-gray-700 block tabular-nums">
-                        {formatBaseUsd(total)} USD
-                      </span>
-                    )}
                   </div>
                 </div>
-
-                {!isBaseCurrency && (
-                  <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 space-y-1 leading-snug">
-                    <p className="font-bold text-amber-900">
-                      {t('checkout.settlementNoticeTitle', 'Currency & Payment Settlement Notice')}
-                    </p>
-                    <p className="font-normal text-amber-800">
-                      {t(
-                        'checkout.settlementNoticeBody',
-                        `Prices are shown in ${currency.code} (1 USD = ${currency.rate} ${currency.code}) as an estimate. Your order will be invoiced and charged in US Dollars (${formatBaseUsd(total)} USD).`,
-                        {
-                          currency: currency.code,
-                          rate: currency.rate,
-                          usdTotal: formatBaseUsd(total),
-                        }
-                      )}
-                    </p>
-                  </div>
-                )}
               </div>
 
               {submitError && (
@@ -1415,9 +1380,7 @@ export default function CheckoutPage({ cartItems, onClearCart, onSelectPage }: C
                     <span>
                       {t('btn.completeOrder', 'Complete Order')} •{' '}
                       <span className="notranslate" translate="no">
-                        {isBaseCurrency
-                          ? `${formatBaseUsd(total)} USD`
-                          : `${formatBaseUsd(total)} USD (≈ ${formatPrice(total, { showCode: true })})`}
+                        ${total.toFixed(2)} USD
                       </span>
                     </span>
                   </>

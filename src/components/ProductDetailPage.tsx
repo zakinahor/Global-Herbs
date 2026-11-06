@@ -449,7 +449,7 @@ export default function ProductDetailPage({
           <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 flex items-center justify-between">
             <div translate="no">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Selected Option Price ({currency.code})
+                Price (USD)
               </span>
               <div className="flex items-baseline gap-2.5">
                 {activeProduct.onSale && currentOriginalPrice ? (
@@ -467,16 +467,9 @@ export default function ProductDetailPage({
                   </span>
                 )}
                 <span className="notranslate text-xs font-bold text-gray-500">
-                  {currency.code}
+                  USD
                 </span>
               </div>
-              {!isBaseCurrency && (
-                <span className="notranslate text-[11px] font-semibold text-gray-500 block mt-1 tabular-nums">
-                  {t('product.basePriceLabel', `Base Price: ${formatBaseUsd(currentPrice)} USD`, {
-                    usdAmount: formatBaseUsd(currentPrice),
-                  })}
-                </span>
-              )}
             </div>
 
             {activeProduct.inventory !== undefined && (

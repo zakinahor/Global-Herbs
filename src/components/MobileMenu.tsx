@@ -91,7 +91,7 @@ export default function MobileMenu({
           {/* Language & Currency Selector Bar */}
           <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-gray-50 border border-gray-200/80">
             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
-              {t('language.current', 'Language')} / {t('currency.select', 'Currency')}
+              {t('language.current', 'Language')} / Currency (USD)
             </span>
             <div className="flex items-center gap-1.5">
               <CurrencySwitcher compact />

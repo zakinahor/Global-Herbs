@@ -138,14 +138,7 @@ function anonymizeIpPrefix(ip: string): string {
   return 'local';
 }
 
-export function mapCountryToCurrency(countryCode: string): string {
-  const upper = (countryCode || '').toUpperCase();
-  if (COUNTRY_TO_CURRENCY[upper]) {
-    return COUNTRY_TO_CURRENCY[upper];
-  }
-  if (EUROZONE_COUNTRIES.has(upper)) {
-    return 'EUR';
-  }
+export function mapCountryToCurrency(_countryCode: string): string {
   return 'USD';
 }
 

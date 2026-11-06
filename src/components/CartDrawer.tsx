@@ -431,26 +431,10 @@ export default function CartDrawer({
                   <span>{t('cart.subtotal', 'Subtotal')}:</span>
                   <div className="text-right" translate="no">
                     <span className="notranslate text-base text-emerald-800 block tabular-nums">
-                      {!isBaseCurrency ? `≈ ${formatPrice(subtotal, { showCode: true })}` : formatPrice(subtotal, { showCode: true })}
+                      ${subtotal.toFixed(2)} USD
                     </span>
-                    {!isBaseCurrency && (
-                      <span className="notranslate text-[11px] text-gray-500 font-semibold block tabular-nums">
-                        {t('cart.usdTotalNote', `Settlement Total in USD: ${formatBaseUsd(subtotal)}`, {
-                          usdAmount: formatBaseUsd(subtotal),
-                        })}
-                      </span>
-                    )}
                   </div>
                 </div>
-                {!isBaseCurrency && (
-                  <div className="p-2 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[10px] text-amber-900 font-medium leading-snug">
-                    {t(
-                      'currency.chargedInUsd',
-                      `Final checkout is processed in USD (${formatBaseUsd(subtotal)}). Displayed ${currency.code} amounts are estimates.`,
-                      { usdAmount: formatBaseUsd(subtotal), currency: currency.code }
-                    )}
-                  </div>
-                )}
                 <p className="text-[10px] text-gray-400 font-semibold text-center leading-relaxed">
                   {t('trust.stealth', 'Double Vacuum Sealed Packaging')} · {t('trust.discrete', 'Discreet Worldwide Delivery')}
                 </p>
