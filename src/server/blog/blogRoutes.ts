@@ -412,27 +412,4 @@ blogRouter.get('/api/admin/blog/seo-overview', requireAdmin, (req: Request, res:
 // VERCEL CRON & EXTERNAL SCHEDULER ENDPOINT
 // ============================================================================
 
-/**
- * Shared handler for Vercel Cron and external scheduler webhooks
- * Supports:
- * - Authorization: Bearer <CRON_SECRET> (timing-safe comparison)
- * - Administrator credentials
- * - Both POST and GET methods (Vercel Cron invokes with GET or POST)
- */
-async function handleCronPublish(req: Request, res: Response) {
-  return res.status(200).json({
-    success: true,
-    message: 'Automated blog posting has been deactivated per administrator configuration.',
-    checked: 0,
-    claimed: 0,
-    published: [],
-    failed: [],
-    errors: [],
-  });
-}
 
-// Support both standard Vercel Cron path (/api/cron/publish) and legacy path (/api/admin/blog/cron-publish)
-blogRouter.get('/api/cron/publish', handleCronPublish);
-blogRouter.post('/api/cron/publish', handleCronPublish);
-blogRouter.get('/api/admin/blog/cron-publish', handleCronPublish);
-blogRouter.post('/api/admin/blog/cron-publish', handleCronPublish);
