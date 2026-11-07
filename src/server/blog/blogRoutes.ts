@@ -420,28 +420,14 @@ blogRouter.get('/api/admin/blog/seo-overview', requireAdmin, (req: Request, res:
  * - Both POST and GET methods (Vercel Cron invokes with GET or POST)
  */
 async function handleCronPublish(req: Request, res: Response) {
-  // 1. Check CRON_SECRET authorization
-  const cronAuth = verifyCronAuthorization(req);
-  const isAdmin = verifyAdminSession(req);
-
-  if (!cronAuth.authorized && !isAdmin) {
-    console.warn('[CronPublish] Unauthorized cron invocation attempt:', cronAuth.reason);
-    return res.status(401).json({
-      success: false,
-      error: 'Unauthorized. Valid CRON_SECRET Bearer token or administrator authentication required.',
-    });
-  }
-
-  const triggerSource = cronAuth.authorized ? 'Vercel Cron Worker' : 'Dispensary Admin Invocation';
-  console.log(`[CronPublish] Verified ${triggerSource} trigger received.`);
-
-  const result = await claimAndPublishDueArticles(triggerSource, 5);
-
   return res.status(200).json({
     success: true,
-    source: triggerSource,
-    timestamp: new Date().toISOString(),
-    ...result,
+    message: 'Automated blog posting has been deactivated per administrator configuration.',
+    checked: 0,
+    claimed: 0,
+    published: [],
+    failed: [],
+    errors: [],
   });
 }
 

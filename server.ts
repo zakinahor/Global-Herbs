@@ -28,7 +28,6 @@ import {
   getLiveExchangeRates,
 } from './lib/locale/localeService';
 import { blogRouter } from './src/server/blog/blogRoutes';
-import { blogScheduler } from './src/server/blog/blogSchedulerService';
 import { reviewRouter } from './src/server/reviewRoutes';
 import { initReviewStore, submitReview } from './src/server/reviewService';
 
@@ -1478,48 +1477,6 @@ async function startServer() {
     });
   });
 
-  // Daily Automated Blog Scheduler Cron Endpoint (Vercel Hobby compatible "0 17 * * *")
-  const cronPublishHandler = async (req: express.Request, res: express.Response) => {
-    try {
-      const headers = req.headers || {};
-      const secret = process.env.CRON_SECRET || 'gh-scheduler-sec-2026';
-      const rawAuth = headers['authorization'] || headers['Authorization'] || '';
-      const authHeader = (Array.isArray(rawAuth) ? rawAuth[0] : rawAuth) || '';
-      const adminSecret = headers['x-admin-secret'] || headers['x-admin-key'];
-      const adminKey = (Array.isArray(adminSecret) ? adminSecret[0] : adminSecret) || '';
-
-      const isAuthorized =
-        (authHeader.startsWith('Bearer ') && (authHeader.slice(7).trim() === secret || authHeader.slice(7).trim() === 'gh-scheduler-sec-2026')) ||
-        (adminKey && (adminKey === secret || adminKey === 'gh-scheduler-sec-2026'));
-
-      if (!isAuthorized) {
-        return res.status(401).json({
-          success: false,
-          error: 'Unauthorized. Supply valid CRON_SECRET Bearer token or administrator credentials.',
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        source: 'Vercel Cron Worker',
-        timestamp: new Date().toISOString(),
-        schedule: '0 17 * * *',
-        checked: 7,
-        claimed: 0,
-        published: [],
-        failed: [],
-        errors: [],
-      });
-    } catch (err: any) {
-      return res.status(500).json({
-        success: false,
-        error: `Handler error: ${err?.message || 'Unknown error'}`,
-      });
-    }
-  };
-
-  app.all('/api/cron-publish', cronPublishHandler);
-  app.all('/api/cron/publish', cronPublishHandler);
 
   // API Route: Newsletter email subscription
   app.post('/api/subscribe', async (req, res) => {
@@ -1998,7 +1955,6 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[API Server] Global Herbs running on port ${PORT} with PID ${process.pid}`);
-    blogScheduler.start();
   });
 }
 

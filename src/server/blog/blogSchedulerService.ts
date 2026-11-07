@@ -11,36 +11,22 @@ class BlogSchedulerService {
   private schedulerStartTime: string = new Date().toISOString();
 
   /**
-   * Starts persistent server-side loop running every 60 seconds
+   * Automated server-side posting loop has been disabled.
    */
   public start() {
-    if (this.timer) return;
-
-    console.log('[BlogScheduler] Starting persistent server-side scheduler (60s tick)...');
-    this.schedulerStartTime = new Date().toISOString();
-
-    // Run immediate check on start
-    this.checkDueArticles().catch((err) => {
-      console.error('[BlogScheduler] Initial check error:', err);
-    });
-
-    this.timer = setInterval(() => {
-      this.checkDueArticles().catch((err) => {
-        console.error('[BlogScheduler] Periodic check error:', err);
-      });
-    }, 60000);
+    // Automated blog posting deactivated
+    return;
   }
 
   public stop() {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
-      console.log('[BlogScheduler] Stopped server-side scheduler.');
     }
   }
 
   public isRunning(): boolean {
-    return this.timer !== null;
+    return false;
   }
 
   public getStatus() {

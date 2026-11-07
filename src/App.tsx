@@ -45,7 +45,7 @@ import SupportWidget from './components/SupportWidget';
 import WhatsAppChatButton from './components/WhatsAppChatButton';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
-import AdminBlogManager from './components/admin/AdminBlogManager';
+import AdminReviewManager from './components/admin/AdminReviewManager';
 import RegisterPage from './components/auth/RegisterPage';
 import LoginPage from './components/auth/LoginPage';
 import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
@@ -847,24 +847,10 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
-        <Route
-          path="/admin/blog"
-          element={
-            <motion.div
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={pageVariants}
-              transition={pageTransition}
-              className="w-full flex-grow"
-            >
-              <AdminBlogManager />
-            </motion.div>
-          }
-        />
-        <Route path="/admin/seo-blog" element={<Navigate to="/admin/blog" replace />} />
-        <Route path="/admin/reviews" element={<AdminBlogManager initialTab="reviews" />} />
-        <Route path="/admin" element={<Navigate to="/admin/blog" replace />} />
+        <Route path="/admin/reviews" element={<AdminReviewManager />} />
+        <Route path="/admin/blog" element={<Navigate to="/blog" replace />} />
+        <Route path="/admin/seo-blog" element={<Navigate to="/blog" replace />} />
+        <Route path="/admin" element={<Navigate to="/admin/reviews" replace />} />
 
         {/* Customer Authentication & Account Management Routes */}
         <Route

@@ -2,12 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": false,
-  "crons": [
-    {
-      "path": "/api/cron-publish",
-      "schedule": "0 17 * * *"
-    }
-  ],
   "redirects": [
     {
       "source": "/products/1",
@@ -311,14 +305,6 @@
     {
       "source": "/api/notification/status",
       "destination": "/api/notification-status"
-    },
-    {
-      "source": "/api/cron/publish",
-      "destination": "/api/cron-publish"
-    },
-    {
-      "source": "/api/admin/blog/cron-publish",
-      "destination": "/api/cron-publish"
     },
     {
       "source": "/api/admin/blog/:path*",
