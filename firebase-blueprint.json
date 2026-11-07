@@ -36,6 +36,21 @@
           "type": "boolean",
           "description": "Whether customer email has been verified"
         },
+        "accountType": {
+          "type": "string",
+          "description": "Customer membership tier or account classification",
+          "maxLength": 50
+        },
+        "deliveryAddress": {
+          "type": "string",
+          "description": "Primary delivery street address",
+          "maxLength": 500
+        },
+        "notes": {
+          "type": "string",
+          "description": "Customer delivery preferences or notes",
+          "maxLength": 1000
+        },
         "savedAddresses": {
           "type": "array",
           "description": "Array of saved delivery addresses for expedited checkout"

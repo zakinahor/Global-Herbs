@@ -21,7 +21,7 @@ import {
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
-import { auth, db, googleProvider } from '../lib/firebase';
+import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../lib/firebase';
 
 export interface SavedAddress {
   id?: string;
@@ -131,12 +131,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadCustomerProfile = useCallback(async (fUser: FirebaseUser) => {
     try {
       const userDocRef = doc(db, 'customers', fUser.uid);
-      const userDocSnap = await getDoc(userDocRef);
+      let userDocSnap;
+      try {
+        userDocSnap = await getDoc(userDocRef);
+      } catch (docErr) {
+        handleFirestoreError(docErr, OperationType.GET, `customers/${fUser.uid}`);
+      }
 
       const idToken = await fUser.getIdToken();
       setToken(idToken);
 
-      if (userDocSnap.exists()) {
+      if (userDocSnap && userDocSnap.exists()) {
         const data = userDocSnap.data();
         const profile: AuthUser = {
           id: fUser.uid,
@@ -164,19 +169,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           emailVerified: fUser.emailVerified,
           savedAddresses: [],
         };
-        await setDoc(userDocRef, {
-          customerId: fUser.uid,
-          fullName: initialProfile.name,
-          email: initialProfile.email,
-          createdAt: initialProfile.createdAt,
-          emailVerified: initialProfile.emailVerified,
-          accountType: initialProfile.accountType,
-          savedAddresses: [],
-        });
+        try {
+          await setDoc(userDocRef, {
+            customerId: fUser.uid,
+            fullName: initialProfile.name,
+            email: initialProfile.email,
+            createdAt: initialProfile.createdAt,
+            emailVerified: initialProfile.emailVerified,
+            accountType: initialProfile.accountType,
+            savedAddresses: [],
+          });
+        } catch (setErr) {
+          handleFirestoreError(setErr, OperationType.CREATE, `customers/${fUser.uid}`);
+        }
         setUser(initialProfile);
       }
     } catch (err) {
-      console.error('[AuthContext] Error loading Firestore profile:', err);
+      console.warn('[AuthContext] Firestore profile sync notice (falling back to auth info):', err);
       // Fallback to basic Firebase user info
       setUser({
         id: fUser.uid,
@@ -256,7 +265,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           : [],
       };
 
-      await setDoc(doc(db, 'customers', fUser.uid), customerDoc);
+      try {
+        await setDoc(doc(db, 'customers', fUser.uid), customerDoc);
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.CREATE, `customers/${fUser.uid}`);
+      }
 
       // Send Firebase Email Verification
       try {
@@ -403,7 +416,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.deliveryAddress !== undefined) updatePayload.deliveryAddress = data.deliveryAddress.trim();
       if (data.notes !== undefined) updatePayload.notes = data.notes.trim();
 
-      await setDoc(userDocRef, updatePayload, { merge: true });
+      try {
+        await setDoc(userDocRef, updatePayload, { merge: true });
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.UPDATE, `customers/${auth.currentUser.uid}`);
+      }
 
       // If name changed, update Firebase Auth profile as well
       if (data.name) {
@@ -450,15 +467,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const defaultAddr = updatedAddresses.find((a) => a.isDefault) || updatedAddresses[0];
 
-      await setDoc(
-        doc(db, 'customers', auth.currentUser.uid),
-        {
-          savedAddresses: updatedAddresses,
-          defaultShippingAddress: defaultAddr || null,
-          updatedAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
+      try {
+        await setDoc(
+          doc(db, 'customers', auth.currentUser.uid),
+          {
+            savedAddresses: updatedAddresses,
+            defaultShippingAddress: defaultAddr || null,
+            updatedAt: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.UPDATE, `customers/${auth.currentUser.uid}`);
+      }
 
       setUser((prev) => (prev ? { ...prev, savedAddresses: updatedAddresses, defaultShippingAddress: defaultAddr } : null));
       return { success: true };
@@ -477,15 +498,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const updated = existing.filter((_, idx) => idx !== addressIndex);
       const defaultAddr = updated.find((a) => a.isDefault) || updated[0];
 
-      await setDoc(
-        doc(db, 'customers', auth.currentUser.uid),
-        {
-          savedAddresses: updated,
-          defaultShippingAddress: defaultAddr || null,
-          updatedAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
+      try {
+        await setDoc(
+          doc(db, 'customers', auth.currentUser.uid),
+          {
+            savedAddresses: updated,
+            defaultShippingAddress: defaultAddr || null,
+            updatedAt: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.UPDATE, `customers/${auth.currentUser.uid}`);
+      }
 
       setUser((prev) => (prev ? { ...prev, savedAddresses: updated, defaultShippingAddress: defaultAddr } : null));
       return { success: true };
@@ -625,11 +650,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
 
       // Save to customer's Firestore orders subcollection
-      await setDoc(doc(db, 'customers', auth.currentUser.uid, 'orders', cleanOrderId), {
-        ...claimedOrder,
-        customerId: auth.currentUser.uid,
-        customerEmail: user.email,
-      });
+      try {
+        await setDoc(doc(db, 'customers', auth.currentUser.uid, 'orders', cleanOrderId), {
+          ...claimedOrder,
+          customerId: auth.currentUser.uid,
+          customerEmail: user.email,
+        });
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.CREATE, `customers/${auth.currentUser.uid}/orders/${cleanOrderId}`);
+      }
 
       return { success: true, order: claimedOrder };
     } catch (err: any) {
@@ -677,7 +706,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         createdAt: new Date().toISOString(),
       };
 
-      await setDoc(doc(db, 'customers', auth.currentUser.uid, 'orders', orderId), customerOrderRecord);
+      try {
+        await setDoc(doc(db, 'customers', auth.currentUser.uid, 'orders', orderId), customerOrderRecord);
+      } catch (setErr) {
+        handleFirestoreError(setErr, OperationType.CREATE, `customers/${auth.currentUser.uid}/orders/${orderId}`);
+      }
       return true;
     } catch (err) {
       console.error('[SaveOrderToAccount Error]', err);

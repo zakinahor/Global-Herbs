@@ -31,7 +31,7 @@ service cloud.firestore {
     // Customer profile validation helper
     function isValidCustomer(data, userId) {
       return data.keys().hasAll(['customerId', 'email', 'createdAt']) &&
-             data.keys().hasOnly(['customerId', 'fullName', 'email', 'phone', 'createdAt', 'updatedAt', 'emailVerified', 'savedAddresses', 'defaultShippingAddress', 'accountType']) &&
+             data.keys().hasOnly(['customerId', 'fullName', 'email', 'phone', 'accountType', 'deliveryAddress', 'notes', 'createdAt', 'updatedAt', 'emailVerified', 'savedAddresses', 'defaultShippingAddress']) &&
              data.customerId is string &&
              data.customerId == userId &&
              data.email is string &&
@@ -39,8 +39,13 @@ service cloud.firestore {
              data.createdAt is string &&
              (!('fullName' in data) || (data.fullName is string && data.fullName.size() <= 100)) &&
              (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
+             (!('accountType' in data) || (data.accountType is string && data.accountType.size() <= 50)) &&
+             (!('deliveryAddress' in data) || (data.deliveryAddress is string && data.deliveryAddress.size() <= 500)) &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 1000)) &&
+             (!('updatedAt' in data) || data.updatedAt is string) &&
              (!('emailVerified' in data) || data.emailVerified is bool) &&
-             (!('savedAddresses' in data) || (data.savedAddresses is list && data.savedAddresses.size() <= 20));
+             (!('savedAddresses' in data) || (data.savedAddresses is list && data.savedAddresses.size() <= 20)) &&
+             (!('defaultShippingAddress' in data) || data.defaultShippingAddress is map || data.defaultShippingAddress == null);
     }
 
     // Customer order validation helper
@@ -59,11 +64,10 @@ service cloud.firestore {
 
     // Customers collection: Isolated to authenticated owner
     match /customers/{customerId} {
-      allow get: if isOwner(customerId) && isValidId(customerId);
+      allow get: if isOwner(customerId);
       allow list: if isSignedIn() && resource.data.customerId == request.auth.uid;
-      allow create: if isOwner(customerId) && isValidId(customerId) && isValidCustomer(incoming(), customerId);
+      allow create: if isOwner(customerId) && isValidCustomer(incoming(), customerId);
       allow update: if isOwner(customerId) &&
-                       isValidId(customerId) &&
                        isValidCustomer(incoming(), customerId) &&
                        incoming().customerId == existing().customerId &&
                        incoming().createdAt == existing().createdAt;
@@ -71,10 +75,9 @@ service cloud.firestore {
 
       // Customer Orders subcollection: Private to customer
       match /orders/{orderId} {
-        allow get: if isOwner(customerId) && isValidId(customerId) && isValidId(orderId);
-        allow list: if isOwner(customerId) && isValidId(customerId);
+        allow get: if isOwner(customerId) && isValidId(orderId);
+        allow list: if isOwner(customerId);
         allow create: if isOwner(customerId) &&
-                         isValidId(customerId) &&
                          isValidId(orderId) &&
                          isValidCustomerOrder(incoming(), customerId);
         // Customers are strictly forbidden from changing order fulfillment or payment status
