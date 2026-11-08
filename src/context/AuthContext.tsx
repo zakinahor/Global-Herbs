@@ -278,6 +278,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('[Auth] Verification email rate limited or deferred:', e);
       }
 
+      // Automatically notify administrator of new customer registration (non-blocking)
+      try {
+        fetch('/api/auth/notify-registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: payload.name.trim(),
+            email: emailClean,
+            phone: payload.phone ? payload.phone.trim() : undefined,
+            accountStatus: 'Active (Email Verification Pending)',
+            accountType: payload.accountType || 'Personal / Recreational',
+            customerId: fUser.uid,
+          }),
+        }).catch((notifErr) => {
+          console.warn('[Auth] Non-blocking admin notification dispatch warning:', notifErr);
+        });
+      } catch (err) {
+        console.warn('[Auth] Failed to dispatch admin notification:', err);
+      }
+
       await loadCustomerProfile(fUser);
 
       return {

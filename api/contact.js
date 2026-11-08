@@ -556,11 +556,25 @@ async function sendCustomerInquiryNotification(inquiry) {
     `----------------------------------------`,
     cleanMessage || "(No additional message text provided)"
   ].filter((line) => line !== "").join("\n");
+  const isProduct = Boolean(inquiry.productReference) || inquiryType.toLowerCase().includes('product');
+  const isNewsletter = inquiryType.toLowerCase().includes('newsletter') || cleanSubject.toLowerCase().includes('newsletter');
+
+  let classifiedSubject = `NEW CONTACT MESSAGE – GLOBAL HERBS: ${cleanSubject}`;
+  let eventHeadline = 'New Website Contact Form Submission';
+  if (isProduct) {
+    const prodRef = inquiry.productReference || cleanSubject;
+    classifiedSubject = `NEW PRODUCT ENQUIRY – GLOBAL HERBS: ${prodRef}`;
+    eventHeadline = 'New Botanical Product Enquiry';
+  } else if (isNewsletter) {
+    classifiedSubject = `NEW NEWSLETTER SUBSCRIPTION – GLOBAL HERBS: ${cleanEmail}`;
+    eventHeadline = 'New VIP Newsletter Subscription';
+  }
+
   const payload = {
     orderNumber: inquiryId,
     orderDate: submittedAt,
-    status: `${inquiryType}: ${cleanSubject}`,
-    subject: `[${inquiryType}] ${cleanSubject} \u2014 ${cleanName}`,
+    status: isProduct ? 'Product Enquiry' : isNewsletter ? 'Newsletter Subscription' : 'Contact Message',
+    subject: classifiedSubject,
     recipient: adminEmail,
     adminEmail,
     customer: {
@@ -568,11 +582,10 @@ async function sendCustomerInquiryNotification(inquiry) {
       email: cleanEmail,
       phone: cleanPhone || "Not provided"
     },
-    // Non-empty item guarantees the live Google Apps Script endpoint processes the form notification
     items: [
       {
-        name: `${inquiryType}: ${cleanSubject}`,
-        variant: inquiry.productReference || inquiry.orderReference || `From: ${cleanEmail}`,
+        name: isProduct ? `Enquiry: ${inquiry.productReference || cleanSubject}` : isNewsletter ? 'VIP Newsletter Club (Coupon: HERBS15OFF)' : `Contact Message: ${cleanSubject}`,
+        variant: inquiry.productReference ? `Product Ref: ${inquiry.productReference}` : `Sender: ${cleanEmail}`,
         quantity: 1,
         price: "0.00",
         subtotal: "0.00"
@@ -588,19 +601,19 @@ async function sendCustomerInquiryNotification(inquiry) {
     },
     shipping: {
       name: cleanName,
-      address: `Website Form Submission (${inquiryType})`,
+      address: `Website Form Submission (${eventHeadline})`,
       city: cleanPhone ? `Phone: ${cleanPhone}` : "",
       state: "",
       postalCode: "",
       country: "Online Form"
     },
-    paymentMethod: inquiryType,
-    paymentStatus: "Form Submitted \u2014 Action Required",
+    paymentMethod: isProduct ? 'Product Enquiry' : isNewsletter ? 'Newsletter Signup' : 'Contact Message',
+    paymentStatus: "Action Required / Client Inquiry",
     transactionId: inquiryId,
     notes: formattedNotes
   };
   console.log(
-    `[Customer Form Notification] Dispatching ${inquiryType} (#${inquiryId}) from ${cleanEmail} to admin (${adminEmail})`
+    `[Customer Form Notification] Dispatching ${classifiedSubject} (#${inquiryId}) from ${cleanEmail} to admin (${adminEmail})`
   );
   return sendOrderNotification(payload);
 }

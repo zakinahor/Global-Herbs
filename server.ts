@@ -20,6 +20,10 @@ import {
   sendOrderNotification,
   sendCustomerOrderConfirmation,
   sendCustomerInquiryNotification,
+  sendContactMessageNotification,
+  sendProductEnquiryNotification,
+  sendNewsletterSubscriptionNotification,
+  sendCustomerRegistrationNotification,
   markOrderProcessed,
   NotificationStatus,
 } from './lib/email/orderNotification';
@@ -717,17 +721,35 @@ async function startServer() {
     persistSubmissions();
 
     // Dispatch real-time email notification to admin with customer Reply-To
-    const notificationResult = await sendCustomerInquiryNotification({
-      id: submissionId,
-      name: cleanName,
-      email: cleanEmail,
-      phone: cleanPhone,
-      subject: cleanSubject,
-      message: cleanMessage,
-      type: inquiryType,
-      productReference,
-      orderReference,
-    });
+    const isProductEnquiry = Boolean(productReference) || cleanSubject.toLowerCase().includes('sample') || type === 'sample_request';
+    const isNewsletter = type === 'newsletter_subscription' || cleanSubject.toLowerCase().includes('newsletter');
+
+    let notificationResult;
+    if (isProductEnquiry) {
+      notificationResult = await sendProductEnquiryNotification({
+        id: submissionId,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        productReference: productReference || 'Botanical Product Sample Pack',
+        message: cleanMessage,
+        subject: cleanSubject,
+      });
+    } else if (isNewsletter) {
+      notificationResult = await sendNewsletterSubscriptionNotification({
+        email: cleanEmail,
+        discountCode: 'HERBS15OFF',
+      });
+    } else {
+      notificationResult = await sendContactMessageNotification({
+        id: submissionId,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        subject: cleanSubject,
+        message: cleanMessage,
+      });
+    }
 
     submission.notificationStatus = notificationResult.notificationStatus;
     submission.notificationMessageId = notificationResult.notificationMessageId;
@@ -813,23 +835,13 @@ async function startServer() {
       console.log(`[Member Auth] Registered new member: ${cleanName} (${cleanEmail}) [${newUser.accountType}]`);
 
       // Await admin notification so serverless/container execution never drops it
-      const notifResult = await sendCustomerInquiryNotification({
-        id: `REG-${userId}`,
+      const notifResult = await sendCustomerRegistrationNotification({
         name: cleanName,
         email: cleanEmail,
         phone: newUser.phone,
-        subject: `New Member Registration: ${cleanName} (${newUser.accountType})`,
-        message:
-          `A new member account has been registered on Global Herbs Inc:\n\n` +
-          `Member ID: ${userId}\n` +
-          `Name: ${cleanName}\n` +
-          `Email: ${cleanEmail}\n` +
-          `Account Tier: ${newUser.accountType}\n` +
-          `Phone: ${newUser.phone || 'Not provided'}\n` +
-          `Default Delivery Address: ${newUser.deliveryAddress || 'Not provided'}\n` +
-          `Notes / Preferences: ${newUser.notes || 'None'}\n` +
-          `Registered At: ${newUser.createdAt}`,
-        type: 'Dispensary Member Registration',
+        accountStatus: 'Active',
+        accountType: newUser.accountType,
+        customerId: userId,
       });
 
       return res.status(201).json({
@@ -844,6 +856,58 @@ async function startServer() {
       return res.status(500).json({
         success: false,
         error: 'An internal error occurred during registration. Please try again.',
+      });
+    }
+  });
+
+  // 1b. Customer Registration Notification Endpoint (from Firebase Auth / Frontend)
+  app.post('/api/auth/notify-registration', async (req, res) => {
+    try {
+      const { name, email, phone, accountStatus, accountType, customerId } = req.body || {};
+
+      if (!email || typeof email !== 'string' || !email.includes('@')) {
+        return res.status(400).json({ success: false, error: 'A valid customer email address is required.' });
+      }
+
+      const cleanName = (name || 'New Registered Customer').trim();
+      const cleanEmail = email.trim().toLowerCase();
+
+      // Deduplicate rapid duplicate notifications within 60 seconds
+      const dedupKey = `reg-notif:${cleanEmail}`;
+      const recent = recentFormHashes.get(dedupKey);
+      if (recent && Date.now() - recent.timestamp < 60000) {
+        return res.status(200).json({
+          ...recent.result,
+          duplicateSuppressed: true,
+        });
+      }
+
+      const notifResult = await sendCustomerRegistrationNotification({
+        name: cleanName,
+        email: cleanEmail,
+        phone: phone ? String(phone).trim() : undefined,
+        accountStatus: accountStatus || 'Active',
+        accountType: accountType || 'Personal / Recreational',
+        customerId: customerId || undefined,
+      });
+
+      const responsePayload = {
+        success: notifResult.success,
+        recipient: notifResult.recipient,
+        notificationStatus: notifResult.notificationStatus,
+        notificationMessageId: notifResult.notificationMessageId,
+        notificationSentAt: notifResult.notificationSentAt,
+      };
+
+      recentFormHashes.set(dedupKey, { timestamp: Date.now(), result: responsePayload });
+
+      return res.status(200).json(responsePayload);
+    } catch (err: any) {
+      console.error('[Notify Registration Endpoint Error]', err);
+      return res.status(200).json({
+        success: false,
+        error: err?.message || 'Notification encountered an internal error',
+        notificationStatus: 'failed',
       });
     }
   });
@@ -1428,20 +1492,24 @@ async function startServer() {
     persistSubmissions();
 
     // 1. Dispatch real-time email notification to admin with customer Reply-To
-    const notificationResult = await sendCustomerInquiryNotification({
-      id: submissionId,
-      name: cleanName,
-      email: cleanEmail,
-      phone: cleanPhone,
-      subject: cleanSubject,
-      message: cleanMessage,
-      type: 'Customer Contact Form',
-      productReference,
-      orderReference,
-      metadata: {
-        NewsletterOptIn: subscribeNewsletter ? 'Yes' : 'No',
-      },
-    });
+    const notificationResult = productReference
+      ? await sendProductEnquiryNotification({
+          id: submissionId,
+          name: cleanName,
+          email: cleanEmail,
+          phone: cleanPhone,
+          productReference,
+          message: cleanMessage,
+          subject: cleanSubject,
+        })
+      : await sendContactMessageNotification({
+          id: submissionId,
+          name: cleanName,
+          email: cleanEmail,
+          phone: cleanPhone,
+          subject: cleanSubject,
+          message: cleanMessage,
+        });
 
     // 2. Update persistent submission record with notification status
     submissionRecord.notificationStatus = notificationResult.notificationStatus;
@@ -1523,19 +1591,10 @@ async function startServer() {
     contactSubmissions.push(subRecord);
     persistSubmissions();
 
-    // Notify admin about new newsletter / waitlist subscriber (awaited)
-    const notificationResult = await sendCustomerInquiryNotification({
-      id: subId,
-      name: 'New Subscriber / VIP Lead',
+    // Notify admin about new newsletter subscriber (awaited)
+    const notificationResult = await sendNewsletterSubscriptionNotification({
       email: cleanEmail,
-      subject: `New VIP Newsletter Subscriber: ${cleanEmail}`,
-      message: [
-        `A customer has subscribed to the Global Herbs newsletter / VIP access club:`,
-        `Subscriber Email: ${cleanEmail}`,
-        `Discount Coupon Issued: HERBS15OFF`,
-        `Timestamp: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}`,
-      ].join('\n'),
-      type: 'VIP Newsletter Subscription',
+      discountCode: 'HERBS15OFF',
     });
 
     subRecord.notificationStatus = notificationResult.notificationStatus;

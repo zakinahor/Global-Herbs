@@ -86,6 +86,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 flex items-center justify-center font-sans">
       <SEOHead
+        activePage="login"
         customTitle="Customer Sign In | Global Herbs Online Dispensary"
         customDescription="Sign in to your Global Herbs customer account. Access order history, track stealth parcels, manage delivery addresses, and view your verified client profile."
       />

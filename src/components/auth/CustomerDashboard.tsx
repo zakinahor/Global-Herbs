@@ -295,6 +295,7 @@ export default function CustomerDashboard() {
   return (
     <div className="min-h-[85vh] bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 font-sans text-left">
       <SEOHead
+        activePage="account"
         customTitle="Customer Dashboard | Global Herbs Online Dispensary"
         customDescription="Manage your Global Herbs customer profile, view itemized past orders, track live stealth dispatches, and configure saved delivery addresses."
       />

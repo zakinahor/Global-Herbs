@@ -183,6 +183,32 @@ export function getPage(pathname: string): SeoPage | null {
       schema: [
         {
           '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': `${BASE_URL}/#organization`,
+          name: 'Global Herbs',
+          alternateName: 'Global Herbs Inc.',
+          url: `${BASE_URL}/`,
+          logo: `${BASE_URL}/api/logo.jpg`,
+          email: 'globalherbsinc@gmail.com',
+          telephone: '+1-213-280-1161',
+          sameAs: [
+            'https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A',
+            'https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr',
+            'https://www.tiktok.com/@global.herbs6',
+            'https://www.reddit.com/u/globalherbsinc',
+          ],
+          contactPoint: [
+            {
+              '@type': 'ContactPoint',
+              telephone: '+1-213-280-1161',
+              contactType: 'Customer Service',
+              areaServed: 'US',
+              availableLanguage: ['English', 'Spanish', 'French'],
+            },
+          ],
+        },
+        {
+          '@context': 'https://schema.org',
           '@type': 'WebSite',
           '@id': `${BASE_URL}/#website`,
           url: `${BASE_URL}/`,

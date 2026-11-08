@@ -53,9 +53,20 @@ function doPost(e) {
 
     // Determine subject line
     var isCustomerConfirmation = (recipientEmail.toLowerCase() !== ADMIN_RECIPIENT_EMAIL.toLowerCase());
-    var defaultSubject = isCustomerConfirmation
-      ? ("Order Confirmation #" + referenceId + " — Global Herbs Inc.")
-      : ("New Order #" + referenceId + " — " + customerName + " — $" + resolvedTotal.toFixed(2) + " " + resolvedCurrency);
+    var defaultSubject;
+    if (isCustomerConfirmation) {
+      defaultSubject = "Order Confirmation #" + referenceId + " — Global Herbs Inc.";
+    } else if (data.status === "Customer Registration" || String(data.subject || "").includes("REGISTRATION")) {
+      defaultSubject = "NEW CUSTOMER REGISTRATION – GLOBAL HERBS";
+    } else if (data.productReference || String(data.subject || "").includes("PRODUCT ENQUIRY")) {
+      defaultSubject = "NEW PRODUCT ENQUIRY – GLOBAL HERBS: " + (data.productReference || customerName);
+    } else if (String(data.subject || "").includes("NEWSLETTER") || data.type === "newsletter_subscription") {
+      defaultSubject = "NEW NEWSLETTER SUBSCRIPTION – GLOBAL HERBS: " + customerEmail;
+    } else if (String(data.subject || "").includes("CONTACT") || data.type === "contact_form") {
+      defaultSubject = "NEW CONTACT MESSAGE – GLOBAL HERBS: " + (data.subject || "Customer Inquiry");
+    } else {
+      defaultSubject = "NEW CUSTOMER ORDER #" + referenceId + " — " + customerName + " — $" + resolvedTotal.toFixed(2) + " " + resolvedCurrency;
+    }
     var subject = String(data.subject || defaultSubject).trim();
 
     // Build email bodies (prefer provided HTML/text, otherwise dynamically generate)

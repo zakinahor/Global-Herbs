@@ -109,6 +109,8 @@ export interface OrderNotificationInput {
   recipient?: string;
   adminEmail?: string;
   forceRetry?: boolean;
+  text?: string;
+  html?: string;
 }
 
 export interface CleanAppsScriptPayload {
@@ -179,6 +181,8 @@ export interface CleanAppsScriptPayload {
     email?: string;
   };
   notes: string;
+  text?: string;
+  html?: string;
   sendCustomerConfirmation?: boolean;
 }
 
@@ -581,7 +585,7 @@ export function formatOrderPayload(
 
   const subject =
     order.subject ||
-    `New Order #${orderNumber} — ${customerName} — $${total} ${currency}`;
+    `NEW CUSTOMER ORDER #${orderNumber} — ${customerName} — $${total} ${currency}`;
 
   return {
     orderNumber,
@@ -644,6 +648,8 @@ export function formatOrderPayload(
       email: customerEmail,
     },
     notes: enrichedNotes,
+    text: order.text || enrichedNotes,
+    html: order.html || undefined,
     sendCustomerConfirmation: true,
   };
 }
@@ -1107,6 +1113,943 @@ export async function sendCustomerOrderConfirmation(
   };
 }
 
+function escapeHtml(str: string): string {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+export interface ContactMessageInput {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  submissionDate?: string;
+}
+
+/**
+ * Sends a distinct NEW CONTACT MESSAGE email to globalherbsinc@gmail.com
+ */
+export async function sendContactMessageNotification(
+  input: ContactMessageInput
+): Promise<OrderNotificationResult> {
+  const cleanName = (input.name || 'Valued Client').trim();
+  const cleanEmail = sanitizeEmailAddress(input.email) || 'contact@globalherbs.site';
+  const cleanPhone = (input.phone || '').trim();
+  const cleanSubject = (input.subject || 'General Inquiry').trim();
+  const cleanMessage = (input.message || '').trim();
+  const submissionId =
+    input.id ||
+    `CNT-${Date.now().toString(36).toUpperCase()}-${Math.random()
+      .toString(36)
+      .substring(2, 6)
+      .toUpperCase()}`;
+
+  const now = input.submissionDate ? new Date(input.submissionDate) : new Date();
+  const dateStr = now.toLocaleDateString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timeStr = now.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+
+  const adminEmail = getAdminRecipientEmail();
+  const subject = `NEW CONTACT MESSAGE – GLOBAL HERBS: ${cleanSubject}`;
+
+  const plainText = [
+    '==================================================',
+    'GLOBAL HERBS — NEW CONTACT MESSAGE',
+    '==================================================',
+    '',
+    'A new contact message has been submitted on Global Herbs.',
+    '',
+    'Contact Details:',
+    `- Customer Name:   ${cleanName}`,
+    `- Email Address:   ${cleanEmail}`,
+    `- Phone Number:    ${cleanPhone || 'Not provided'}`,
+    `- Subject / Topic: ${cleanSubject}`,
+    `- Submission Date: ${dateStr}`,
+    `- Submission Time: ${timeStr}`,
+    `- Submission ID:   ${submissionId}`,
+    '',
+    'Message:',
+    '--------------------------------------------------',
+    cleanMessage || '(No message provided)',
+    '--------------------------------------------------',
+    '',
+    'Website: https://globalherbs.site',
+    'This notification is for administrative purposes only.',
+  ].join('\n');
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+  <div style="background:#064e3b;padding:24px 28px;color:#ffffff;">
+    <h1 style="margin:0;font-size:22px;letter-spacing:-0.02em;">Global Herbs Inc.</h1>
+    <p style="margin:6px 0 0;font-size:14px;opacity:0.9;">Customer Support Desk &bull; Contact Message</p>
+  </div>
+  <div style="padding:26px 28px;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:24px;">
+      <span style="display:inline-block;color:#166534;font-weight:700;font-size:15px;letter-spacing:0.02em;">
+        NEW CONTACT MESSAGE
+      </span>
+      <p style="margin:6px 0 0;font-size:14px;color:#1f2937;">
+        Topic: <strong>${escapeHtml(cleanSubject)}</strong>
+      </p>
+    </div>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:0 0 12px;">Contact Details</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;width:150px;border-bottom:1px solid #f3f4f6;">Customer Name:</td>
+        <td style="padding:8px 0;font-weight:600;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanName)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Email Address:</td>
+        <td style="padding:8px 0;font-weight:600;color:#059669;border-bottom:1px solid #f3f4f6;">
+          <a href="mailto:${escapeHtml(cleanEmail)}" style="color:#059669;text-decoration:none;">${escapeHtml(cleanEmail)}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Phone Number:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanPhone || 'Not provided')}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Submission Date:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${dateStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Submission Time:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${timeStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;">Submission ID:</td>
+        <td style="padding:8px 0;color:#6b7280;font-family:monospace;">#${submissionId}</td>
+      </tr>
+    </table>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:16px 0 8px;">Message Content</h2>
+    <div style="background:#f9fafb;border-radius:8px;padding:16px;border:1px solid #e5e7eb;white-space:pre-wrap;font-size:14px;color:#1f2937;line-height:1.6;">${escapeHtml(cleanMessage)}</div>
+
+    <p style="margin:20px 0 0;font-size:12px;color:#9ca3af;font-style:italic;">
+      This notification is for administrative purposes only. Click Reply to answer ${escapeHtml(cleanName)} directly.
+    </p>
+  </div>
+  <div style="background:#f9fafb;padding:16px 28px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+    Global Herbs Inc. &bull; Dispensary Care &bull; <a href="https://globalherbs.site" style="color:#059669;text-decoration:none;">globalherbs.site</a>
+  </div>
+</div>
+`;
+
+  const scriptUrl = getAppsScriptUrl();
+  if (!scriptUrl) {
+    const configError = 'GOOGLE_APPS_SCRIPT_URL environment variable is not configured on the server.';
+    return {
+      success: false,
+      orderNumber: submissionId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      unconfigured: true,
+      error: configError,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: configError,
+      notificationAttempts: 0,
+    };
+  }
+
+  const payload: CleanAppsScriptPayload = {
+    orderNumber: submissionId,
+    orderId: submissionId,
+    orderDate: `${dateStr} at ${timeStr}`,
+    status: 'NEW CONTACT MESSAGE',
+    subject,
+    recipient: adminEmail,
+    to: adminEmail,
+    adminEmail,
+    email: adminEmail,
+    emailFrom: getSenderEmail(),
+    currency: 'USD',
+    paymentMethod: 'Contact Form Submission',
+    paymentStatus: 'Action Required',
+    transactionId: submissionId,
+    customer: {
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone || 'Not provided',
+    },
+    items: [
+      {
+        name: `Contact: ${cleanSubject}`,
+        variant: cleanName,
+        quantity: 1,
+        price: '0.00',
+        subtotal: '0.00',
+      },
+    ],
+    totals: {
+      subtotal: '0.00',
+      discount: '0.00',
+      shipping: '0.00',
+      tax: '0.00',
+      total: '0.00',
+      currency: 'USD',
+    },
+    shipping: {
+      address: 'Contact Message',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'Online Form',
+    },
+    notes: plainText,
+    text: plainText,
+    html,
+  };
+
+  const dispatchResult = await postToAppsScriptWithRetry(scriptUrl, payload, 3);
+  if (!dispatchResult.ok) {
+    console.error(`[Contact Notification Failed] ${submissionId}: ${dispatchResult.error}`);
+    return {
+      success: false,
+      orderNumber: submissionId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      error: dispatchResult.error,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: dispatchResult.error,
+      notificationAttempts: dispatchResult.attempts,
+    };
+  }
+
+  const sentAt = new Date().toISOString();
+  markOrderProcessed(submissionId, true, dispatchResult.messageId, sentAt);
+  console.log(`[Contact Notification Sent] ${submissionId} -> ${adminEmail} (msgId: ${dispatchResult.messageId})`);
+
+  return {
+    success: true,
+    orderNumber: submissionId,
+    recipient: adminEmail,
+    replyTo: cleanEmail,
+    error: null,
+    notificationStatus: 'sent',
+    notificationMessageId: dispatchResult.messageId,
+    notificationSentAt: sentAt,
+    notificationError: null,
+    notificationAttempts: dispatchResult.attempts,
+  };
+}
+
+export interface ProductEnquiryInput {
+  id?: string;
+  productName?: string;
+  productReference?: string;
+  productId?: string | number;
+  productSku?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  submissionDate?: string;
+}
+
+/**
+ * Sends a distinct NEW PRODUCT ENQUIRY email to globalherbsinc@gmail.com
+ */
+export async function sendProductEnquiryNotification(
+  input: ProductEnquiryInput
+): Promise<OrderNotificationResult> {
+  const cleanProductRef = (input.productReference || input.productName || 'Dispensary Product').trim();
+  const cleanName = (input.name || 'Valued Prospect').trim();
+  const cleanEmail = sanitizeEmailAddress(input.email) || 'inquiry@globalherbs.site';
+  const cleanPhone = (input.phone || '').trim();
+  const cleanMessage = (input.message || '').trim();
+  const enquiryId =
+    input.id ||
+    `ENQ-${Date.now().toString(36).toUpperCase()}-${Math.random()
+      .toString(36)
+      .substring(2, 6)
+      .toUpperCase()}`;
+
+  const now = input.submissionDate ? new Date(input.submissionDate) : new Date();
+  const dateStr = now.toLocaleDateString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timeStr = now.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+
+  const adminEmail = getAdminRecipientEmail();
+  const subject = `NEW PRODUCT ENQUIRY – GLOBAL HERBS: ${cleanProductRef}`;
+
+  const plainText = [
+    '==================================================',
+    'GLOBAL HERBS — NEW PRODUCT ENQUIRY',
+    '==================================================',
+    '',
+    'A new product enquiry has been submitted on Global Herbs.',
+    '',
+    'Product & Customer Details:',
+    `- Product Name / Ref: ${cleanProductRef}`,
+    `- Customer Name:      ${cleanName}`,
+    `- Email Address:      ${cleanEmail}`,
+    `- Phone Number:       ${cleanPhone || 'Not provided'}`,
+    `- Submission Date:    ${dateStr}`,
+    `- Submission Time:    ${timeStr}`,
+    `- Enquiry ID:         ${enquiryId}`,
+    '',
+    'Enquiry Message:',
+    '--------------------------------------------------',
+    cleanMessage || '(No message provided)',
+    '--------------------------------------------------',
+    '',
+    'Website: https://globalherbs.site',
+    'This notification is for administrative purposes only.',
+  ].join('\n');
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+  <div style="background:#064e3b;padding:24px 28px;color:#ffffff;">
+    <h1 style="margin:0;font-size:22px;letter-spacing:-0.02em;">Global Herbs Inc.</h1>
+    <p style="margin:6px 0 0;font-size:14px;opacity:0.9;">Product Desk &bull; Customer Enquiry</p>
+  </div>
+  <div style="padding:26px 28px;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:24px;">
+      <span style="display:inline-block;color:#166534;font-weight:700;font-size:15px;letter-spacing:0.02em;">
+        NEW PRODUCT ENQUIRY
+      </span>
+      <p style="margin:6px 0 0;font-size:14px;color:#1f2937;">
+        Target Product: <strong>${escapeHtml(cleanProductRef)}</strong>
+      </p>
+    </div>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:0 0 12px;">Enquiry Details</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;width:150px;border-bottom:1px solid #f3f4f6;">Product:</td>
+        <td style="padding:8px 0;font-weight:600;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanProductRef)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Customer Name:</td>
+        <td style="padding:8px 0;font-weight:600;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanName)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Email Address:</td>
+        <td style="padding:8px 0;font-weight:600;color:#059669;border-bottom:1px solid #f3f4f6;">
+          <a href="mailto:${escapeHtml(cleanEmail)}" style="color:#059669;text-decoration:none;">${escapeHtml(cleanEmail)}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Phone Number:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanPhone || 'Not provided')}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Submission Date:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${dateStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Submission Time:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${timeStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;">Enquiry ID:</td>
+        <td style="padding:8px 0;color:#6b7280;font-family:monospace;">#${enquiryId}</td>
+      </tr>
+    </table>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:16px 0 8px;">Enquiry Message</h2>
+    <div style="background:#f9fafb;border-radius:8px;padding:16px;border:1px solid #e5e7eb;white-space:pre-wrap;font-size:14px;color:#1f2937;line-height:1.6;">${escapeHtml(cleanMessage)}</div>
+
+    <p style="margin:20px 0 0;font-size:12px;color:#9ca3af;font-style:italic;">
+      This notification is for administrative purposes only. Click Reply to answer ${escapeHtml(cleanName)} directly.
+    </p>
+  </div>
+  <div style="background:#f9fafb;padding:16px 28px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+    Global Herbs Inc. &bull; Dispensary Care &bull; <a href="https://globalherbs.site" style="color:#059669;text-decoration:none;">globalherbs.site</a>
+  </div>
+</div>
+`;
+
+  const scriptUrl = getAppsScriptUrl();
+  if (!scriptUrl) {
+    const configError = 'GOOGLE_APPS_SCRIPT_URL environment variable is not configured on the server.';
+    return {
+      success: false,
+      orderNumber: enquiryId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      unconfigured: true,
+      error: configError,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: configError,
+      notificationAttempts: 0,
+    };
+  }
+
+  const payload: CleanAppsScriptPayload = {
+    orderNumber: enquiryId,
+    orderId: enquiryId,
+    orderDate: `${dateStr} at ${timeStr}`,
+    status: 'NEW PRODUCT ENQUIRY',
+    subject,
+    recipient: adminEmail,
+    to: adminEmail,
+    adminEmail,
+    email: adminEmail,
+    emailFrom: getSenderEmail(),
+    currency: 'USD',
+    paymentMethod: 'Product Enquiry',
+    paymentStatus: 'Action Required',
+    transactionId: enquiryId,
+    customer: {
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone || 'Not provided',
+    },
+    items: [
+      {
+        name: `Enquiry: ${cleanProductRef}`,
+        variant: cleanName,
+        quantity: 1,
+        price: '0.00',
+        subtotal: '0.00',
+      },
+    ],
+    totals: {
+      subtotal: '0.00',
+      discount: '0.00',
+      shipping: '0.00',
+      tax: '0.00',
+      total: '0.00',
+      currency: 'USD',
+    },
+    shipping: {
+      address: 'Product Enquiry',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'Online Form',
+    },
+    notes: plainText,
+    text: plainText,
+    html,
+  };
+
+  const dispatchResult = await postToAppsScriptWithRetry(scriptUrl, payload, 3);
+  if (!dispatchResult.ok) {
+    console.error(`[Product Enquiry Failed] ${enquiryId}: ${dispatchResult.error}`);
+    return {
+      success: false,
+      orderNumber: enquiryId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      error: dispatchResult.error,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: dispatchResult.error,
+      notificationAttempts: dispatchResult.attempts,
+    };
+  }
+
+  const sentAt = new Date().toISOString();
+  markOrderProcessed(enquiryId, true, dispatchResult.messageId, sentAt);
+  console.log(`[Product Enquiry Sent] ${enquiryId} -> ${adminEmail} (msgId: ${dispatchResult.messageId})`);
+
+  return {
+    success: true,
+    orderNumber: enquiryId,
+    recipient: adminEmail,
+    replyTo: cleanEmail,
+    error: null,
+    notificationStatus: 'sent',
+    notificationMessageId: dispatchResult.messageId,
+    notificationSentAt: sentAt,
+    notificationError: null,
+    notificationAttempts: dispatchResult.attempts,
+  };
+}
+
+export interface NewsletterSubscriptionInput {
+  id?: string;
+  email: string;
+  name?: string;
+  subject?: string;
+  subscriptionDate?: string;
+  couponCode?: string;
+  discountCode?: string;
+}
+
+/**
+ * Sends a distinct NEW NEWSLETTER SUBSCRIPTION email to globalherbsinc@gmail.com
+ */
+export async function sendNewsletterSubscriptionNotification(
+  input: NewsletterSubscriptionInput
+): Promise<OrderNotificationResult> {
+  const cleanEmail = sanitizeEmailAddress(input.email) || 'subscriber@globalherbs.site';
+  const coupon = (input.discountCode || input.couponCode || 'HERBS15OFF').trim();
+  const subId = `SUB-VIP-${Date.now().toString(36).toUpperCase()}`;
+
+  const now = input.subscriptionDate ? new Date(input.subscriptionDate) : new Date();
+  const dateStr = now.toLocaleDateString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timeStr = now.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+
+  const adminEmail = getAdminRecipientEmail();
+  const subject = `NEW NEWSLETTER SUBSCRIPTION – GLOBAL HERBS: ${cleanEmail}`;
+
+  const plainText = [
+    '==================================================',
+    'GLOBAL HERBS — NEW NEWSLETTER SUBSCRIPTION',
+    '==================================================',
+    '',
+    'A new customer has subscribed to the Global Herbs newsletter.',
+    '',
+    'Subscriber Details:',
+    `- Email Address:      ${cleanEmail}`,
+    `- Subscription Date:  ${dateStr}`,
+    `- Subscription Time:  ${timeStr}`,
+    `- Coupon Code Issued: ${coupon}`,
+    `- Subscription ID:    ${subId}`,
+    '',
+    'Website: https://globalherbs.site',
+    'This notification is for administrative purposes only.',
+  ].join('\n');
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+  <div style="background:#064e3b;padding:24px 28px;color:#ffffff;">
+    <h1 style="margin:0;font-size:22px;letter-spacing:-0.02em;">Global Herbs Inc.</h1>
+    <p style="margin:6px 0 0;font-size:14px;opacity:0.9;">Audience &bull; VIP Newsletter Subscription</p>
+  </div>
+  <div style="padding:26px 28px;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:24px;">
+      <span style="display:inline-block;color:#166534;font-weight:700;font-size:15px;letter-spacing:0.02em;">
+        NEW NEWSLETTER SUBSCRIPTION
+      </span>
+      <p style="margin:6px 0 0;font-size:14px;color:#1f2937;">
+        New subscriber: <strong style="color:#059669;">${escapeHtml(cleanEmail)}</strong>
+      </p>
+    </div>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:0 0 12px;">Subscriber Details</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;width:160px;border-bottom:1px solid #f3f4f6;">Email Address:</td>
+        <td style="padding:8px 0;font-weight:600;color:#059669;border-bottom:1px solid #f3f4f6;">
+          <a href="mailto:${escapeHtml(cleanEmail)}" style="color:#059669;text-decoration:none;">${escapeHtml(cleanEmail)}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Subscription Date:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${dateStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Subscription Time:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${timeStr}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Coupon Issued:</td>
+        <td style="padding:8px 0;color:#111827;font-weight:700;border-bottom:1px solid #f3f4f6;">${escapeHtml(coupon)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;">Subscription ID:</td>
+        <td style="padding:8px 0;color:#6b7280;font-family:monospace;">#${subId}</td>
+      </tr>
+    </table>
+
+    <p style="margin:20px 0 0;font-size:12px;color:#9ca3af;font-style:italic;">
+      This notification is for administrative purposes only.
+    </p>
+  </div>
+  <div style="background:#f9fafb;padding:16px 28px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+    Global Herbs Inc. &bull; Dispensary Care &bull; <a href="https://globalherbs.site" style="color:#059669;text-decoration:none;">globalherbs.site</a>
+  </div>
+</div>
+`;
+
+  const scriptUrl = getAppsScriptUrl();
+  if (!scriptUrl) {
+    const configError = 'GOOGLE_APPS_SCRIPT_URL environment variable is not configured on the server.';
+    return {
+      success: false,
+      orderNumber: subId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      unconfigured: true,
+      error: configError,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: configError,
+      notificationAttempts: 0,
+    };
+  }
+
+  const payload: CleanAppsScriptPayload = {
+    orderNumber: subId,
+    orderId: subId,
+    orderDate: `${dateStr} at ${timeStr}`,
+    status: 'NEW NEWSLETTER SUBSCRIPTION',
+    subject,
+    recipient: adminEmail,
+    to: adminEmail,
+    adminEmail,
+    email: adminEmail,
+    emailFrom: getSenderEmail(),
+    currency: 'USD',
+    paymentMethod: 'Newsletter Subscription',
+    paymentStatus: 'Subscribed',
+    transactionId: subId,
+    customer: {
+      name: 'Newsletter Subscriber',
+      email: cleanEmail,
+      phone: 'Not provided',
+    },
+    items: [
+      {
+        name: 'Newsletter Subscription: ' + cleanEmail,
+        variant: coupon,
+        quantity: 1,
+        price: '0.00',
+        subtotal: '0.00',
+      },
+    ],
+    totals: {
+      subtotal: '0.00',
+      discount: '0.00',
+      shipping: '0.00',
+      tax: '0.00',
+      total: '0.00',
+      currency: 'USD',
+    },
+    shipping: {
+      address: 'Newsletter Subscriber',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'Online Form',
+    },
+    notes: plainText,
+    text: plainText,
+    html,
+  };
+
+  const dispatchResult = await postToAppsScriptWithRetry(scriptUrl, payload, 3);
+  if (!dispatchResult.ok) {
+    console.error(`[Newsletter Notification Failed] ${subId}: ${dispatchResult.error}`);
+    return {
+      success: false,
+      orderNumber: subId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      error: dispatchResult.error,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: dispatchResult.error,
+      notificationAttempts: dispatchResult.attempts,
+    };
+  }
+
+  const sentAt = new Date().toISOString();
+  markOrderProcessed(subId, true, dispatchResult.messageId, sentAt);
+  console.log(`[Newsletter Notification Sent] ${subId} -> ${adminEmail} (msgId: ${dispatchResult.messageId})`);
+
+  return {
+    success: true,
+    orderNumber: subId,
+    recipient: adminEmail,
+    replyTo: cleanEmail,
+    error: null,
+    notificationStatus: 'sent',
+    notificationMessageId: dispatchResult.messageId,
+    notificationSentAt: sentAt,
+    notificationError: null,
+    notificationAttempts: dispatchResult.attempts,
+  };
+}
+
+export interface CustomerRegistrationInput {
+  id?: string;
+  name: string;
+  email: string;
+  phone?: string;
+  accountType?: string;
+  accountStatus?: string;
+  status?: string;
+  customerId?: string;
+  createdAt?: string;
+}
+
+/**
+ * Sends a distinct NEW CUSTOMER REGISTRATION email to globalherbsinc@gmail.com
+ * Formatted exactly per user specifications:
+ *
+ * Subject: NEW CUSTOMER REGISTRATION – GLOBAL HERBS
+ * Body:
+ * A new customer has successfully registered on Global Herbs.
+ * Customer Details:
+ * - Full Name: [Customer Name]
+ * - Email Address: [Customer Email]
+ * - Registration Date: [Date]
+ * - Registration Time: [Time]
+ * - Account Status: [Status]
+ * Website: https://globalherbs.site
+ * This notification is for administrative purposes only.
+ */
+export async function sendCustomerRegistrationNotification(
+  input: CustomerRegistrationInput
+): Promise<OrderNotificationResult> {
+  const cleanName = (input.name || 'Valued Customer').trim();
+  const cleanEmail = sanitizeEmailAddress(input.email) || 'customer@globalherbs.site';
+  const cleanStatus = (input.accountStatus || input.status || 'Active / Verified').trim();
+  const now = input.createdAt ? new Date(input.createdAt) : new Date();
+
+  const regDate = now.toLocaleDateString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const regTime = now.toLocaleTimeString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  });
+
+  const adminEmail = getAdminRecipientEmail();
+  const subject = 'NEW CUSTOMER REGISTRATION – GLOBAL HERBS';
+
+  const plainText = [
+    'A new customer has successfully registered on Global Herbs.',
+    '',
+    'Customer Details:',
+    '',
+    `- Full Name: ${cleanName}`,
+    `- Email Address: ${cleanEmail}`,
+    `- Registration Date: ${regDate}`,
+    `- Registration Time: ${regTime}`,
+    `- Account Status: ${cleanStatus}`,
+    '',
+    'Website: https://globalherbs.site',
+    '',
+    'This notification is for administrative purposes only.',
+  ].join('\n');
+
+  const html = `
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+  <div style="background:#064e3b;padding:24px 28px;color:#ffffff;">
+    <h1 style="margin:0;font-size:22px;letter-spacing:-0.02em;">Global Herbs Inc.</h1>
+    <p style="margin:6px 0 0;font-size:14px;opacity:0.9;">Customer Account System &bull; Registration Notification</p>
+  </div>
+  <div style="padding:26px 28px;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 18px;margin-bottom:24px;">
+      <span style="display:inline-block;color:#166534;font-weight:700;font-size:15px;letter-spacing:0.02em;">
+        NEW CUSTOMER REGISTRATION
+      </span>
+      <p style="margin:6px 0 0;font-size:14px;color:#1f2937;">
+        A new customer has successfully registered on Global Herbs.
+      </p>
+    </div>
+
+    <h2 style="font-size:13px;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin:0 0 12px;">Customer Details</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:24px;">
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;width:150px;border-bottom:1px solid #f3f4f6;">Full Name:</td>
+        <td style="padding:8px 0;font-weight:600;color:#111827;border-bottom:1px solid #f3f4f6;">${escapeHtml(cleanName)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Email Address:</td>
+        <td style="padding:8px 0;font-weight:600;color:#059669;border-bottom:1px solid #f3f4f6;">
+          <a href="mailto:${escapeHtml(cleanEmail)}" style="color:#059669;text-decoration:none;">${escapeHtml(cleanEmail)}</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Registration Date:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${regDate}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;border-bottom:1px solid #f3f4f6;">Registration Time:</td>
+        <td style="padding:8px 0;color:#111827;border-bottom:1px solid #f3f4f6;">${regTime}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#6b7280;">Account Status:</td>
+        <td style="padding:8px 0;color:#111827;font-weight:600;">${escapeHtml(cleanStatus)}</td>
+      </tr>
+    </table>
+
+    <div style="background:#f9fafb;border-radius:8px;padding:12px 16px;border:1px solid #e5e7eb;font-size:13px;color:#4b5563;margin-bottom:16px;">
+      <strong>Website:</strong> <a href="https://globalherbs.site" style="color:#059669;text-decoration:underline;">https://globalherbs.site</a>
+    </div>
+
+    <p style="margin:16px 0 0;font-size:12px;color:#9ca3af;font-style:italic;">
+      This notification is for administrative purposes only.
+    </p>
+  </div>
+  <div style="background:#f9fafb;padding:16px 28px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+    Global Herbs Inc. &bull; Administrative Systems &bull; <a href="https://globalherbs.site" style="color:#059669;text-decoration:none;">globalherbs.site</a>
+  </div>
+</div>
+`;
+
+  // Idempotency check: prevent duplicate registration emails for the same email within 24 hours
+  const regId = `REG-${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  if (isOrderAlreadyProcessed(regId)) {
+    const existing = getProcessedOrderRecord(regId);
+    return {
+      success: true,
+      orderNumber: regId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      duplicateSuppressed: true,
+      notificationStatus: 'sent',
+      notificationMessageId: existing?.messageId || `dup-${regId}`,
+      notificationSentAt: existing?.sentAt || new Date().toISOString(),
+      notificationError: null,
+      notificationAttempts: 1,
+    };
+  }
+
+  const scriptUrl = getAppsScriptUrl();
+  if (!scriptUrl) {
+    const configError = 'GOOGLE_APPS_SCRIPT_URL environment variable is not configured on the server.';
+    return {
+      success: false,
+      orderNumber: regId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      unconfigured: true,
+      error: configError,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: configError,
+      notificationAttempts: 0,
+    };
+  }
+
+  const payload: CleanAppsScriptPayload = {
+    orderNumber: regId,
+    orderId: regId,
+    orderDate: `${regDate} at ${regTime}`,
+    status: 'NEW CUSTOMER REGISTRATION',
+    subject,
+    recipient: adminEmail,
+    to: adminEmail,
+    adminEmail,
+    email: adminEmail,
+    emailFrom: getSenderEmail(),
+    currency: 'USD',
+    paymentMethod: 'Customer Registration',
+    paymentStatus: cleanStatus,
+    transactionId: regId,
+    customer: {
+      name: cleanName,
+      email: cleanEmail,
+      phone: input.phone || 'Not provided',
+    },
+    items: [
+      {
+        name: 'Customer Registration: ' + cleanName,
+        variant: cleanStatus,
+        quantity: 1,
+        price: '0.00',
+        subtotal: '0.00',
+      },
+    ],
+    totals: {
+      subtotal: '0.00',
+      discount: '0.00',
+      shipping: '0.00',
+      tax: '0.00',
+      total: '0.00',
+      currency: 'USD',
+    },
+    shipping: {
+      address: 'Online Registration',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'United States',
+    },
+    notes: plainText,
+    text: plainText,
+    html,
+  };
+
+  const dispatchResult = await postToAppsScriptWithRetry(scriptUrl, payload, 3);
+  if (!dispatchResult.ok) {
+    console.error(`[Registration Notification Failed] ${cleanEmail}: ${dispatchResult.error}`);
+    return {
+      success: false,
+      orderNumber: regId,
+      recipient: adminEmail,
+      replyTo: cleanEmail,
+      error: dispatchResult.error,
+      notificationStatus: 'failed',
+      notificationMessageId: null,
+      notificationSentAt: null,
+      notificationError: dispatchResult.error,
+      notificationAttempts: dispatchResult.attempts,
+    };
+  }
+
+  const sentAt = new Date().toISOString();
+  markOrderProcessed(regId, true, dispatchResult.messageId, sentAt);
+  console.log(`[Registration Notification Sent] ${cleanEmail} -> ${adminEmail} (msgId: ${dispatchResult.messageId})`);
+
+  return {
+    success: true,
+    orderNumber: regId,
+    recipient: adminEmail,
+    replyTo: cleanEmail,
+    error: null,
+    notificationStatus: 'sent',
+    notificationMessageId: dispatchResult.messageId,
+    notificationSentAt: sentAt,
+    notificationError: null,
+    notificationAttempts: dispatchResult.attempts,
+  };
+}
+
 export interface CustomerInquiryInput {
   id?: string;
   name: string;
@@ -1122,116 +2065,47 @@ export interface CustomerInquiryInput {
 }
 
 /**
- * Sends a customer form submission (Contact Form, Support Widget, Product Review,
- * Sample Request, Account Registration, Password Reset, Newsletter Signup) to the
- * configured Admin Email via Google Apps Script.
- *
- * CRITICAL FIX: Always populates a non-empty `items` entry describing the form submission
- * because the deployed Google Apps Script Web App validates `items.length > 0`.
+ * Universal dispatcher for backward compatibility that properly categorizes forms.
  */
 export async function sendCustomerInquiryNotification(
   inquiry: CustomerInquiryInput
 ): Promise<OrderNotificationResult> {
-  const adminEmail =
-    sanitizeEmailAddress(inquiry.recipient) || getAdminRecipientEmail();
-  const inquiryType = (inquiry.type || 'Customer Contact Form').trim();
-  const cleanName = (inquiry.name || 'Valued Customer').trim();
-  const cleanEmail =
-    sanitizeEmailAddress(inquiry.email) || 'inquiry@globalherbs.site';
-  const cleanPhone = (inquiry.phone || '').trim();
-  const cleanSubject = (inquiry.subject || 'Customer Inquiry').trim();
-  const cleanMessage = (inquiry.message || '').trim();
-  const inquiryId =
-    inquiry.id ||
-    `FORM-${Date.now().toString(36).toUpperCase()}-${Math.random()
-      .toString(36)
-      .substring(2, 6)
-      .toUpperCase()}`;
-  const submittedAt = new Date().toLocaleString('en-US', {
-    timeZone: 'America/Los_Angeles',
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  const typeLower = (inquiry.type || '').toLowerCase();
+
+  if (typeLower.includes('newsletter') || typeLower.includes('vip')) {
+    return sendNewsletterSubscriptionNotification({
+      email: inquiry.email,
+    });
+  }
+
+  if (typeLower.includes('registration') || typeLower.includes('member') || typeLower.includes('signup')) {
+    return sendCustomerRegistrationNotification({
+      name: inquiry.name,
+      email: inquiry.email,
+      phone: inquiry.phone,
+      accountType: inquiry.type,
+    });
+  }
+
+  if (typeLower.includes('sample') || typeLower.includes('product') || inquiry.productReference) {
+    return sendProductEnquiryNotification({
+      id: inquiry.id,
+      productName: inquiry.productReference || inquiry.subject || 'Dispensary Product',
+      name: inquiry.name,
+      email: inquiry.email,
+      phone: inquiry.phone,
+      message: inquiry.message,
+    });
+  }
+
+  return sendContactMessageNotification({
+    id: inquiry.id,
+    name: inquiry.name,
+    email: inquiry.email,
+    phone: inquiry.phone,
+    subject: inquiry.subject,
+    message: inquiry.message,
   });
-
-  const metadataLines = inquiry.metadata
-    ? Object.entries(inquiry.metadata)
-        .filter(([, v]) => v !== undefined && v !== null && v !== '')
-        .map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`)
-    : [];
-
-  const formattedNotes = [
-    `CUSTOMER INQUIRY / FORM SUBMISSION`,
-    `========================================`,
-    `Submission ID: ${inquiryId}`,
-    `Form Type: ${inquiryType}`,
-    `Subject / Topic: ${cleanSubject}`,
-    `Submission Date/Time: ${submittedAt}`,
-    `Customer Name: ${cleanName}`,
-    `Customer Email (Reply-To): ${cleanEmail}`,
-    `Customer Phone: ${cleanPhone || 'Not provided'}`,
-    inquiry.productReference ? `Product Reference: ${inquiry.productReference}` : '',
-    inquiry.orderReference ? `Order Reference: ${inquiry.orderReference}` : '',
-    ...metadataLines,
-    ``,
-    `SUBMITTED MESSAGE / DETAILS:`,
-    `----------------------------------------`,
-    cleanMessage || '(No additional message text provided)',
-  ]
-    .filter((line) => line !== '')
-    .join('\n');
-
-  const payload: OrderNotificationInput = {
-    orderNumber: inquiryId,
-    orderDate: submittedAt,
-    status: `${inquiryType}: ${cleanSubject}`,
-    subject: `[${inquiryType}] ${cleanSubject} — ${cleanName}`,
-    recipient: adminEmail,
-    adminEmail,
-    customer: {
-      name: cleanName,
-      email: cleanEmail,
-      phone: cleanPhone || 'Not provided',
-    },
-    // Non-empty item guarantees the live Google Apps Script endpoint processes the form notification
-    items: [
-      {
-        name: `${inquiryType}: ${cleanSubject}`,
-        variant: inquiry.productReference || inquiry.orderReference || `From: ${cleanEmail}`,
-        quantity: 1,
-        price: '0.00',
-        subtotal: '0.00',
-      },
-    ],
-    totals: {
-      subtotal: '0.00',
-      discount: '0.00',
-      shipping: '0.00',
-      tax: '0.00',
-      total: '0.00',
-      currency: 'USD',
-    },
-    shipping: {
-      name: cleanName,
-      address: `Website Form Submission (${inquiryType})`,
-      city: cleanPhone ? `Phone: ${cleanPhone}` : '',
-      state: '',
-      postalCode: '',
-      country: 'Online Form',
-    },
-    paymentMethod: inquiryType,
-    paymentStatus: 'Form Submitted — Action Required',
-    transactionId: inquiryId,
-    notes: formattedNotes,
-  };
-
-  console.log(
-    `[Customer Form Notification] Dispatching ${inquiryType} (#${inquiryId}) from ${cleanEmail} to admin (${adminEmail})`
-  );
-  return sendOrderNotification(payload);
 }
 
 export default sendOrderNotification;

@@ -4,6 +4,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -16,6 +19,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -30,6 +36,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -41,6 +50,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -52,6 +64,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -63,6 +78,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation
@@ -74,6 +92,9 @@ Allow: /
 Disallow: /checkout
 Disallow: /account
 Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
 Disallow: /api/
 Disallow: /admin
 Disallow: /order-confirmation

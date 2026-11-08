@@ -45,6 +45,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-[75vh] py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 flex items-center justify-center font-sans">
       <SEOHead
+        activePage="forgot-password"
         customTitle="Reset Password | Global Herbs Online Dispensary"
         customDescription="Reset your Global Herbs customer account password securely."
       />

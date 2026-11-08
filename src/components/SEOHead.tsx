@@ -196,6 +196,28 @@ export default function SEOHead({
         { name: 'Home', url: `${BASE_DOMAIN}/` },
         { name: 'Order Tracking', url: canonicalUrl },
       ];
+    } else if (
+      activePage === 'login' ||
+      activePage === 'register' ||
+      activePage === 'forgot-password' ||
+      activePage === 'account' ||
+      activePage === 'dashboard'
+    ) {
+      const pageTitleMap: Record<string, string> = {
+        login: 'Sign In | Customer Account | Global Herbs',
+        register: 'Create Customer Account | Global Herbs',
+        'forgot-password': 'Reset Password | Global Herbs Account',
+        account: 'Customer Account Dashboard | Global Herbs',
+        dashboard: 'Customer Account Dashboard | Global Herbs',
+      };
+      title = pageTitleMap[activePage] || 'Customer Account | Global Herbs';
+      description = 'Manage your Global Herbs customer account, order history, and personal details.';
+      canonicalUrl = `${BASE_DOMAIN}/${activePage === 'dashboard' ? 'account' : activePage}`;
+      robotsDirectives = 'noindex, nofollow';
+      breadcrumbItems = [
+        { name: 'Home', url: `${BASE_DOMAIN}/` },
+        { name: 'Account', url: canonicalUrl },
+      ];
     } else if (activePage === 'not-found') {
       title = 'Page Not Found | Global Herbs';
       description = 'The page you requested could not be found.';
@@ -513,6 +535,50 @@ export default function SEOHead({
           })),
         });
       }
+    }
+
+    // E. Organization & WebSite Schema (For Homepage / Site-wide root)
+    if (activePage === 'home' || activePage === 'shop' || (!selectedProduct && !selectedArticle && !activeCategory)) {
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Global Herbs',
+        alternateName: 'Global Herbs Inc.',
+        url: BASE_DOMAIN,
+        logo: `${BASE_DOMAIN}/api/logo.jpg`,
+        email: 'globalherbsinc@gmail.com',
+        telephone: '+1-213-280-1161',
+        sameAs: [
+          'https://www.youtube.com/channel/UCyu1M9pmZExiQ2HU4YIEH3A',
+          'https://www.facebook.com/share/1F9v8LnmJX/?mibextid=wwXIfr',
+          'https://www.tiktok.com/@global.herbs6',
+          'https://www.reddit.com/u/globalherbsinc',
+        ],
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            telephone: '+1-213-280-1161',
+            contactType: 'Customer Service',
+            areaServed: 'US',
+            availableLanguage: ['English', 'Spanish', 'French'],
+          },
+        ],
+      });
+
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Global Herbs',
+        url: BASE_DOMAIN,
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${BASE_DOMAIN}/products?search={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      });
     }
 
     if (schemas.length > 0) {

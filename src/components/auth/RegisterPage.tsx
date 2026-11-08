@@ -129,6 +129,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[80vh] py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 flex items-center justify-center font-sans">
       <SEOHead
+        activePage="register"
         customTitle="Create Customer Account | Global Herbs Online Dispensary"
         customDescription="Register for a Global Herbs customer account. Enjoy expedited checkout, order tracking, stealth parcel notifications, and exclusive subscriber specials."
       />
