@@ -1162,12 +1162,6 @@ function prerenderSeoPages() {
       h1: 'Dispensary Administration',
       desc: 'Dispensary editorial and administration portal.',
     },
-    {
-      pathname: '/admin/blog',
-      title: 'Content Administration | Global Herbs',
-      h1: 'Content Administration Portal',
-      desc: 'Dispensary editorial and content administration portal.',
-    },
   ];
 
   for (const util of utilityNoIndexPages) {

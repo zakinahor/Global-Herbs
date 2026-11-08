@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { createServer as createViteServer } from 'vite';
 import { generateSitemapXML, NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from './src/utils/sitemap';
 import { products, categories, legacySlugMap } from './src/data/products';
+import { blogArticles } from './src/data/blogArticles';
 import { getPage, renderPageHtml } from './scripts/prerender-seo';
 import {
   sendAppsScriptOrderNotification,
@@ -31,7 +32,6 @@ import {
   resolveVisitorLocale,
   getLiveExchangeRates,
 } from './lib/locale/localeService';
-import { blogRouter } from './src/server/blog/blogRoutes';
 import { reviewRouter } from './src/server/reviewRoutes';
 import { initReviewStore, submitReview } from './src/server/reviewService';
 
@@ -302,8 +302,54 @@ async function startServer() {
   // JSON request body parser
   app.use(express.json());
 
-  // Mount Automated SEO Blog & Publishing Management Router
-  app.use(blogRouter);
+  // Public Knowledge Hub / Blog API Endpoints (Read-Only)
+  app.get('/api/blog', (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    const category = req.query.category as string;
+    const search = req.query.q as string;
+
+    let list = [...blogArticles];
+
+    if (category && category !== 'All') {
+      list = list.filter((a) => a.category === category || a.categorySlug === category);
+    }
+
+    if (search && search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter((a) => {
+        const inTitle = (a.title || '').toLowerCase().includes(q);
+        const inExcerpt = (a.excerpt || '').toLowerCase().includes(q);
+        const inKeywords = (a.targetKeywords || []).some((kw) => (kw || '').toLowerCase().includes(q));
+        return inTitle || inExcerpt || inKeywords;
+      });
+    }
+
+    return res.json({
+      success: true,
+      total: list.length,
+      articles: list,
+    });
+  });
+
+  app.get('/api/blog/:slug', (req, res) => {
+    const slug = req.params.slug?.toLowerCase().trim();
+    const article = blogArticles.find(
+      (a) => (a.slug && a.slug.toLowerCase() === slug) || (a.id && a.id.toLowerCase() === slug)
+    );
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        error: `Article with slug "${slug}" not found.`,
+      });
+    }
+
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+    return res.json({
+      success: true,
+      article,
+    });
+  });
 
   // Mount Customer Reviews, Ratings, and Moderation Router
   app.use(reviewRouter);

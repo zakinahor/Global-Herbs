@@ -1,1 +1,48 @@
-[]
+[
+  {
+    "id": "SUB-VIP-MW7QHLGD",
+    "name": "New Subscriber / VIP Lead",
+    "email": "vip_subscriber@example.com",
+    "subject": "VIP Newsletter Subscription",
+    "message": "Discount Coupon Issued: HERBS15OFF",
+    "type": "newsletter_subscription",
+    "notificationStatus": "sent",
+    "notificationMessageId": "gas-SUB-VIP-MW7QHLGD-1794136400239",
+    "notificationSentAt": "2026-11-08T11:13:20.239Z",
+    "notificationError": null,
+    "notificationAttempts": 1,
+    "createdAt": "2026-11-08T11:13:19.069Z"
+  },
+  {
+    "id": "CNT-MW7QHPMI-BPC5",
+    "name": "Sarah Jenkins",
+    "email": "sarah.j@example.com",
+    "phone": "+12135550188",
+    "subject": "Shipping Inquiry",
+    "message": "Do you offer weekend delivery options?",
+    "subscribeNewsletter": false,
+    "type": "contact_form",
+    "notificationStatus": "sent",
+    "notificationMessageId": "gas-CNT-MW7QHPMI-BPC5-1794136405672",
+    "notificationSentAt": "2026-11-08T11:13:25.672Z",
+    "notificationError": null,
+    "createdAt": "2026-11-08T11:13:24.474Z",
+    "notificationAttempts": 1
+  },
+  {
+    "id": "CNT-MW7QIGO3-GBZE",
+    "name": "Alex Chen",
+    "email": "alex.c@example.com",
+    "phone": "",
+    "subject": "THCa Rosin Availability",
+    "message": "When will the 3.5g jar be back in stock?",
+    "subscribeNewsletter": false,
+    "type": "contact_form",
+    "notificationStatus": "sent",
+    "notificationMessageId": "gas-CNT-MW7QIGO3-GBZE-1794136440687",
+    "notificationSentAt": "2026-11-08T11:14:00.687Z",
+    "notificationError": null,
+    "createdAt": "2026-11-08T11:13:59.523Z",
+    "notificationAttempts": 1
+  }
+]
