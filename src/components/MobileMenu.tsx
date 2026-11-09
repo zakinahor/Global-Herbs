@@ -28,7 +28,7 @@ export default function MobileMenu({
   onSelectCategory,
   onSelectPage,
 }: MobileMenuProps) {
-  const { user, isLoggedIn, openAccountModal } = useAuth();
+  const { user, isLoggedIn, isAdmin, openAccountModal } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -138,6 +138,30 @@ export default function MobileMenu({
             </div>
             <ChevronRight size={16} className={isLoggedIn ? 'text-emerald-200' : 'text-emerald-700'} />
           </button>
+
+          {/* Administrator Management Access Link */}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              onClick={onClose}
+              className="w-full p-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-950 flex items-center justify-between text-left transition hover:bg-amber-100 shadow-xs"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-800 text-white flex items-center justify-center font-bold text-xs">
+                  <ShieldCheck size={16} />
+                </div>
+                <div>
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-800 block">
+                    Administrator Area
+                  </span>
+                  <span className="text-xs font-bold text-gray-900 block leading-tight">
+                    Dispensary Product Management
+                  </span>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-amber-800" />
+            </Link>
+          )}
 
           {/* 🌟 Featured Knowledge Hub & Educational Guides Card */}
           <Link

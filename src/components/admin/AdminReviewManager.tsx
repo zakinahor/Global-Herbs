@@ -21,12 +21,14 @@ import {
   Image as ImageIcon,
   Send,
   AlertCircle,
-  Eye,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { ProductReview, ReviewStatus } from '../../types/review';
 import { products } from '../../data/products';
 
 export default function AdminReviewManager() {
+  const { user, isLoggedIn, isAdmin, isLoading: authLoading } = useAuth();
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [counts, setCounts] = useState({ all: 0, pending: 0, approved: 0, rejected: 0 });
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -170,8 +172,66 @@ export default function AdminReviewManager() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isLoggedIn || !isAdmin) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center p-4">
+        <div className="bg-gray-800 border border-red-500/40 rounded-2xl p-8 max-w-md w-full text-center space-y-4">
+          <div className="w-12 h-12 bg-red-900/50 text-red-400 rounded-xl flex items-center justify-center mx-auto">
+            <AlertCircle size={24} />
+          </div>
+          <h2 className="font-heading font-extrabold text-base text-white">
+            Administrator Access Required
+          </h2>
+          <p className="text-xs text-gray-400">
+            Please sign in with an account having the <strong>Admin</strong> role to access review moderation.
+          </p>
+          <div className="pt-2">
+            <Link
+              to="/login?redirect=/admin/reviews"
+              className="inline-block px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition"
+            >
+              Sign In to Management
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 text-left">
+    <div className="space-y-6 text-left max-w-7xl mx-auto py-6 px-4">
+      {/* Top Navigation Tabs */}
+      <div className="bg-gray-800 border border-gray-700 rounded-2xl p-1.5 flex items-center gap-2">
+        <Link
+          to="/admin/products"
+          className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white hover:bg-gray-700/60 transition flex items-center gap-2"
+        >
+          <span>Product Catalog Management</span>
+        </Link>
+        <Link
+          to="/admin/reviews"
+          className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-700 text-white shadow flex items-center gap-2"
+        >
+          <span>Customer Reviews Moderation</span>
+        </Link>
+        <Link
+          to="/products"
+          target="_blank"
+          className="ml-auto px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition flex items-center gap-1.5"
+        >
+          <ExternalLink size={13} />
+          <span>Live Store</span>
+        </Link>
+      </div>
+
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-gray-900 text-white border border-emerald-500 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-bold animate-bounce">

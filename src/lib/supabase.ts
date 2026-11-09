@@ -6,6 +6,7 @@
  */
 
 import { createClient, SupabaseClient, User as SupabaseUser, Session } from '@supabase/supabase-js';
+import type { Product } from '../types';
 
 // Environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -49,12 +50,36 @@ export interface SupabaseProfile {
   id: string; // references auth.users.id
   full_name: string;
   email: string;
+  role?: 'customer' | 'admin';
   phone?: string;
   account_type?: string;
   delivery_address?: string;
   notes?: string;
   email_verified?: boolean;
   saved_addresses?: any[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface SupabaseProductRow {
+  id: number;
+  name: string;
+  slug: string;
+  category: string;
+  category_slug: string;
+  price: number;
+  original_price?: number | null;
+  on_sale: boolean;
+  in_stock: boolean;
+  image: string;
+  description: string;
+  sku?: string;
+  weight?: string;
+  weights?: string[];
+  weight_variants?: any[];
+  strain_type?: string;
+  potency?: string;
+  inventory?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -254,6 +279,177 @@ export async function insertNewsletterSubscriber(email: string, couponCode = 'HE
   } catch (err) {
     console.error('[Supabase DB] Exception recording newsletter subscriber:', err);
     return false;
+  }
+}
+
+// ============================================================================
+// PRODUCT MANAGEMENT SERVICE METHODS (For Admin & Store Catalog)
+// ============================================================================
+
+export function mapRowToProduct(row: SupabaseProductRow): Product {
+  return {
+    id: Number(row.id),
+    name: row.name,
+    slug: row.slug,
+    category: row.category,
+    categorySlug: row.category_slug,
+    price: Number(row.price),
+    originalPrice: row.original_price ? Number(row.original_price) : undefined,
+    onSale: Boolean(row.on_sale),
+    inStock: row.in_stock !== undefined ? Boolean(row.in_stock) : true,
+    image: row.image,
+    description: row.description,
+    sku: row.sku,
+    weight: row.weight,
+    weights: row.weights,
+    weightVariants: row.weight_variants,
+    strainType: row.strain_type,
+    potency: row.potency,
+    inventory: row.inventory ?? 100,
+  };
+}
+
+export function mapProductToRow(prod: Partial<Product>): Partial<SupabaseProductRow> {
+  const row: Partial<SupabaseProductRow> = {};
+  if (prod.id !== undefined) row.id = prod.id;
+  if (prod.name !== undefined) row.name = prod.name;
+  if (prod.slug !== undefined) row.slug = prod.slug;
+  if (prod.category !== undefined) row.category = prod.category;
+  if (prod.categorySlug !== undefined) row.category_slug = prod.categorySlug;
+  if (prod.price !== undefined) row.price = Number(prod.price);
+  if (prod.originalPrice !== undefined) row.original_price = prod.originalPrice ? Number(prod.originalPrice) : null;
+  if (prod.onSale !== undefined) row.on_sale = Boolean(prod.onSale);
+  if (prod.inStock !== undefined) row.in_stock = Boolean(prod.inStock);
+  if (prod.image !== undefined) row.image = prod.image;
+  if (prod.description !== undefined) row.description = prod.description;
+  if (prod.sku !== undefined) row.sku = prod.sku;
+  if (prod.weight !== undefined) row.weight = prod.weight;
+  if (prod.weights !== undefined) row.weights = prod.weights;
+  if (prod.weightVariants !== undefined) row.weight_variants = prod.weightVariants;
+  if (prod.strainType !== undefined) row.strain_type = prod.strainType;
+  if (prod.potency !== undefined) row.potency = prod.potency;
+  if (prod.inventory !== undefined) row.inventory = prod.inventory;
+  return row;
+}
+
+/**
+ * Fetch all products from Supabase products table
+ */
+export async function fetchProductsFromSupabase(): Promise<Product[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.warn('[Supabase Products] Error fetching products:', error.message);
+      return [];
+    }
+
+    if (!data || data.length === 0) return [];
+    return data.map((r: any) => mapRowToProduct(r));
+  } catch (err) {
+    console.error('[Supabase Products] Exception fetching products:', err);
+    return [];
+  }
+}
+
+/**
+ * Update a product in Supabase products table (Admin operation)
+ */
+export async function updateProductInSupabase(
+  productId: number,
+  updates: Partial<Product>
+): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: 'Supabase is not configured' };
+  }
+
+  try {
+    const updateData = {
+      ...mapProductToRow(updates),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await supabase
+      .from('products')
+      .update(updateData)
+      .eq('id', productId);
+
+    if (error) {
+      console.error('[Supabase Products] Update error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error('[Supabase Products] Update exception:', err);
+    return { success: false, error: err?.message || 'Failed to update product in database' };
+  }
+}
+
+/**
+ * Create a new product in Supabase products table (Admin operation)
+ */
+export async function createProductInSupabase(
+  product: Partial<Product>
+): Promise<{ success: boolean; product?: Product; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: 'Supabase is not configured' };
+  }
+
+  try {
+    const insertData = {
+      ...mapProductToRow(product),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase
+      .from('products')
+      .insert([insertData])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Supabase Products] Create error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, product: mapRowToProduct(data as SupabaseProductRow) };
+  } catch (err: any) {
+    console.error('[Supabase Products] Create exception:', err);
+    return { success: false, error: err?.message || 'Failed to create product in database' };
+  }
+}
+
+/**
+ * Delete a product from Supabase products table (Admin operation)
+ */
+export async function deleteProductInSupabase(
+  productId: number
+): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: 'Supabase is not configured' };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', productId);
+
+    if (error) {
+      console.error('[Supabase Products] Delete error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error('[Supabase Products] Delete exception:', err);
+    return { success: false, error: err?.message || 'Failed to delete product from database' };
   }
 }
 

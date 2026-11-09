@@ -50,6 +50,7 @@ export interface AuthUser {
   id: string; // Auth User ID (Firebase UID or Supabase UUID)
   name: string;
   email: string;
+  role: 'customer' | 'admin';
   accountType: string;
   phone?: string;
   deliveryAddress?: string;
@@ -105,6 +106,8 @@ interface AuthContextType {
   user: AuthUser | null;
   firebaseUser: FirebaseUser | null;
   token: string | null;
+  role: 'customer' | 'admin';
+  isAdmin: boolean;
   isLoggedIn: boolean;
   isLoading: boolean;
   isEmailVerified: boolean;
@@ -162,10 +165,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (userDocSnap && userDocSnap.exists()) {
         const data = userDocSnap.data();
+        const userRole: 'customer' | 'admin' =
+          data.role === 'admin' || data.accountType === 'Administrator' ? 'admin' : 'customer';
+
         const profile: AuthUser = {
           id: fUser.uid,
           name: data.fullName || fUser.displayName || 'Valued Customer',
           email: fUser.email || data.email || '',
+          role: userRole,
           accountType: data.accountType || 'Personal / Recreational',
           phone: data.phone || '',
           deliveryAddress: data.deliveryAddress || '',
@@ -183,6 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: fUser.uid,
           name: fUser.displayName || 'Valued Customer',
           email: fUser.email || '',
+          role: 'customer',
           accountType: 'Personal / Recreational',
           createdAt: new Date().toISOString(),
           emailVerified: fUser.emailVerified,
@@ -194,6 +202,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             customerId: fUser.uid,
             fullName: initialProfile.name,
             email: initialProfile.email,
+            role: 'customer',
             createdAt: initialProfile.createdAt,
             emailVerified: initialProfile.emailVerified,
             accountType: initialProfile.accountType,
@@ -210,6 +219,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: fUser.uid,
         name: fUser.displayName || 'Valued Customer',
         email: fUser.email || '',
+        role: 'customer',
         accountType: 'Personal / Recreational',
         createdAt: new Date().toISOString(),
         emailVerified: fUser.emailVerified,
@@ -224,11 +234,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (sessionToken) setToken(sessionToken);
       const dbProfile = await getSupabaseProfile(supabaseUser.id);
 
+      const userRole: 'customer' | 'admin' =
+        dbProfile?.role === 'admin' ||
+        supabaseUser.user_metadata?.role === 'admin' ||
+        supabaseUser.app_metadata?.role === 'admin'
+          ? 'admin'
+          : 'customer';
+
       if (dbProfile) {
         setUser({
           id: supabaseUser.id,
           name: dbProfile.full_name || supabaseUser.user_metadata?.full_name || 'Valued Customer',
           email: dbProfile.email || supabaseUser.email || '',
+          role: userRole,
           accountType: dbProfile.account_type || supabaseUser.user_metadata?.account_type || 'Personal / Recreational',
           phone: dbProfile.phone || supabaseUser.user_metadata?.phone || '',
           deliveryAddress: dbProfile.delivery_address || '',
@@ -250,6 +268,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: supabaseUser.id,
           name: fallbackName,
           email: supabaseUser.email || '',
+          role: userRole,
           accountType: supabaseUser.user_metadata?.account_type || 'Personal / Recreational',
           createdAt: supabaseUser.created_at || new Date().toISOString(),
           emailVerified: Boolean(supabaseUser.email_confirmed_at),
@@ -262,6 +281,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: supabaseUser.id,
           full_name: newProfile.name,
           email: newProfile.email,
+          role: userRole,
           account_type: newProfile.accountType,
           created_at: newProfile.createdAt,
           saved_addresses: [],
@@ -271,10 +291,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (err) {
       console.error('[AuthContext] Error loading Supabase profile:', err);
+      const fallbackRole: 'customer' | 'admin' =
+        supabaseUser.user_metadata?.role === 'admin' || supabaseUser.app_metadata?.role === 'admin'
+          ? 'admin'
+          : 'customer';
       setUser({
         id: supabaseUser.id,
         name: supabaseUser.user_metadata?.full_name || 'Valued Customer',
         email: supabaseUser.email || '',
+        role: fallbackRole,
         accountType: 'Personal / Recreational',
         createdAt: new Date().toISOString(),
         emailVerified: Boolean(supabaseUser.email_confirmed_at),
@@ -1188,6 +1213,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         firebaseUser,
         token,
+        role: user?.role || 'customer',
+        isAdmin: Boolean(user?.role === 'admin'),
         isLoggedIn: Boolean(user),
         isLoading,
         isEmailVerified,

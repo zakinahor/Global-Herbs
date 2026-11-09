@@ -46,6 +46,7 @@ import WhatsAppChatButton from './components/WhatsAppChatButton';
 import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
 import AdminReviewManager from './components/admin/AdminReviewManager';
+import AdminProductManager from './components/admin/AdminProductManager';
 import RegisterPage from './components/auth/RegisterPage';
 import LoginPage from './components/auth/LoginPage';
 import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
@@ -53,6 +54,7 @@ import CustomerDashboard from './components/auth/CustomerDashboard';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import { ProductProvider, useProducts } from './context/ProductContext';
 
 // Helper component to scroll window to top on route change
 function ScrollToTop() {
@@ -193,7 +195,10 @@ function ShopPage({
     setMaxPrice(max);
   };
 
-  const filteredProducts = initialProducts.filter((p) => {
+  const { products: dynamicProducts } = useProducts();
+  const catalogProducts = dynamicProducts && dynamicProducts.length > 0 ? dynamicProducts : initialProducts;
+
+  const filteredProducts = catalogProducts.filter((p) => {
     if (activeCategory) {
       if (p.categorySlug !== activeCategory) return false;
       if (!NON_INDEXABLE_CATEGORY_SLUGS.has(activeCategory) && NON_INDEXABLE_PRODUCT_IDS.has(p.id)) {
@@ -847,10 +852,11 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
+        <Route path="/admin/products" element={<AdminProductManager />} />
         <Route path="/admin/reviews" element={<AdminReviewManager />} />
         <Route path="/admin/blog" element={<Navigate to="/blog" replace />} />
         <Route path="/admin/seo-blog" element={<Navigate to="/blog" replace />} />
-        <Route path="/admin" element={<Navigate to="/admin/reviews" replace />} />
+        <Route path="/admin" element={<Navigate to="/admin/products" replace />} />
 
         {/* Customer Authentication & Account Management Routes */}
         <Route
@@ -1088,7 +1094,8 @@ export default function App() {
       <LanguageProvider>
         <CurrencyProvider>
           <AuthProvider>
-            <ScrollToTop />
+            <ProductProvider>
+              <ScrollToTop />
 
           <div className="min-h-screen bg-white flex flex-col justify-between text-left pb-16 md:pb-0">
             <AgeVerificationModal />
@@ -1163,6 +1170,7 @@ export default function App() {
               )}
             </AnimatePresence>
           </div>
+            </ProductProvider>
           </AuthProvider>
         </CurrencyProvider>
       </LanguageProvider>

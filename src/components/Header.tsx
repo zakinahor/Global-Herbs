@@ -17,6 +17,7 @@ import {
   Truck,
   LogIn,
   UserPlus,
+  ShieldCheck,
 } from 'lucide-react';
 import { Category } from '../types';
 import logoUrl from '../assets/images/global_herbs_logo_1784328365704.jpg';
@@ -60,7 +61,7 @@ export default function Header({
 }: HeaderProps) {
   const { formatPrice } = useCurrency();
   const { t } = useLanguage();
-  const { user, isLoggedIn, isModalOpen, openAccountModal, closeAccountModal, logout } = useAuth();
+  const { user, isLoggedIn, isAdmin, isModalOpen, openAccountModal, closeAccountModal, logout } = useAuth();
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
@@ -317,9 +318,16 @@ export default function Header({
                 {isLoggedIn ? (
                   <>
                     <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
-                      <span className="text-[10px] uppercase font-extrabold text-emerald-800 tracking-wider block">
-                        Verified Member
-                      </span>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-[10px] uppercase font-extrabold text-emerald-800 tracking-wider block">
+                          {isAdmin ? 'Dispensary Administrator' : 'Verified Member'}
+                        </span>
+                        {isAdmin && (
+                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">
+                            Admin
+                          </span>
+                        )}
+                      </div>
                       <strong className="text-xs text-gray-900 block truncate">
                         {user?.name}
                       </strong>
@@ -329,6 +337,17 @@ export default function Header({
                     </div>
 
                     <div className="py-1">
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setAccountMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-amber-900 bg-amber-50/80 hover:bg-amber-100 transition border-b border-amber-200/50 mb-1"
+                        >
+                          <ShieldCheck size={14} className="text-amber-700" />
+                          <span>Dispensary Management</span>
+                        </Link>
+                      )}
+
                       <Link
                         to="/account"
                         onClick={() => setAccountMenuOpen(false)}
