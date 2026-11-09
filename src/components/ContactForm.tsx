@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Send, CheckCircle2, AlertCircle, Phone, User, Tag, Sparkles } from 'lucide-react';
 import { analytics } from '../utils/analytics';
+import { insertContactSubmission, insertNewsletterSubscriber, isSupabaseConfigured } from '../lib/supabase';
 
 export default function ContactForm() {
   // Support Form State
@@ -55,6 +56,24 @@ export default function ContactForm() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        // Persist to Supabase Database (non-blocking)
+        if (isSupabaseConfigured()) {
+          insertContactSubmission({
+            submission_id: `SUB-${Date.now()}`,
+            name: cleanName,
+            email: cleanEmail,
+            phone: phone.trim() || undefined,
+            subject,
+            message: message.trim(),
+            type: 'General Contact / Product Inquiry',
+            created_at: new Date().toISOString(),
+          }).catch(() => {});
+
+          if (subscribeNewsletter) {
+            insertNewsletterSubscriber(cleanEmail, 'HERBS15OFF').catch(() => {});
+          }
+        }
+
         setContactResult({
           success: true,
           text: data.message || `Thank you, ${firstName}! Your inquiry was received. We will get back to you shortly.`,
@@ -105,6 +124,10 @@ export default function ContactForm() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        if (isSupabaseConfigured()) {
+          insertNewsletterSubscriber(cleanSubEmail, 'HERBS15OFF').catch(() => {});
+        }
+
         setSubResult({
           success: true,
           text: `Subscribed! Your VIP 15% discount coupon is active.`,

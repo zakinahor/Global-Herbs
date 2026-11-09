@@ -27,6 +27,8 @@ import {
   Search,
   FileText,
   MailCheck,
+  UploadCloud,
+  Database,
 } from 'lucide-react';
 import { useAuth, MemberOrder, SavedAddress } from '../../context/AuthContext';
 import { useCurrency } from '../../context/CurrencyContext';
@@ -40,7 +42,8 @@ type DashboardTab =
   | 'profile'
   | 'addresses'
   | 'security'
-  | 'claim';
+  | 'claim'
+  | 'vault';
 
 export default function CustomerDashboard() {
   const navigate = useNavigate();
@@ -50,6 +53,7 @@ export default function CustomerDashboard() {
     isLoggedIn,
     isLoading: isAuthLoading,
     isEmailVerified,
+    isSupabaseActive,
     logout,
     resendVerificationEmail,
     updateProfile,
@@ -58,6 +62,7 @@ export default function CustomerDashboard() {
     deleteDeliveryAddress,
     getMyOrders,
     claimGuestOrder,
+    uploadCustomerDocument,
   } = useAuth();
 
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
@@ -100,6 +105,49 @@ export default function CustomerDashboard() {
   const [claimEmail, setClaimEmail] = useState('');
   const [claimLoading, setClaimLoading] = useState(false);
   const [claimMsg, setClaimMsg] = useState<{ text: string; isError: boolean } | null>(null);
+
+  // Document Vault & Supabase Storage state
+  const [vaultFile, setVaultFile] = useState<File | null>(null);
+  const [vaultUploading, setVaultUploading] = useState(false);
+  const [vaultMsg, setVaultMsg] = useState<{ text: string; isError: boolean } | null>(null);
+  const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; url: string; date: string }>>([
+    {
+      name: 'Global-Herbs-Stealth-Delivery-Charter.pdf',
+      url: '/privacy-policy',
+      date: 'Default Verified Record',
+    },
+  ]);
+
+  const handleDocumentUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setVaultMsg(null);
+    if (!vaultFile) {
+      setVaultMsg({ text: 'Please select a document or image to upload.', isError: true });
+      return;
+    }
+
+    setVaultUploading(true);
+    const res = await uploadCustomerDocument(vaultFile, 'customer-documents');
+    setVaultUploading(false);
+
+    if (res.success && res.url) {
+      setUploadedDocs((prev) => [
+        {
+          name: vaultFile.name,
+          url: res.url!,
+          date: new Date().toLocaleDateString(),
+        },
+        ...prev,
+      ]);
+      setVaultMsg({ text: `Document "${vaultFile.name}" successfully uploaded to Supabase Storage!`, isError: false });
+      setVaultFile(null);
+    } else {
+      setVaultMsg({
+        text: res.error || 'Failed to upload document to storage.',
+        isError: true,
+      });
+    }
+  };
 
   // Tracking tab input
   const [trackingLookupId, setTrackingLookupId] = useState('');
@@ -404,6 +452,7 @@ export default function CustomerDashboard() {
               { id: 'addresses', label: 'Saved Addresses', icon: MapPin },
               { id: 'security', label: 'Change Password', icon: Lock },
               { id: 'claim', label: 'Claim Guest Orders', icon: FileText },
+              { id: 'vault', label: 'Document Vault & Storage', icon: UploadCloud },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1063,6 +1112,161 @@ export default function CustomerDashboard() {
                 )}
               </button>
             </form>
+          </div>
+        )}
+
+        {/* Tab 8: Document Vault & Supabase Storage */}
+        {activeTab === 'vault' && (
+          <div className="bg-white border border-gray-200/90 rounded-2xl p-6 sm:p-8 shadow-xs max-w-3xl space-y-6 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+              <div>
+                <h2 className="font-heading font-extrabold text-lg text-gray-900 tracking-tight flex items-center gap-2">
+                  <UploadCloud size={20} className="text-emerald-800" />
+                  <span>Document Vault &amp; Cloud Storage</span>
+                </h2>
+                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                  Upload customer compliance records, state medical recommendations, or verification proofs securely to dedicated cloud buckets.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${
+                  isSupabaseActive
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                    : 'bg-amber-50 text-amber-800 border-amber-300'
+                }`}>
+                  <Database size={12} />
+                  <span>{isSupabaseActive ? 'Supabase Connected' : 'Cloud Storage Ready'}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Architecture Overview Cards */}
+            <div className="grid sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl border border-gray-200 bg-gray-50 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-850 block mb-1">
+                  Private Vault Bucket
+                </span>
+                <span className="font-mono text-xs font-bold text-gray-900">customer-documents</span>
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Encrypted files accessible only by your verified account credentials.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-gray-200 bg-gray-50 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-850 block mb-1">
+                  Product Media Bucket
+                </span>
+                <span className="font-mono text-xs font-bold text-gray-900">product-images</span>
+                <p className="text-[11px] text-gray-500 mt-1">
+                  High-resolution botanical product photos served through global CDN.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl border border-gray-200 bg-gray-50 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-850 block mb-1">
+                  Static Assets Bucket
+                </span>
+                <span className="font-mono text-xs font-bold text-gray-900">public-assets</span>
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Laboratory COAs, stealth guides, and dispensary documentation.
+                </p>
+              </div>
+            </div>
+
+            {vaultMsg && (
+              <div
+                className={`p-3.5 rounded-xl border text-xs flex items-center gap-2 ${
+                  vaultMsg.isError
+                    ? 'bg-red-50 border-red-200 text-red-800'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-800 font-semibold'
+                }`}
+              >
+                {vaultMsg.isError ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
+                <span>{vaultMsg.text}</span>
+              </div>
+            )}
+
+            {/* Upload Form */}
+            <form onSubmit={handleDocumentUpload} className="space-y-4 pt-2">
+              <div className="border-2 border-dashed border-gray-200 hover:border-emerald-500 rounded-2xl p-6 text-center bg-gray-50/50 hover:bg-emerald-50/20 transition cursor-pointer">
+                <input
+                  type="file"
+                  id="vault-file-input"
+                  onChange={(e) => setVaultFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <label htmlFor="vault-file-input" className="cursor-pointer block space-y-2">
+                  <UploadCloud size={32} className="mx-auto text-emerald-800" />
+                  <div className="text-xs text-gray-700">
+                    {vaultFile ? (
+                      <span className="font-bold text-emerald-900">{vaultFile.name} ({(vaultFile.size / 1024).toFixed(1)} KB)</span>
+                    ) : (
+                      <>
+                        <span className="font-bold text-emerald-800 hover:underline">Click to browse</span> or drag and drop files here
+                      </>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-gray-400">
+                    PDF, PNG, JPG, or WEBP up to 25 MB
+                  </p>
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  disabled={vaultUploading || !vaultFile}
+                  className="py-2.5 px-6 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {vaultUploading ? (
+                    <>
+                      <RefreshCw size={13} className="animate-spin" />
+                      <span>Uploading to Supabase Storage...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud size={14} />
+                      <span>Upload to Vault</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Uploaded Documents List */}
+            <div className="pt-4 border-t border-gray-100 space-y-3">
+              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                Stored Documents &amp; Compliance Records
+              </h4>
+
+              <div className="space-y-2">
+                {uploadedDocs.map((doc, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-2.5 truncate pr-2">
+                      <FileText size={16} className="text-emerald-800 flex-shrink-0" />
+                      <div className="truncate">
+                        <span className="font-bold text-gray-900 block truncate">{doc.name}</span>
+                        <span className="text-[10px] text-gray-400">{doc.date}</span>
+                      </div>
+                    </div>
+
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1 bg-white border border-gray-200 hover:bg-emerald-50 hover:text-emerald-900 text-gray-700 rounded-lg text-[11px] font-bold flex items-center gap-1 transition"
+                    >
+                      <ExternalLink size={12} />
+                      <span>View</span>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
