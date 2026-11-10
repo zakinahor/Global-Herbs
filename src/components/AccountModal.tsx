@@ -23,7 +23,6 @@ import {
 import { useAuth, MemberOrder } from '../context/AuthContext';
 import { analytics } from '../utils/analytics';
 import GoogleSignInButton from './GoogleSignInButton';
-import { googleSignIn } from '../utils/googleWorkspaceAuth';
 import { useNavigate } from 'react-router-dom';
 
 interface AccountModalProps {
@@ -38,6 +37,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
     login,
     register,
     logout,
+    loginWithGoogle,
     updateProfile,
     getMyOrders,
     modalTab,
@@ -476,20 +476,19 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
 
               <div className="pt-3 border-t border-gray-100 flex flex-col items-center gap-2.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  Or Connect Google Workspace for Forms &amp; Surveys
+                  Or Continue with Google
                 </span>
                 <GoogleSignInButton
                   onClick={async () => {
-                    try {
-                      const res = await googleSignIn();
-                      if (res) {
-                        onClose();
-                        navigate('/forms');
-                      }
-                    } catch {
+                    setFeedback(null);
+                    const res = await loginWithGoogle();
+                    if (res.success) {
+                      onClose();
+                      navigate('/account');
+                    } else if (res.error) {
                       setFeedback({
                         success: false,
-                        text: 'Google Sign-In was cancelled or could not complete.',
+                        text: res.error,
                       });
                     }
                   }}

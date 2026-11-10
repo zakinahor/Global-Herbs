@@ -604,7 +604,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             redirectTo: `${window.location.origin}/account`,
           },
         });
-        if (error) return { success: false, error: error.message };
+        if (error) {
+          let msg = error.message;
+          if (msg.toLowerCase().includes('unsupported provider') || msg.toLowerCase().includes('not enabled')) {
+            msg = 'Google Sign-In is not enabled in your Supabase project yet. In your Supabase Dashboard, go to Authentication > Providers > Google to enable it, or log in with your email and password.';
+          }
+          return { success: false, error: msg };
+        }
         return { success: true };
       } catch (err: any) {
         console.error('[Supabase Google Auth Error]', err);
@@ -618,10 +624,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (err: any) {
       console.error('[Google Auth Error]', err);
+      let errorMsg = 'Google Sign-In failed. Please try again or log in with your email and password.';
       if (err.code === 'auth/popup-closed-by-user') {
-        return { success: false, error: 'Sign-in cancelled.' };
+        errorMsg = 'Sign-in popup was closed before completing.';
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        errorMsg = 'Sign-in request was cancelled.';
+      } else if (err.code === 'auth/popup-blocked') {
+        errorMsg = 'The Google sign-in popup was blocked by your browser. Please allow popups for globalherbs.site, or sign in using your email and password.';
+      } else if (err.code === 'auth/unauthorized-domain') {
+        const currentDomain = typeof window !== 'undefined' ? window.location.hostname : 'globalherbs.site';
+        errorMsg = `This domain (${currentDomain}) is not authorized for Google Sign-In in Firebase. Please add '${currentDomain}' in Firebase Console > Authentication > Settings > Authorized Domains, or sign in with your email and password.`;
+      } else if (err.code === 'auth/operation-not-allowed') {
+        errorMsg = 'Google Sign-In provider is currently disabled in your Firebase console. Please enable the Google provider in Firebase Authentication > Sign-in method, or sign in with your email and password.';
+      } else if (err.message) {
+        errorMsg = err.message;
       }
-      return { success: false, error: err.message || 'Google Sign-In failed.' };
+      return { success: false, error: errorMsg };
     }
   };
 
