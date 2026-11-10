@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 2. CUSTOMER PROFILES TABLE (Linked with Supabase auth.users)
 -- Supports Two Roles: 'customer' (default) and 'admin'
 -- No hardcoded admin credentials; assign admin role dynamically via SQL:
--- UPDATE public.profiles SET role = 'admin' WHERE email = 'YOUR_ADMIN_EMAIL@EXAMPLE.COM';
+-- UPDATE public.profiles SET role = 'admin' WHERE email = 'globalherbsinc@gmail.com';
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
@@ -294,3 +294,12 @@ CREATE POLICY "Users can access own documents or admins can view" ON storage.obj
       auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin()
     )
   );
+
+-- ============================================================================
+-- 9. OPTIONAL: ASSIGN ADMINISTRATOR ROLE
+-- Promotes globalherbsinc@gmail.com to administrator if user profile exists
+-- ============================================================================
+UPDATE public.profiles
+SET role = 'admin'
+WHERE email = 'globalherbsinc@gmail.com';
+
