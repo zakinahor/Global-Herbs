@@ -5,7 +5,7 @@ export interface BlogArticle {
   metaTitle: string;
   metaDescription: string;
   targetKeywords: string[];
-  category: 'THCa & Legality' | 'Concentrates & Rosin' | 'CBD & Wellness' | 'Dosing & Guides' | 'Terpenes & Genetics' | 'Announcements & Updates';
+  category: 'THCa & Legality' | 'Concentrates & Rosin' | 'CBD & Wellness' | 'Dosing & Guides' | 'Terpenes & Genetics' | 'Announcements & Updates' | 'CBD Education';
   categorySlug: string;
   author: {
     name: string;
@@ -19,6 +19,7 @@ export interface BlogArticle {
   publishedDate: string;
   readTime: string;
   featuredImage: string;
+  imageAlt?: string;
   excerpt: string;
   keyTakeaways: string[];
   tableOfContents: {
@@ -60,6 +61,311 @@ export interface BlogArticle {
 }
 
 export const blogArticles: BlogArticle[] = [
+  {
+    id: 'full-spectrum-cbd-vs-cbd-isolate',
+    slug: 'full-spectrum-cbd-vs-cbd-isolate',
+    title: "Full-Spectrum CBD vs. CBD Isolate: What's the Difference?",
+    metaTitle: 'Full-Spectrum CBD vs. CBD Isolate: Key Differences',
+    metaDescription: 'Learn the difference between full-spectrum CBD and CBD isolate, explore their cannabinoid profiles, understand THC considerations, and discover what to check before choosing a CBD product.',
+    targetKeywords: [
+      'Full Spectrum CBD vs CBD Isolate',
+      'Full-spectrum CBD',
+      'CBD isolate',
+      'Broad-spectrum CBD',
+      'Hemp extract',
+      'CBD cannabinoid profile',
+      'CBD THC content',
+      'Full-spectrum hemp extract',
+    ],
+    category: 'CBD Education',
+    categorySlug: 'cbd-education',
+    author: {
+      name: 'Elena Rostova',
+      role: 'Holistic Wellness & Cannabinoid Science Educator',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+    },
+    reviewer: {
+      name: 'Dr. Julian Mercer',
+      credentials: 'Professor of Clinical Phytochemistry & Analytical Botany',
+    },
+    publishedDate: 'November 10, 2026',
+    readTime: '7 min read',
+    featuredImage: '/images/cbd_isolate_vs_full_spectrum.jpg',
+    imageAlt: 'Comparison of full-spectrum CBD oil and CBD isolate crystals.',
+    excerpt: 'Understand the core differences between full-spectrum CBD and CBD isolate. Compare cannabinoid profiles, terpenes, THC considerations, the entourage effect, and lab testing before buying.',
+    keyTakeaways: [
+      'Extraction Differences: Full-spectrum CBD retains a wide spectrum of hemp compounds (CBD, CBG, CBN, CBC, terpenes, flavonoids, and trace THC), while CBD isolate is refined to contain primarily pure cannabidiol.',
+      'THC Considerations: Full-spectrum CBD may contain trace amounts of legal THC (<0.3%), whereas CBD isolate is formulated with zero detectable THC—critical for those undergoing workplace drug testing.',
+      'The Entourage Effect: The synergistic interaction of whole-plant cannabinoids and terpenes is a key reason many choose full-spectrum extracts, though clinical research remains developing.',
+      'Broad-Spectrum Alternative: Sits in between full-spectrum and isolate, preserving minor cannabinoids and terpenes with THC removed.',
+      'Third-Party COA Testing: Always examine batch-specific lab certificates to verify cannabinoid potency and ensure zero heavy metals, pesticides, or residual solvents.',
+    ],
+    tableOfContents: [
+      { id: 'what-is-full-spectrum-cbd', title: 'What Is Full-Spectrum CBD?' },
+      { id: 'what-is-cbd-isolate', title: 'What Is CBD Isolate?' },
+      { id: 'key-differences', title: 'Full-Spectrum CBD vs. CBD Isolate: Key Differences' },
+      { id: 'understanding-the-entourage-effect', title: 'Understanding the Entourage Effect' },
+      { id: 'does-full-spectrum-cbd-contain-thc', title: 'Does Full-Spectrum CBD Contain THC?' },
+      { id: 'how-to-choose-a-quality-cbd-product', title: 'How to Choose a Quality CBD Product' },
+      { id: 'what-about-broad-spectrum-cbd', title: 'What About Broad-Spectrum CBD?' },
+      { id: 'cbd-safety-consumer-guide', title: 'CBD Safety: What Consumers Should Know' },
+      { id: 'final-thoughts', title: 'Final Thoughts: Full-Spectrum CBD or CBD Isolate?' },
+    ],
+    contentSections: [
+      {
+        id: 'what-is-full-spectrum-cbd',
+        title: 'What Is Full-Spectrum CBD?',
+        paragraphs: [
+          'CBD products come in different formulations, and understanding what separates them can make shopping much easier. Two of the most common options are full-spectrum CBD and CBD isolate.',
+          'Although both contain cannabidiol (CBD), they differ in how they are extracted, processed, and formulated. One retains a broader range of naturally occurring hemp compounds, while the other is refined to contain primarily CBD.',
+          'So, which one should you choose?',
+          "At Global Herbs, we believe understanding what's inside a product is just as important as understanding its label. Here's a closer look at the differences between full-spectrum CBD and CBD isolate.",
+          'Full-spectrum CBD is a hemp extract that retains CBD alongside other naturally occurring compounds found in the hemp plant.',
+          'Depending on the source material and extraction process, these compounds may include:',
+        ],
+        subsections: [
+          {
+            subtitle: 'Naturally Occurring Cannabinoids, Terpenes & Flavonoids',
+            paragraphs: [],
+            bullets: [
+              'Cannabidiol (CBD)',
+              'Cannabigerol (CBG)',
+              'Cannabinol (CBN)',
+              'Cannabichromene (CBC)',
+              'Naturally occurring terpenes',
+              'Flavonoids',
+              'Trace amounts of THC',
+            ],
+          },
+          {
+            subtitle: 'Whole-Plant Chemical Profile',
+            paragraphs: [
+              'The exact chemical composition varies between products and manufacturing batches.',
+              "One of the main characteristics of full-spectrum CBD is that it preserves a broader portion of the hemp plant's natural chemical profile rather than isolating CBD alone.",
+              'This makes it an option for consumers interested in a more comprehensive hemp extract.',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'what-is-cbd-isolate',
+        title: 'What Is CBD Isolate?',
+        paragraphs: [
+          'CBD isolate is a highly purified form of cannabidiol.',
+          'During processing, manufacturers separate CBD from most of the other naturally occurring compounds in hemp. The resulting product is designed to contain CBD as its primary cannabinoid, often at a very high purity level.',
+          'Unlike full-spectrum extracts, CBD isolate generally contains little to no other cannabinoids, terpenes, or flavonoids.',
+          'It is commonly available as:',
+        ],
+        subsections: [
+          {
+            subtitle: 'Common Formats of CBD Isolate',
+            paragraphs: [],
+            bullets: [
+              'CBD powder or crystals',
+              'CBD-infused oils',
+              'Capsules',
+              'Gummies',
+              'Other formulated CBD products',
+            ],
+          },
+          {
+            subtitle: 'Purity and Flavor Profile',
+            paragraphs: [
+              'Its relatively neutral flavour and simplified cannabinoid profile make it appealing to consumers who prefer products containing primarily CBD.',
+              'However, product labels and independent laboratory reports should always be checked to verify the actual composition.',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'key-differences',
+        title: 'Full-Spectrum CBD vs. CBD Isolate: Key Differences',
+        paragraphs: [
+          'Although both formulations contain CBD, their composition and characteristics are different.',
+        ],
+        table: {
+          caption: 'Full-Spectrum CBD vs. CBD Isolate: Key Differences',
+          headers: ['Feature', 'Full-Spectrum CBD', 'CBD Isolate'],
+          rows: [
+            ['Main compound', 'CBD and other hemp compounds', 'Primarily CBD'],
+            ['Minor cannabinoids', 'May contain CBG, CBN and CBC', 'Generally removed'],
+            ['Terpenes', 'May be retained', 'Generally removed'],
+            ['THC', 'May contain trace amounts', 'Intended to contain no detectable THC'],
+            ['Flavour', 'Often earthy and herbal', 'Generally neutral'],
+            ['Extract profile', 'Broad plant profile', 'Highly purified CBD'],
+            ['Processing', 'Retains more naturally occurring compounds', 'More extensively refined'],
+          ],
+        },
+        subsections: [
+          {
+            subtitle: 'Evaluating Individual Formulation Needs',
+            paragraphs: [
+              "Neither formulation is automatically superior. The right option depends on the product's composition, individual preferences, THC considerations, and applicable regulations.",
+            ],
+          },
+        ],
+      },
+      {
+        id: 'understanding-the-entourage-effect',
+        title: 'Understanding the Entourage Effect',
+        paragraphs: [
+          'You may have come across the term entourage effect when researching full-spectrum CBD.',
+          'The entourage effect is a scientific hypothesis suggesting that cannabinoids, terpenes, and other plant compounds may interact with one another and influence their combined effects.',
+          'For example, full-spectrum extracts retain several naturally occurring hemp compounds that are removed during the production of CBD isolate.',
+          'This has generated considerable interest in whole-plant hemp extracts.',
+          'However, it is important to understand that the clinical evidence remains developing. Researchers have not established that full-spectrum CBD consistently produces better health outcomes than CBD isolate.',
+          'Consumers should therefore be cautious about products making guaranteed therapeutic claims based on the entourage effect.',
+        ],
+      },
+      {
+        id: 'does-full-spectrum-cbd-contain-thc',
+        title: 'Does Full-Spectrum CBD Contain THC?',
+        paragraphs: [
+          'Yes, full-spectrum CBD may contain small amounts of tetrahydrocannabinol (THC), depending on the hemp source, extraction process, and final formulation.',
+          'THC is the cannabinoid primarily responsible for the intoxicating effects associated with cannabis.',
+          "Even when a product meets a particular jurisdiction's legal THC threshold, trace THC should not be considered irrelevant.",
+          'This is especially important for individuals who:',
+        ],
+        subsections: [
+          {
+            subtitle: 'Key Considerations for THC Sensitivity',
+            paragraphs: [],
+            bullets: [
+              'Are subject to workplace drug testing.',
+              'Participate in professional sports with drug-testing requirements.',
+              'Must avoid THC for personal or legal reasons.',
+              'Prefer products with no detectable THC.',
+            ],
+          },
+          {
+            subtitle: 'Verifying THC Levels via Independent Labs',
+            paragraphs: [
+              'CBD isolate is generally the more suitable formulation for people seeking to minimise THC exposure. However, no product should be assumed to be completely THC-free without appropriate batch-specific laboratory testing.',
+              'A [Certificate of Analysis (COA)](/blog/how-to-read-a-cannabis-coa-lab-testing-guide) is an important document to review before purchasing.',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'how-to-choose-a-quality-cbd-product',
+        title: 'How to Choose a Quality CBD Product',
+        paragraphs: [
+          'Regardless of whether you prefer full-spectrum CBD or CBD isolate, product quality should always be a priority.',
+          'Here are some important things to consider before purchasing.',
+        ],
+        subsections: [
+          {
+            subtitle: '1. Check the cannabinoid content',
+            paragraphs: [
+              'Look beyond the front label. Check the amount of CBD per serving and the total amount in the entire bottle or package.',
+            ],
+          },
+          {
+            subtitle: '2. Review the Certificate of Analysis',
+            paragraphs: [
+              "A reliable laboratory report should identify the product's cannabinoid profile and THC content. Ideally, it should also include screening for pesticides, heavy metals, residual solvents, and microbial contamination where relevant.",
+            ],
+          },
+          {
+            subtitle: '3. Confirm the extract type',
+            paragraphs: [
+              'Make sure the product clearly identifies whether it is full-spectrum, broad-spectrum, or CBD isolate. The term hemp extract alone does not establish which formulation is being used.',
+            ],
+          },
+          {
+            subtitle: '4. Examine the ingredients',
+            paragraphs: [
+              'Review carrier oils, flavourings, botanical ingredients, and other additives. This is particularly important when purchasing CBD products combined with herbs or other plant extracts.',
+            ],
+          },
+          {
+            subtitle: '5. Check the manufacturer',
+            paragraphs: [
+              'Look for transparent product information, traceable batches, clear labelling, and accessible quality documentation.',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'what-about-broad-spectrum-cbd',
+        title: 'What About Broad-Spectrum CBD?',
+        paragraphs: [
+          'There is another formulation worth understanding: broad-spectrum CBD.',
+          'Broad-spectrum CBD sits between full-spectrum extracts and CBD isolate.',
+          'It generally contains CBD alongside selected minor cannabinoids and other hemp compounds, but the manufacturing process is intended to remove THC.',
+          'However, THC removal should always be verified through laboratory testing.',
+          'Here is a simple way to understand the three formulations:',
+        ],
+        subsections: [
+          {
+            subtitle: 'Summary of the Three Extract Formulations',
+            paragraphs: [],
+            bullets: [
+              'Full-spectrum: CBD plus a wider range of naturally occurring hemp compounds, potentially including THC.',
+              'Broad-spectrum: CBD plus selected additional hemp compounds, with THC intended to be removed.',
+              'CBD isolate: Highly purified CBD with most other hemp compounds removed.',
+            ],
+          },
+          {
+            subtitle: 'Comparing Formulations to Match Preferences',
+            paragraphs: [
+              'Understanding these differences makes it easier to compare products and identify the formulation that matches your preferences. For personalized intake guidelines, read our [CBD drops & tinctures dosing guide](/blog/how-to-dose-cbd-drops-tinctures-sleep-anxiety-guide).',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'cbd-safety-consumer-guide',
+        title: 'CBD Safety: What Consumers Should Know',
+        paragraphs: [
+          'CBD products should not automatically be considered risk-free simply because they are hemp-derived.',
+          'The U.S. Food and Drug Administration (FDA) has highlighted potential concerns involving CBD, including liver injury, drowsiness, and interactions with certain medications.',
+          'Anyone taking prescription medication, managing an existing medical condition, or considering combining CBD with other herbal products should consult a qualified healthcare professional.',
+          'The FDA also advises against using CBD or THC products during pregnancy and breastfeeding.',
+          'Additionally, CBD products should be kept away from children and pets unless specifically advised by an appropriate veterinary professional.',
+          'Consumers should also check the laws applicable to their location, as CBD and THC regulations differ between countries and jurisdictions.',
+        ],
+      },
+      {
+        id: 'final-thoughts',
+        title: 'Final Thoughts: Full-Spectrum CBD or CBD Isolate?',
+        paragraphs: [
+          'The difference between full-spectrum CBD and CBD isolate comes down to the compounds retained during processing.',
+          'Full-spectrum CBD preserves a broader range of naturally occurring hemp compounds, while CBD isolate provides a more refined formulation centred on cannabidiol.',
+          'If you value a broader plant profile, full-spectrum CBD may match your preferences. If minimising THC exposure and choosing a simpler cannabinoid formulation are your priorities, CBD isolate may be worth considering.',
+          'Whichever option you explore, pay attention to the ingredients, cannabinoid content, independent laboratory results, and product information.',
+          'At Global Herbs, we believe informed shopping starts with understanding the products you choose.',
+          'Explore our [CBD collection](/category/cbd) and discover our range of hemp-derived formulations.',
+          'Visit Global Herbs: https://globalherbs.site',
+        ],
+      },
+    ],
+    recommendedCategorySlug: 'cbd',
+    recommendedProductSearch: 'CBD',
+    faqs: [
+      {
+        question: 'What is the main difference between full-spectrum CBD and CBD isolate?',
+        answer: 'Full-spectrum CBD is an unrefined or lightly refined hemp extract retaining cannabidiol alongside minor cannabinoids (CBG, CBN, CBC), terpenes, flavonoids, and trace amounts of THC (<0.3%). CBD isolate is purified cannabidiol with virtually all other cannabinoids, terpenes, and plant compounds removed during processing.',
+      },
+      {
+        question: 'Does full-spectrum CBD contain THC?',
+        answer: 'Yes, full-spectrum CBD may contain trace amounts of legal THC (up to 0.3% dry weight). Individuals who undergo workplace drug testing, participate in tested athletic leagues, or prefer zero THC exposure generally opt for CBD isolate or broad-spectrum formulations verified by laboratory testing.',
+      },
+      {
+        question: 'What is broad-spectrum CBD and how does it compare?',
+        answer: 'Broad-spectrum CBD bridges the gap between full-spectrum extracts and CBD isolate. It retains selected minor cannabinoids and terpenes from hemp, but undergoes targeted refining processes designed to eliminate detectable THC.',
+      },
+      {
+        question: 'Is full-spectrum CBD better than CBD isolate?',
+        answer: 'Neither formulation is objectively superior. Full-spectrum extracts appeal to consumers seeking whole-plant synergy (the entourage effect), while CBD isolate is preferred by consumers who want high-purity cannabidiol without other hemp compounds or THC.',
+      },
+      {
+        question: 'What should I look for on a CBD Certificate of Analysis (COA)?',
+        answer: "A complete third-party COA should confirm the product's cannabinoid profile (total CBD and minor cannabinoids per serving), quantify THC content, and verify non-detectable levels for heavy metals, residual solvents, pesticides, and microbial pathogens.",
+      },
+    ],
+    botanicalDisclaimer: 'This article is intended for general educational purposes only. It does not constitute medical advice or a recommendation to use CBD to diagnose, treat, cure, or prevent any medical condition. Always consult a qualified healthcare professional when considering cannabinoid products.',
+  },
   {
     id: 'top-10-strongest-thca-strains-2026-potency-terpenes-guide',
     slug: 'top-10-strongest-thca-strains-2026-potency-terpenes-guide',

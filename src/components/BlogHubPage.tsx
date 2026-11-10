@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Search, Clock, Calendar, ChevronRight, ShieldCheck, Sparkles, Filter } from 'lucide-react';
 import { blogArticles, BlogArticle } from '../data/blogArticles';
 import SEOHead from './SEOHead';
 
 export default function BlogHubPage() {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [articlesList, setArticlesList] = useState<BlogArticle[]>(blogArticles);
@@ -22,7 +23,7 @@ export default function BlogHubPage() {
       });
   }, []);
 
-  const categories = ['All', 'Announcements & Updates', 'THCa & Legality', 'Concentrates & Rosin', 'CBD & Wellness', 'Dosing & Guides'];
+  const categories = ['All', 'Announcements & Updates', 'CBD Education', 'THCa & Legality', 'Concentrates & Rosin', 'CBD & Wellness', 'Dosing & Guides'];
 
   const filteredArticles = articlesList.filter((article) => {
     if (selectedCategory !== 'All' && article.category !== selectedCategory) {
@@ -90,7 +91,7 @@ export default function BlogHubPage() {
               <div className="lg:col-span-7 relative h-64 lg:h-auto overflow-hidden">
                 <img
                   src={featuredArticle.featuredImage}
-                  alt={featuredArticle.title}
+                  alt={featuredArticle.imageAlt || featuredArticle.title}
                   className="w-full h-full object-cover object-center transform hover:scale-105 transition duration-700 ease-out"
                   loading="lazy"
                   decoding="async"
@@ -186,13 +187,14 @@ export default function BlogHubPage() {
               {filteredArticles.map((article) => (
                 <article
                   key={article.id}
-                  className="bg-white border border-gray-200 hover:border-emerald-700 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition duration-200 flex flex-col justify-between group"
+                  onClick={() => navigate(`/blog/${article.slug}`)}
+                  className="bg-white border border-gray-200 hover:border-emerald-700 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition duration-200 flex flex-col justify-between group cursor-pointer"
                 >
                   <div>
                     <div className="relative h-48 overflow-hidden">
                       <img
                         src={article.featuredImage}
-                        alt={article.title}
+                        alt={article.imageAlt || article.title}
                         className="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 ease-out"
                         loading="lazy"
                         decoding="async"

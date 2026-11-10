@@ -31,6 +31,63 @@ interface ArticleDetailPageProps {
   onAddToCart: (productId: number) => Promise<void>;
 }
 
+function renderFormattedContent(text: string): React.ReactNode {
+  if (!text) return text;
+  if (!text.includes('[') && !text.includes('**') && !text.includes('http')) {
+    return text;
+  }
+
+  const regex = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|(https?:\/\/[^\s,]+)/g;
+  const elements: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      elements.push(text.substring(lastIndex, match.index));
+    }
+
+    if (match[1] && match[2]) {
+      const label = match[1];
+      const href = match[2];
+      if (href.startsWith('/')) {
+        elements.push(
+          <Link key={match.index} to={href} className="text-emerald-800 hover:text-emerald-950 font-bold underline transition">
+            {label}
+          </Link>
+        );
+      } else {
+        elements.push(
+          <a key={match.index} href={href} target="_blank" rel="noopener noreferrer" className="text-emerald-800 hover:text-emerald-950 font-bold underline transition">
+            {label}
+          </a>
+        );
+      }
+    } else if (match[3]) {
+      elements.push(
+        <strong key={match.index} className="font-bold text-gray-900">
+          {match[3]}
+        </strong>
+      );
+    } else if (match[4]) {
+      const url = match[4];
+      elements.push(
+        <a key={match.index} href={url} target="_blank" rel="noopener noreferrer" className="text-emerald-800 hover:text-emerald-950 font-bold underline transition">
+          {url}
+        </a>
+      );
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    elements.push(text.substring(lastIndex));
+  }
+
+  return elements.length > 0 ? elements : text;
+}
+
 export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProps) {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
@@ -263,7 +320,7 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
             <div className="relative rounded-2xl overflow-hidden border border-gray-200/80 shadow-md bg-emerald-950 group">
               <img
                 src={article.featuredImage}
-                alt={`${article.title} - Global Herbs Educational Guide`}
+                alt={article.imageAlt || `${article.title} - Global Herbs Educational Guide`}
                 className="w-full h-auto max-h-[460px] object-cover object-center transform group-hover:scale-102 transition duration-700 ease-out"
                 loading="eager"
                 decoding="async"
@@ -308,7 +365,7 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
 
               {section.paragraphs.map((p, idx) => (
                 <p key={idx} className="text-sm text-gray-700 leading-relaxed font-normal">
-                  {p}
+                  {renderFormattedContent(p)}
                 </p>
               ))}
 
@@ -354,14 +411,14 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
                   </h3>
                   {sub.paragraphs.map((sp, spIdx) => (
                     <p key={spIdx} className="text-sm text-gray-700 leading-relaxed font-normal">
-                      {sp}
+                      {renderFormattedContent(sp)}
                     </p>
                   ))}
                   {sub.bullets && sub.bullets.length > 0 && (
                     <ul className="space-y-2 pl-4 list-disc text-sm text-gray-700">
                       {sub.bullets.map((bullet, bIdx) => (
                         <li key={bIdx} className="leading-relaxed">
-                          {bullet}
+                          {renderFormattedContent(bullet)}
                         </li>
                       ))}
                     </ul>

@@ -650,9 +650,10 @@ function getApprovedProductReviews(productId: number): {
         }
       }
     } catch {
-      // Fallback to static
+      // ignore
     }
-    const article = dynamicArticle || blogArticles.find((item) => item.slug === slug);
+    const staticArticle = blogArticles.find((item) => item.slug === slug);
+    const article = staticArticle || dynamicArticle;
     if (!article) return null;
 
     const articleSchemas: Record<string, unknown>[] = [
@@ -668,7 +669,7 @@ function getApprovedProductReviews(productId: number): {
         description: article.metaDescription || article.excerpt,
         image: [absoluteUrl(article.featuredImage)],
         datePublished: article.publishedDate,
-        author: { '@type': 'Person', name: article.author.name, jobTitle: article.author.role },
+        author: { '@type': 'Person', name: article.author?.name || 'Global Herbs Editorial Team', jobTitle: article.author?.role || 'Senior Botanical Editor' },
         ...(article.reviewer
           ? {
               reviewedBy: {
@@ -691,7 +692,7 @@ function getApprovedProductReviews(productId: number): {
       articleSchemas.push({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        mainEntity: article.faqs.map((faq) => ({
+        mainEntity: article.faqs.map((faq: any) => ({
           '@type': 'Question',
           name: faq.question,
           acceptedAnswer: {
@@ -702,24 +703,46 @@ function getApprovedProductReviews(productId: number): {
       });
     }
 
-    const sectionsHtml = article.contentSections
+    const formatPrerenderText = (text: string): string => {
+      if (!text) return '';
+      let rendered = escapeHtml(text);
+      rendered = rendered.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2">$1</a>'
+      );
+      rendered = rendered.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      return rendered;
+    };
+
+    const sectionsHtml = (article.contentSections || [])
       .map(
-        (sec) =>
-          `<section id="${escapeHtml(sec.id)}">
+        (sec: any) => {
+          const tableHtml = sec.table
+            ? `<table>
+                <caption>${escapeHtml(sec.table.caption)}</caption>
+                <thead><tr>${sec.table.headers.map((h: string) => `<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+                <tbody>${sec.table.rows.map((r: string[]) => `<tr>${r.map((c: string) => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+              </table>`
+            : '';
+
+          return `<section id="${escapeHtml(sec.id)}">
             <h2>${escapeHtml(sec.title)}</h2>
-            ${sec.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
+            ${sec.paragraphs.map((p: string) => `<p>${formatPrerenderText(p)}</p>`).join('')}
+            ${tableHtml}
             ${
               sec.subsections
                 ? sec.subsections
                     .map(
-                      (sub) =>
+                      (sub: any) =>
                         `<h3>${escapeHtml(sub.subtitle)}</h3>
-                        ${sub.paragraphs.map((sp) => `<p>${escapeHtml(sp)}</p>`).join('')}`
+                        ${sub.paragraphs.map((sp: string) => `<p>${formatPrerenderText(sp)}</p>`).join('')}
+                        ${sub.bullets && sub.bullets.length > 0 ? `<ul>${sub.bullets.map((b: string) => `<li>${formatPrerenderText(b)}</li>`).join('')}</ul>` : ''}`
                     )
                     .join('')
                 : ''
             }
-          </section>`
+          </section>`;
+        }
       )
       .join('');
 
@@ -766,10 +789,10 @@ function getApprovedProductReviews(productId: number): {
         </nav>
         <article>
           <h1>${escapeHtml(article.title)}</h1>
-          <p>By ${escapeHtml(article.author.name)} (${escapeHtml(article.author.role)}) | Reviewed by ${escapeHtml(article.reviewer.name)} | Published ${escapeHtml(article.publishedDate)}</p>
+          <p>By ${escapeHtml(article.author?.name || 'Global Herbs Editorial Team')} (${escapeHtml(article.author?.role || 'Senior Botanical Editor')}) | Reviewed by ${escapeHtml(article.reviewer?.name || 'Scientific Advisory Board')} | Published ${escapeHtml(article.publishedDate)}</p>
           <p>${escapeHtml(article.excerpt)}</p>
           <h2>Key Takeaways</h2>
-          <ul>${article.keyTakeaways.map((k) => `<li>${escapeHtml(k)}</li>`).join('')}</ul>
+          <ul>${(article.keyTakeaways || []).map((k: string) => `<li>${escapeHtml(k)}</li>`).join('')}</ul>
           ${sectionsHtml}
           <section>
             <h2>Frequently Asked Questions</h2>
