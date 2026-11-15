@@ -38,6 +38,8 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
     register,
     logout,
     loginWithGoogle,
+    oauthError,
+    clearOAuthError,
     updateProfile,
     getMyOrders,
     modalTab,
@@ -80,8 +82,16 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
 
   // Status & Feedback
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ success: boolean; text: string } | null>(null);
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen && oauthError) {
+      setFeedback({ success: false, text: oauthError });
+      clearOAuthError();
+    }
+  }, [isOpen, oauthError, clearOAuthError]);
 
   // Sync profile edit state when user changes
   useEffect(() => {
@@ -479,20 +489,29 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   Or Continue with Google
                 </span>
                 <GoogleSignInButton
+                  disabled={googleLoading || isSubmitting}
                   onClick={async () => {
+                    if (googleLoading || isSubmitting) return;
                     setFeedback(null);
-                    const res = await loginWithGoogle();
-                    if (res.success) {
-                      onClose();
-                      navigate('/account');
-                    } else if (res.error) {
-                      setFeedback({
-                        success: false,
-                        text: res.error,
-                      });
+                    setGoogleLoading(true);
+                    try {
+                      const res = await loginWithGoogle('/account');
+                      if (res.success) {
+                        if (!res.redirected) {
+                          onClose();
+                          navigate('/account');
+                        }
+                      } else if (res.error) {
+                        setFeedback({
+                          success: false,
+                          text: res.error,
+                        });
+                      }
+                    } finally {
+                      setGoogleLoading(false);
                     }
                   }}
-                  label="Sign in with Google"
+                  label={googleLoading ? 'Connecting to Google...' : 'Sign in with Google'}
                 />
               </div>
 

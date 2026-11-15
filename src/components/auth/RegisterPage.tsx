@@ -20,7 +20,7 @@ import SEOHead from '../SEOHead';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const { register, loginWithGoogle, isLoggedIn } = useAuth();
+  const { register, loginWithGoogle, isLoggedIn, oauthError, clearOAuthError } = useAuth();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -32,6 +32,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -41,6 +42,13 @@ export default function RegisterPage() {
       navigate('/account');
     }
   }, [isLoggedIn, navigate]);
+
+  React.useEffect(() => {
+    if (oauthError) {
+      setErrorMessage(oauthError);
+      clearOAuthError();
+    }
+  }, [oauthError, clearOAuthError]);
 
   // Password Strength Calculation
   const calculatePasswordStrength = (pass: string) => {
@@ -117,12 +125,21 @@ export default function RegisterPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (googleLoading || isLoading) return;
     setErrorMessage(null);
-    const res = await loginWithGoogle();
-    if (res.success) {
-      navigate('/account');
-    } else if (res.error) {
-      setErrorMessage(res.error);
+    setSuccessMessage(null);
+    setGoogleLoading(true);
+    try {
+      const res = await loginWithGoogle('/account');
+      if (res.success) {
+        if (!res.redirected) {
+          navigate('/account');
+        }
+      } else if (res.error) {
+        setErrorMessage(res.error);
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -155,7 +172,8 @@ export default function RegisterPage() {
           <div className="mb-6">
             <GoogleSignInButton
               onClick={handleGoogleSignIn}
-              label="Continue with Google"
+              disabled={googleLoading || isLoading}
+              label={googleLoading ? 'Connecting to Google...' : 'Continue with Google'}
               className="w-full justify-center"
             />
             <div className="relative mt-6">

@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
+  getRedirectResult,
   signOut as firebaseSignOut,
   sendEmailVerification,
   sendPasswordResetEmail,
@@ -113,12 +114,14 @@ interface AuthContextType {
   isEmailVerified: boolean;
   isModalOpen: boolean;
   isSupabaseActive: boolean;
+  oauthError: string | null;
+  clearOAuthError: () => void;
   modalTab: 'login' | 'register' | 'profile' | 'inquiry';
   openAccountModal: (tab?: 'login' | 'register' | 'profile' | 'inquiry') => void;
   closeAccountModal: () => void;
   setModalTab: (tab: 'login' | 'register' | 'profile' | 'inquiry') => void;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; message?: string }>;
-  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: (redirectPath?: string) => Promise<{ success: boolean; redirected?: boolean; error?: string }>;
   register: (payload: RegisterPayload) => Promise<{ success: boolean; error?: string; message?: string }>;
   logout: () => Promise<void>;
   resendVerificationEmail: () => Promise<{ success: boolean; error?: string }>;
@@ -146,8 +149,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalTab, setModalTab] = useState<'login' | 'register' | 'profile' | 'inquiry'>('login');
+  const [oauthError, setOauthError] = useState<string | null>(null);
 
   const isSupabaseActive = isSupabaseConfigured();
+
+  const clearOAuthError = useCallback(() => {
+    setOauthError(null);
+  }, []);
 
   // Load customer profile from Firestore (Firebase Fallback)
   const loadFirebaseCustomerProfile = useCallback(async (fUser: FirebaseUser) => {
@@ -202,7 +210,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             customerId: fUser.uid,
             fullName: initialProfile.name,
             email: initialProfile.email,
-            role: 'customer',
             createdAt: initialProfile.createdAt,
             emailVerified: initialProfile.emailVerified,
             accountType: initialProfile.accountType,
@@ -312,10 +319,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
 
+    // Inspect URL for any returned OAuth error parameters (e.g. from Supabase/Google redirect)
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const urlErrDesc = searchParams.get('error_description') || hashParams.get('error_description');
+      const urlErr = searchParams.get('error') || hashParams.get('error');
+      if (urlErrDesc || urlErr) {
+        setOauthError(decodeURIComponent(urlErrDesc || urlErr || 'Google Sign-In failed.'));
+        const cleanParams = new URLSearchParams(window.location.search);
+        cleanParams.delete('error');
+        cleanParams.delete('error_code');
+        cleanParams.delete('error_description');
+        const nextSearch = cleanParams.toString();
+        const nextUrl = `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ''}`;
+        window.history.replaceState({}, document.title, nextUrl);
+      }
+    }
+
     if (isSupabaseActive) {
       // 1. Primary: Supabase Authentication
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
         if (!isMounted) return;
+        if (error) {
+          setOauthError(error.message);
+        }
         if (session?.user) {
           loadSupabaseProfile(session.user, session.access_token).finally(() => {
             if (isMounted) setIsLoading(false);
@@ -328,6 +356,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (!isMounted) return;
         if (session?.user) {
+          setOauthError(null);
           await loadSupabaseProfile(session.user, session.access_token);
         } else {
           setUser(null);
@@ -342,6 +371,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     } else {
       // 2. Secondary: Firebase Authentication
+      getRedirectResult(auth).catch((err) => {
+        if (isMounted && err?.message) {
+          setOauthError(err.message);
+        }
+      });
+
       const unsubscribe = onAuthStateChanged(auth, async (currentFirebaseUser) => {
         if (!isMounted) return;
         setIsLoading(true);
@@ -595,13 +630,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // 3. Google Sign-In
-  const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+  const loginWithGoogle = async (
+    redirectPath?: string
+  ): Promise<{ success: boolean; redirected?: boolean; error?: string }> => {
+    setOauthError(null);
+    const safeRedirectPath =
+      redirectPath && redirectPath.startsWith('/') ? redirectPath : '/account';
+
     if (isSupabaseActive) {
       try {
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: `${window.location.origin}/account`,
+            redirectTo: `${window.location.origin}${safeRedirectPath}`,
+            queryParams: {
+              prompt: 'select_account',
+            },
           },
         });
         if (error) {
@@ -611,7 +655,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           return { success: false, error: msg };
         }
-        return { success: true };
+        return { success: true, redirected: Boolean(data?.url) };
       } catch (err: any) {
         console.error('[Supabase Google Auth Error]', err);
         return { success: false, error: err.message || 'Google Sign-In failed.' };
@@ -621,7 +665,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const cred = await signInWithPopup(auth, googleProvider);
       await loadFirebaseCustomerProfile(cred.user);
-      return { success: true };
+      return { success: true, redirected: false };
     } catch (err: any) {
       console.error('[Google Auth Error]', err);
       let errorMsg = 'Google Sign-In failed. Please try again or log in with your email and password.';
@@ -636,6 +680,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         errorMsg = `This domain (${currentDomain}) is not authorized for Google Sign-In in Firebase. Please add '${currentDomain}' in Firebase Console > Authentication > Settings > Authorized Domains, or sign in with your email and password.`;
       } else if (err.code === 'auth/operation-not-allowed') {
         errorMsg = 'Google Sign-In provider is currently disabled in your Firebase console. Please enable the Google provider in Firebase Authentication > Sign-in method, or sign in with your email and password.';
+      } else if (err.code === 'auth/account-exists-with-different-credential') {
+        errorMsg = 'An account already exists with this email using a different sign-in method. Please sign in with your email and password.';
       } else if (err.message) {
         errorMsg = err.message;
       }
@@ -1238,6 +1284,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isEmailVerified,
         isModalOpen,
         isSupabaseActive,
+        oauthError,
+        clearOAuthError,
         modalTab,
         openAccountModal,
         closeAccountModal,
