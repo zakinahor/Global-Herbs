@@ -271,11 +271,12 @@ export default function SEOHead({
     };
 
     // Image for Open Graph & Twitter
-    const ogImage = selectedProduct?.image
+    const rawOgImage = selectedProduct?.image
       ? selectedProduct.image
       : selectedArticle?.featuredImage
       ? selectedArticle.featuredImage
       : `${BASE_DOMAIN}/images/global-herbs-logo.jpg`;
+    const ogImage = rawOgImage.startsWith('http') ? rawOgImage : `${BASE_DOMAIN}${rawOgImage.startsWith('/') ? '' : '/'}${rawOgImage}`;
 
     // 4. Update Canonical URL and hreflang tags for indexable translated routes
     const baseCanonicalPath = canonicalUrl.replace(BASE_DOMAIN, '') || '/';
@@ -477,16 +478,28 @@ export default function SEOHead({
     if (selectedArticle) {
       schemas.push({
         '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
+        '@type': ['BlogPosting', 'Article'],
         headline: selectedArticle.title,
         description: selectedArticle.metaDescription,
-        image: [selectedArticle.featuredImage],
+        image: [ogImage],
+        articleSection: selectedArticle.category,
+        keywords: selectedArticle.targetKeywords.join(', '),
         datePublished: selectedArticle.publishedDate,
+        dateModified: selectedArticle.publishedDate,
         author: {
           '@type': 'Person',
           name: selectedArticle.author.name,
           jobTitle: selectedArticle.author.role,
         },
+        ...(selectedArticle.reviewer
+          ? {
+              reviewedBy: {
+                '@type': 'Person',
+                name: selectedArticle.reviewer.name,
+                jobTitle: selectedArticle.reviewer.credentials,
+              },
+            }
+          : {}),
         publisher: {
           '@type': 'Organization',
           name: 'Global Herbs',

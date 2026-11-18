@@ -384,6 +384,7 @@ async function startServer() {
     '/refunds': '/returns',
     '/terms-conditions': '/terms',
     '/track': '/order-tracking',
+    '/track-order': '/order-tracking',
     '/category/flower': '/category/flowers',
     '/category/weed': '/category/flowers',
     '/category/concentrate': '/category/concentrates',
@@ -505,12 +506,47 @@ async function startServer() {
     return res.status(200).json(exchangeRates);
   });
 
-  // API Route: Order Status Tracking Lookup (query param e.g. /api/orders?orderId=GM-954724-HGE)
+  // API Route: Order Status Tracking Lookup & Member Email Sync
   app.get('/api/orders', (req, res) => {
     const orderId = (req.query.orderId as string) || '';
     const email = req.query.email as string;
 
     if (!orderId) {
+      if (email && typeof email === 'string' && email.trim()) {
+        const cleanEmail = email.trim().toLowerCase();
+        const matchedOrders: any[] = [];
+
+        ordersStore.forEach((order) => {
+          if (order.customerEmail && order.customerEmail.toLowerCase().trim() === cleanEmail) {
+            matchedOrders.push({
+              orderId: order.orderId,
+              date: order.date,
+              status: order.status,
+              trackingNumber: order.trackingNumber,
+              carrier: order.carrier,
+              estimatedDelivery: order.estimatedDelivery,
+              shippingAddress: order.shippingAddress,
+              items: order.items,
+              subtotal: order.subtotal ?? order.orderTotal,
+              discount: order.discount ?? 0,
+              shippingCost: order.shippingCost ?? 0,
+              orderTotal: order.orderTotal,
+              currency: order.currency || 'USD',
+              paymentMethod: order.paymentMethod || 'Dispensary Direct',
+              paymentStatus: order.paymentStatus || 'Paid & Verified',
+              createdAt: order.createdAt,
+            });
+          }
+        });
+
+        matchedOrders.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+
+        return res.status(200).json({
+          success: true,
+          orders: matchedOrders,
+        });
+      }
+
       return res.status(400).json({ success: false, error: 'Order ID is required.' });
     }
 

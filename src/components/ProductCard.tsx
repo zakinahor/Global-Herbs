@@ -187,16 +187,18 @@ export default function ProductCard({ product, onAddToCart, onSelectProduct }: P
       </div>
 
       {/* Quick View Modal */}
-      <QuickViewModal
-        isOpen={isQuickViewOpen}
-        onClose={() => setIsQuickViewOpen(false)}
-        product={product}
-        onAddToCart={onAddToCart}
-        onNavigateToDetail={(p) => {
-          if (onSelectProduct) onSelectProduct(p);
-          navigate(`/products/${p.slug}`);
-        }}
-      />
+      {isQuickViewOpen && (
+        <QuickViewModal
+          isOpen={isQuickViewOpen}
+          onClose={() => setIsQuickViewOpen(false)}
+          product={product}
+          onAddToCart={onAddToCart}
+          onNavigateToDetail={(p) => {
+            if (onSelectProduct) onSelectProduct(p);
+            navigate(`/products/${p.slug}`);
+          }}
+        />
+      )}
     </>
   );
 }

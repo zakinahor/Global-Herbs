@@ -25,11 +25,10 @@ export default function QuickViewModal({
 }: QuickViewModalProps) {
   const { formatPrice } = useCurrency();
   const { t } = useLanguage();
-  if (!isOpen || !product) return null;
 
-  const weightVariants = getProductWeightVariants(product);
+  const weightVariants = product ? getProductWeightVariants(product) : [];
   const [selectedWeight, setSelectedWeight] = useState<string>(
-    product.weight || weightVariants[0]?.shortLabel || 'Default'
+    product?.weight || weightVariants[0]?.shortLabel || 'Default'
   );
   const [quantity, setQuantity] = useState<number>(1);
   const [adding, setAdding] = useState<boolean>(false);
@@ -40,8 +39,11 @@ export default function QuickViewModal({
     if (product) {
       const vars = getProductWeightVariants(product);
       setSelectedWeight(product.weight || vars[0]?.shortLabel || 'Default');
+      setQuantity(1);
     }
   }, [product]);
+
+  if (!isOpen || !product) return null;
 
   const selectedVariant = findVariantByLabel(weightVariants, selectedWeight);
   const currentPrice = calculateVariantPrice(product.price, selectedVariant);

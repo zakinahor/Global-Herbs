@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -14,11 +14,11 @@ import { ChevronRight, ChevronLeft, ListFilter, ArrowUpDown, ShieldAlert } from 
 import { motion, AnimatePresence } from 'motion/react';
 
 // Data and Types
-import { CartItem, Product } from './types';
+import { CartItem } from './types';
 import { products as initialProducts, categories } from './data/products';
 import { NON_INDEXABLE_CATEGORY_SLUGS, NON_INDEXABLE_PRODUCT_IDS } from './utils/sitemap';
 
-// Components
+// Eager Core Components (Immediate Landing & Catalog Render)
 import Header from './components/Header';
 import HomePage from './components/HomePage';
 import Hero from './components/Hero';
@@ -26,55 +26,135 @@ import Sidebar from './components/Sidebar';
 import ProductCard from './components/ProductCard';
 import ProductSkeletonCard from './components/ProductSkeletonCard';
 import ContactForm from './components/ContactForm';
-import CartDrawer from './components/CartDrawer';
 import MobileMenu from './components/MobileMenu';
 import Footer from './components/Footer';
 import BackToTopButton from './components/BackToTopButton';
-import { AboutPage, ShippingPage, RefundPage, PrivacyPage, ContactPage, TermsPage } from './components/Pages';
-import ProductDetailPage from './components/ProductDetailPage';
-import CheckoutPage from './components/CheckoutPage';
-import NotFoundPage from './components/NotFoundPage';
 import SEOHead from './components/SEOHead';
 import CategorySeoSection from './components/CategorySeoSection';
-import BlogHubPage from './components/BlogHubPage';
-import ArticleDetailPage from './components/ArticleDetailPage';
-import OrderTrackingPage from './components/OrderTrackingPage';
 import AgeVerificationModal from './components/AgeVerificationModal';
 import CookieConsentBanner from './components/CookieConsentBanner';
 import SupportWidget from './components/SupportWidget';
 import WhatsAppChatButton from './components/WhatsAppChatButton';
-import GoogleFormsPage from './components/GoogleFormsPage';
 import MobileBottomNav from './components/MobileBottomNav';
-import AdminReviewManager from './components/admin/AdminReviewManager';
-import AdminProductManager from './components/admin/AdminProductManager';
-import RegisterPage from './components/auth/RegisterPage';
-import LoginPage from './components/auth/LoginPage';
-import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
-import CustomerDashboard from './components/auth/CustomerDashboard';
+import { AboutPage, ShippingPage, RefundPage, PrivacyPage, ContactPage, TermsPage } from './components/Pages';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { LanguageProvider, extractLocaleFromPathname, useLanguage } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider, useProducts } from './context/ProductContext';
 
-// Helper component to scroll window to top on route change
+// Lazy-loaded Route & Drawer Modules for Fast Initial Paint & Smooth Code-Splitting
+const ProductDetailPage = lazy(() => import('./components/ProductDetailPage'));
+const CheckoutPage = lazy(() => import('./components/CheckoutPage'));
+const NotFoundPage = lazy(() => import('./components/NotFoundPage'));
+const BlogHubPage = lazy(() => import('./components/BlogHubPage'));
+const ArticleDetailPage = lazy(() => import('./components/ArticleDetailPage'));
+const OrderTrackingPage = lazy(() => import('./components/OrderTrackingPage'));
+const GoogleFormsPage = lazy(() => import('./components/GoogleFormsPage'));
+const AdminReviewManager = lazy(() => import('./components/admin/AdminReviewManager'));
+const AdminProductManager = lazy(() => import('./components/admin/AdminProductManager'));
+const RegisterPage = lazy(() => import('./components/auth/RegisterPage'));
+const LoginPage = lazy(() => import('./components/auth/LoginPage'));
+const ForgotPasswordPage = lazy(() => import('./components/auth/ForgotPasswordPage'));
+const CustomerDashboard = lazy(() => import('./components/auth/CustomerDashboard'));
+const CartDrawer = lazy(() => import('./components/CartDrawer'));
+
+function PageLoader() {
+  return (
+    <div className="min-h-[50vh] w-full flex items-center justify-center p-8">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-3 border-emerald-700 border-t-transparent rounded-full animate-spin" />
+        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Loading...</span>
+      </div>
+    </div>
+  );
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, ErrorBoundaryState> {
+  declare props: { children: React.ReactNode };
+  declare state: ErrorBoundaryState;
+  declare setState: (nextState: Partial<ErrorBoundaryState>) => void;
+
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[App ErrorBoundary]', error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-[60vh] flex items-center justify-center px-4 py-16 bg-white text-center">
+          <div className="max-w-md w-full bg-gray-50 border border-gray-200 rounded-2xl p-8 space-y-4 shadow-xs">
+            <ShieldAlert size={40} className="text-emerald-800 mx-auto" />
+            <h2 className="font-heading font-bold text-lg text-gray-900">Something went wrong</h2>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              We hit an unexpected rendering issue while displaying this view. Please refresh or return to the homepage.
+            </p>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  this.setState({ hasError: false });
+                  window.location.href = '/';
+                }}
+                className="px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition cursor-pointer"
+              >
+                Return Home
+              </button>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 text-xs font-bold uppercase tracking-wider rounded-lg transition cursor-pointer"
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Helper component to scroll window to top (or anchor element) on route change
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    if (hash) {
+      const targetId = hash.replace(/^#/, '');
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [pathname]);
+  }, [pathname, hash]);
 
   return null;
 }
 
 const pageVariants = {
-  initial: { opacity: 0, y: 16 },
+  initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -12 },
+  exit: { opacity: 0, y: -6 },
 };
 
 const pageTransition = {
-  duration: 0.35,
+  duration: 0.18,
   ease: [0.22, 1, 0.36, 1] as const,
 };
 
@@ -622,8 +702,9 @@ function AnimatedRoutes({
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={routedLocation}>
+    <Suspense fallback={<PageLoader />}>
+      <AnimatePresence mode="wait">
+        <Routes location={routedLocation}>
         <Route
           path="/"
           element={
@@ -750,6 +831,7 @@ function AnimatedRoutes({
         />
         <Route path="/terms-conditions" element={<Navigate to="/terms" replace />} />
         <Route path="/track" element={<Navigate to="/order-tracking" replace />} />
+        <Route path="/track-order" element={<Navigate to="/order-tracking" replace />} />
         <Route
           path="/blog/understanding-thca-flower-vs-delta-9-thc-complete-guide"
           element={<Navigate to="/blog/what-is-thca-vs-delta-9-thc-legal-potency-guide" replace />}
@@ -967,12 +1049,14 @@ function AnimatedRoutes({
             </motion.div>
           }
         />
-      </Routes>
-    </AnimatePresence>
+        </Routes>
+      </AnimatePresence>
+    </Suspense>
   );
 }
 
-export default function App() {
+function AppShell() {
+  const { products: dynamicProducts } = useProducts();
   const [isLoading, setIsLoading] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(17400);
@@ -1010,7 +1094,8 @@ export default function App() {
     quantity: number = 1,
     unitPrice?: number
   ): Promise<void> => {
-    const productToAdd = initialProducts.find((p) => p.id === productId);
+    const activeCatalog = dynamicProducts && dynamicProducts.length > 0 ? dynamicProducts : initialProducts;
+    const productToAdd = activeCatalog.find((p) => p.id === productId);
     if (!productToAdd) return;
 
     const chosenWeight = selectedWeight || productToAdd.weight || productToAdd.weights?.[0] || 'Default';
@@ -1090,90 +1175,104 @@ export default function App() {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <BrowserRouter>
-      <LanguageProvider>
-        <CurrencyProvider>
-          <AuthProvider>
-            <ProductProvider>
-              <ScrollToTop />
+    <>
+      <ScrollToTop />
 
-          <div className="min-h-screen bg-white flex flex-col justify-between text-left pb-16 md:pb-0">
-            <AgeVerificationModal />
-            <Header
+      <div className="min-h-screen bg-white flex flex-col justify-between text-left pb-16 md:pb-0">
+        <AgeVerificationModal />
+        <Header
+          categories={categories}
+          cartCount={cartCount}
+          onOpenCart={() => setCartOpen(true)}
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          isSearchModalOpen={searchModalOpen}
+          onOpenSearchModal={() => setSearchModalOpen(true)}
+          onCloseSearchModal={() => setSearchModalOpen(false)}
+        />
+
+        <AppErrorBoundary>
+          <AnimatedRoutes
+            cartItems={cartItems}
+            handleAddToCart={handleAddToCart}
+            handleClearCart={handleClearCart}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            setMinPrice={setMinPrice}
+            setMaxPrice={setMaxPrice}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            mobileFiltersOpen={mobileFiltersOpen}
+            setMobileFiltersOpen={setMobileFiltersOpen}
+          />
+        </AppErrorBoundary>
+
+        <Footer />
+
+        {/* Mobile Bottom Sticky Navigation Bar */}
+        <MobileBottomNav
+          onOpenMobileMenu={() => setMobileMenuOpen(true)}
+          onOpenCart={() => setCartOpen(true)}
+          onOpenSearch={() => setSearchModalOpen(true)}
+          cartCount={cartCount}
+        />
+
+        <BackToTopButton />
+        <CookieConsentBanner />
+        <SupportWidget />
+        <WhatsAppChatButton />
+
+        <AnimatePresence>
+          {cartOpen && (
+            <Suspense fallback={null}>
+              <CartDrawer
+                isOpen={cartOpen}
+                onClose={() => setCartOpen(false)}
+                cartItems={cartItems}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveItem={handleRemoveItem}
+                onClearCart={handleClearCart}
+                onGoToCheckout={() => {
+                  setCartOpen(false);
+                }}
+              />
+            </Suspense>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <MobileMenu
+              isOpen={mobileMenuOpen}
+              onClose={() => setMobileMenuOpen(false)}
               categories={categories}
-              cartCount={cartCount}
-              onOpenCart={() => setCartOpen(true)}
-              onOpenMobileMenu={() => setMobileMenuOpen(true)}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              isSearchModalOpen={searchModalOpen}
-              onOpenSearchModal={() => setSearchModalOpen(true)}
-              onCloseSearchModal={() => setSearchModalOpen(false)}
             />
+          )}
+        </AnimatePresence>
+      </div>
+    </>
+  );
+}
 
-            <AnimatedRoutes
-              cartItems={cartItems}
-              handleAddToCart={handleAddToCart}
-              handleClearCart={handleClearCart}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-              mobileFiltersOpen={mobileFiltersOpen}
-              setMobileFiltersOpen={setMobileFiltersOpen}
-            />
-
-            <Footer />
-
-            {/* Mobile Bottom Sticky Navigation Bar */}
-            <MobileBottomNav
-              onOpenMobileMenu={() => setMobileMenuOpen(true)}
-              onOpenCart={() => setCartOpen(true)}
-              onOpenSearch={() => setSearchModalOpen(true)}
-              cartCount={cartCount}
-            />
-
-            <BackToTopButton />
-            <CookieConsentBanner />
-            <SupportWidget />
-            <WhatsAppChatButton />
-
-            <AnimatePresence>
-              {cartOpen && (
-                <CartDrawer
-                  isOpen={cartOpen}
-                  onClose={() => setCartOpen(false)}
-                  cartItems={cartItems}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRemoveItem={handleRemoveItem}
-                  onClearCart={handleClearCart}
-                  onGoToCheckout={() => {
-                    setCartOpen(false);
-                  }}
-                />
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {mobileMenuOpen && (
-                <MobileMenu
-                  isOpen={mobileMenuOpen}
-                  onClose={() => setMobileMenuOpen(false)}
-                  categories={categories}
-                />
-              )}
-            </AnimatePresence>
-          </div>
-            </ProductProvider>
-          </AuthProvider>
-        </CurrencyProvider>
-      </LanguageProvider>
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppErrorBoundary>
+        <LanguageProvider>
+          <CurrencyProvider>
+            <AuthProvider>
+              <ProductProvider>
+                <AppShell />
+              </ProductProvider>
+            </AuthProvider>
+          </CurrencyProvider>
+        </LanguageProvider>
+      </AppErrorBoundary>
     </BrowserRouter>
   );
 }

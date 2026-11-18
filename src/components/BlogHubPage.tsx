@@ -23,7 +23,7 @@ export default function BlogHubPage() {
       });
   }, []);
 
-  const categories = ['All', 'Announcements & Updates', 'CBD Education', 'THCa & Legality', 'Concentrates & Rosin', 'CBD & Wellness', 'Dosing & Guides'];
+  const categories = ['All', 'Hemp Education', 'Announcements & Updates', 'CBD Education', 'THCa & Legality', 'Concentrates & Rosin', 'CBD & Wellness', 'Dosing & Guides'];
 
   const filteredArticles = articlesList.filter((article) => {
     if (selectedCategory !== 'All' && article.category !== selectedCategory) {

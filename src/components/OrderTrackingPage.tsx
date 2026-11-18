@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Package, Clock, Truck, ShieldCheck, AlertCircle, ArrowLeft, CheckCircle2, Send, MessageSquare } from 'lucide-react';
 import SEOHead from './SEOHead';
 
@@ -18,8 +18,12 @@ interface OrderRecord {
 }
 
 export default function OrderTrackingPage() {
-  const [orderIdInput, setOrderIdInput] = useState('');
-  const [emailInput, setEmailInput] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialOrderId = searchParams.get('orderId') || '';
+  const initialEmail = searchParams.get('email') || '';
+
+  const [orderIdInput, setOrderIdInput] = useState(initialOrderId);
+  const [emailInput, setEmailInput] = useState(initialEmail);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [orderResult, setOrderResult] = useState<OrderRecord | null>(null);
@@ -68,9 +72,8 @@ export default function OrderTrackingPage() {
     }
   };
 
-  const handleTrackOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanOrderId = orderIdInput.trim();
+  const lookupOrder = useCallback(async (rawOrderId: string, rawEmail: string = '') => {
+    const cleanOrderId = rawOrderId.trim();
     if (!cleanOrderId) {
       setErrorMessage('Please enter a valid Order ID (e.g. GH-178... or GM-100234).');
       return;
@@ -81,7 +84,7 @@ export default function OrderTrackingPage() {
     setOrderResult(null);
 
     try {
-      const emailQuery = emailInput.trim() ? `?email=${encodeURIComponent(emailInput.trim())}` : '';
+      const emailQuery = rawEmail.trim() ? `?email=${encodeURIComponent(rawEmail.trim())}` : '';
       const response = await fetch(`/api/orders/${encodeURIComponent(cleanOrderId)}${emailQuery}`);
       const data = await response.json();
 
@@ -169,6 +172,21 @@ export default function OrderTrackingPage() {
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const queryOrderId = searchParams.get('orderId');
+    const queryEmail = searchParams.get('email') || '';
+    if (queryOrderId && queryOrderId.trim()) {
+      setOrderIdInput(queryOrderId.trim());
+      if (queryEmail) setEmailInput(queryEmail.trim());
+      lookupOrder(queryOrderId.trim(), queryEmail);
+    }
+  }, [searchParams, lookupOrder]);
+
+  const handleTrackOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await lookupOrder(orderIdInput, emailInput);
   };
 
   return (

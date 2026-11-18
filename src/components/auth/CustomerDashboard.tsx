@@ -91,6 +91,7 @@ export default function CustomerDashboard() {
   // Saved Address modal/form
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [confirmDeleteIdx, setConfirmDeleteIdx] = useState<number | null>(null);
   const [addrStreet1, setAddrStreet1] = useState('');
   const [addrStreet2, setAddrStreet2] = useState('');
   const [addrCity, setAddrCity] = useState('');
@@ -289,9 +290,8 @@ export default function CustomerDashboard() {
   };
 
   const handleDeleteAddress = async (idx: number) => {
-    if (window.confirm('Are you sure you want to remove this delivery address?')) {
-      await deleteDeliveryAddress(idx);
-    }
+    setConfirmDeleteIdx(null);
+    await deleteDeliveryAddress(idx);
   };
 
   const handleClaimOrder = async (e: React.FormEvent) => {
@@ -756,7 +756,7 @@ export default function CustomerDashboard() {
                   className="flex-1 px-4 py-2.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 font-mono text-gray-900"
                 />
                 <Link
-                  to={`/track-order?orderId=${encodeURIComponent(trackingLookupId.trim())}`}
+                  to={`/order-tracking?orderId=${encodeURIComponent(trackingLookupId.trim())}`}
                   className="px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <Search size={14} />
@@ -954,13 +954,30 @@ export default function CustomerDashboard() {
                         <Edit2 size={12} />
                         <span>Edit</span>
                       </button>
-                      <button
-                        onClick={() => handleDeleteAddress(idx)}
-                        className="text-gray-400 hover:text-red-600 cursor-pointer"
-                        title="Delete Address"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                      {confirmDeleteIdx === idx ? (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleDeleteAddress(idx)}
+                            className="px-2 py-0.5 rounded bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] uppercase cursor-pointer transition"
+                          >
+                            Remove
+                          </button>
+                          <button
+                            onClick={() => setConfirmDeleteIdx(null)}
+                            className="px-2 py-0.5 rounded bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold text-[10px] uppercase cursor-pointer transition"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmDeleteIdx(idx)}
+                          className="text-gray-400 hover:text-red-600 cursor-pointer"
+                          title="Delete Address"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -193,15 +193,16 @@ export default function ProductDetailPage({
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Please upload a valid image file (JPEG, PNG, WEBP).');
+      setReviewError('Please upload a valid image file (JPEG, PNG, WEBP).');
       return;
     }
 
     if (file.size > 3 * 1024 * 1024) {
-      alert('Image file size must be less than 3MB.');
+      setReviewError('Image file size must be less than 3MB.');
       return;
     }
 
+    setReviewError(null);
     const reader = new FileReader();
     reader.onload = (event) => {
       setNewReviewImage(event.target?.result as string);

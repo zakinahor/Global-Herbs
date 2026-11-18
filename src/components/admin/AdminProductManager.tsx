@@ -73,7 +73,8 @@ export default function AdminProductManager() {
   const [newStrainType, setNewStrainType] = useState('Hybrid');
   const [newPotency, setNewPotency] = useState('28% THCA');
 
-  // Feedback Toast
+  // Inline delete confirmation & feedback toast
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -190,9 +191,7 @@ export default function AdminProductManager() {
 
   // Delete Product
   const handleDelete = async (product: Product) => {
-    if (!window.confirm(`Are you sure you want to remove "${product.name}" from the active catalog?`)) {
-      return;
-    }
+    setConfirmDeleteId(null);
     const res = await deleteProduct(product.id);
     if (res.success) {
       showToast(`Product #${product.id} removed from catalog.`);
@@ -634,13 +633,30 @@ export default function AdminProductManager() {
                             >
                               <ExternalLink size={14} />
                             </Link>
-                            <button
-                              onClick={() => handleDelete(p)}
-                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
-                              title="Delete Product"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            {confirmDeleteId === p.id ? (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => handleDelete(p)}
+                                  className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold uppercase cursor-pointer transition"
+                                >
+                                  Remove
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteId(null)}
+                                  className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded text-[10px] font-bold uppercase cursor-pointer transition"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setConfirmDeleteId(p.id)}
+                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                                title="Delete Product"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

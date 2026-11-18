@@ -214,7 +214,14 @@ export default function Header({
         </button>
 
         {/* Brand Logo */}
-        <Link to="/" className="notranslate flex items-center gap-2.5 cursor-pointer" translate="no" onClick={() => handleCategorySelect(null)}>
+        <Link
+          to="/"
+          className="notranslate flex items-center gap-2.5 cursor-pointer"
+          translate="no"
+          onClick={() => {
+            if (onSelectCategory) onSelectCategory(null);
+          }}
+        >
           <img
             src={logoUrl}
             alt="Global Herbs Logo"

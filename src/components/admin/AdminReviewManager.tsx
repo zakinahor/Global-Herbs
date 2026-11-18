@@ -44,8 +44,9 @@ export default function AdminReviewManager() {
   const [responderName, setResponderName] = useState<string>('Global Herbs Dispatch Management');
   const [isSubmittingResponse, setIsSubmittingResponse] = useState<boolean>(false);
 
-  // Image preview modal
+  // Image preview modal & inline delete confirmation
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -111,7 +112,7 @@ export default function AdminReviewManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to permanently delete this customer review?')) return;
+    setConfirmDeleteId(null);
     try {
       const res = await fetch(`/api/admin/reviews/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -537,13 +538,30 @@ export default function AdminReviewManager() {
                       <span>{rev.adminResponse ? 'Edit Reply' : 'Reply'}</span>
                     </button>
 
-                    <button
-                      onClick={() => handleDelete(rev.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition cursor-pointer"
-                      title="Permanently delete review"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {confirmDeleteId === rev.id ? (
+                      <div className="flex items-center gap-1 w-full">
+                        <button
+                          onClick={() => handleDelete(rev.id)}
+                          className="flex-1 px-2 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-bold uppercase cursor-pointer transition"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg text-[10px] font-bold uppercase cursor-pointer transition"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(rev.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-lg transition cursor-pointer"
+                        title="Permanently delete review"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -435,7 +435,7 @@ export default function ArticleDetailPage({ onAddToCart }: ArticleDetailPageProp
                     : 'bg-blue-50 border-blue-200 text-blue-900'
                 }`}>
                   <strong className="block font-bold mb-1">{section.calloutBox.title}</strong>
-                  <span>{section.calloutBox.text}</span>
+                  <span>{renderFormattedContent(section.calloutBox.text)}</span>
                 </div>
               )}
             </section>

@@ -74,6 +74,38 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   const emailParam = url.searchParams.get('email');
 
   if (!orderId) {
+    if (emailParam && typeof emailParam === 'string' && emailParam.trim()) {
+      const cleanEmail = emailParam.trim().toLowerCase();
+      const ordersMap = loadOrdersFromDisk();
+      const matched: any[] = [];
+      ordersMap.forEach((ord) => {
+        if (ord.customerEmail && ord.customerEmail.toLowerCase().trim() === cleanEmail) {
+          matched.push({
+            orderId: ord.orderId,
+            date: ord.date,
+            status: ord.status,
+            trackingNumber: ord.trackingNumber,
+            carrier: ord.carrier,
+            estimatedDelivery: ord.estimatedDelivery,
+            shippingAddress: ord.shippingAddress,
+            items: ord.items,
+            subtotal: ord.subtotal ?? ord.orderTotal,
+            discount: ord.discount ?? 0,
+            shippingCost: ord.shippingCost ?? 0,
+            orderTotal: ord.orderTotal,
+            currency: ord.currency || 'USD',
+            paymentMethod: ord.paymentMethod || 'Dispensary Direct',
+            paymentStatus: ord.paymentStatus || 'Paid & Verified',
+          });
+        }
+      });
+
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: true, orders: matched }));
+      return;
+    }
+
     res.statusCode = 400;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ success: false, error: 'Order ID is required.' }));

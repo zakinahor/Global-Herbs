@@ -664,11 +664,14 @@ function getApprovedProductReviews(productId: number): {
       ]),
       {
         '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
+        '@type': ['BlogPosting', 'Article'],
         headline: article.title,
         description: article.metaDescription || article.excerpt,
         image: [absoluteUrl(article.featuredImage)],
+        articleSection: article.category,
+        keywords: Array.isArray(article.targetKeywords) ? article.targetKeywords.join(', ') : undefined,
         datePublished: article.publishedDate,
+        dateModified: article.publishedDate,
         author: { '@type': 'Person', name: article.author?.name || 'Global Herbs Editorial Team', jobTitle: article.author?.role || 'Senior Botanical Editor' },
         ...(article.reviewer
           ? {
@@ -725,6 +728,10 @@ function getApprovedProductReviews(productId: number): {
               </table>`
             : '';
 
+          const calloutHtml = sec.calloutBox
+            ? `<aside><strong>${escapeHtml(sec.calloutBox.title)}</strong><p>${formatPrerenderText(sec.calloutBox.text)}</p></aside>`
+            : '';
+
           return `<section id="${escapeHtml(sec.id)}">
             <h2>${escapeHtml(sec.title)}</h2>
             ${sec.paragraphs.map((p: string) => `<p>${formatPrerenderText(p)}</p>`).join('')}
@@ -741,6 +748,7 @@ function getApprovedProductReviews(productId: number): {
                     .join('')
                 : ''
             }
+            ${calloutHtml}
           </section>`;
         }
       )
@@ -804,6 +812,14 @@ function getApprovedProductReviews(productId: number): {
                   <h2>Featured Lab-Tested Products in This Guide</h2>
                   <p>Discover authentic, batch-tested products matching this educational guide:</p>
                   <ul>${featuredProductsHtml}</ul>
+                </section>`
+              : ''
+          }
+          ${
+            article.botanicalDisclaimer
+              ? `<section>
+                  <h2>Compliance &amp; Botanical Health Disclosure</h2>
+                  <p>${escapeHtml(article.botanicalDisclaimer)}</p>
                 </section>`
               : ''
           }

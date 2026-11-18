@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Trash2, ShoppingBag, Plus, Minus, CheckCircle, CreditCard } from 'lucide-react';
 import { CartItem } from '../types';
@@ -38,6 +38,15 @@ export default function CartDrawer({
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('bitcoin');
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const clearCartTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (clearCartTimeoutRef.current !== null) {
+        window.clearTimeout(clearCartTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + (item.unitPrice !== undefined ? item.unitPrice : item.product.price) * item.quantity,
@@ -99,7 +108,7 @@ export default function CartDrawer({
     } finally {
       setIsSubmittingOrder(false);
       setCheckoutSuccess(true);
-      setTimeout(() => {
+      clearCartTimeoutRef.current = window.setTimeout(() => {
         onClearCart();
         setCheckoutSuccess(false);
         setCheckoutMode(false);
