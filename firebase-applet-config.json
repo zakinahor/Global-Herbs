@@ -1,12 +1,12 @@
 {
-  "projectId": "charismatic-highlander-mt3g1",
-  "appId": "1:1034737664204:web:43d5bcfd4c6963eb55c269",
-  "apiKey": "AIzaSyDEgo2mWrAsExcUKzjyseRxojHwwl938Iw",
-  "authDomain": "charismatic-highlander-mt3g1.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-globalherbs-b64abcda-c94b-4490-870c-891731ee2121",
-  "storageBucket": "charismatic-highlander-mt3g1.firebasestorage.app",
-  "messagingSenderId": "1034737664204",
-  "measurementId": "",
-  "oAuthClientId": "1034737664204-n9j2u33jkmu564ov2nbebqepog2ag6pp.apps.googleusercontent.com",
+  "projectId": "global-herbs-9fc57",
+  "appId": "1:899297313042:web:8cfba106fe02ffccd233cb",
+  "apiKey": "AIzaSyDWNXUyvNiB6hDEtDar5xDjQaDaTRxE9NQ",
+  "authDomain": "global-herbs-9fc57.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "global-herbs-9fc57.firebasestorage.app",
+  "messagingSenderId": "899297313042",
+  "measurementId": "G-M8ZEF5X4JZ",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
